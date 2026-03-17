@@ -5,10 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="free-web-search-ultimate",
-    version="10.0.0",
+    version="11.0.0",
     author="wd041216-bit",
     author_email="",
-    description="Zero-cost, privacy-first web search for AI agents (CLI-Anything Harness)",
+    description="Universal Search-First Knowledge Acquisition Plugin for LLMs (MCP + CLI-Anything)",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/wd041216-bit/free-web-search-ultimate",
@@ -33,11 +33,13 @@ setup(
         "beautifulsoup4>=4.9.0",
         "lxml>=4.6.0",
         "ddgs>=0.1.0",
+        "mcp>=1.1.2",
     ],
     entry_points={
         "console_scripts": [
             "search-web=free_web_search.search_web:main",
             "browse-page=free_web_search.browse_page:main",
+            "free-web-search-mcp=free_web_search.mcp_server:run",
         ],
     },
     package_data={
