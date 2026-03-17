@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="free-web-search",
-    version="6.0.0",
+    version="7.0.0",
     author="wd041216-bit",
     author_email="",
     description="Zero-cost, privacy-first web search for AI agents",

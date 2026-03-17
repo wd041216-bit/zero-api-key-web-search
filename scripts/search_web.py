@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Free Web Search Ultimate - 超级搜索核心 (v6.0 Super Workflow Upgraded)
-支持普通网页与新闻搜索 + 时间过滤 + 智能解析 + 交叉验证
+Free Web Search Ultimate - 超级搜索核心 (v7.0 Super Workflow Upgraded)
+移除了反模式的 auto 意图检测，新增 region 支持，复用 DDGS 实例，增强容错
 """
 import argparse
 import json
@@ -55,6 +55,13 @@ class UltimateSearcher:
             'Accept-Language': 'en-US,en;q=0.9',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         }
+        
+        # 复用 DDGS 实例
+        try:
+            from ddgs import DDGS
+            self.ddgs_client = DDGS(timeout=self.timeout)
+        except Exception:
+            self.ddgs_client = None
 
     def _fetch_with_retry(self, url: str, retries: int = 2) -> Optional[str]:
         """带指数退避的重试机制"""
@@ -68,39 +75,42 @@ class UltimateSearcher:
                     time.sleep(2 ** attempt)
         return None
 
-    def _search_ddgs_text(self, query: str, timelimit: str = None) -> List[Source]:
+    def _search_ddgs_text(self, query: str, timelimit: str = None, region: str = "wt-wt") -> List[Source]:
         """使用官方 ddgs 库进行网页搜索"""
+        if not self.ddgs_client:
+            return []
+            
         results = []
         try:
-            from ddgs import DDGS
-            # page=1 和 page=2 混合获取更多结果
-            for page in [1, 2]:
-                api_results = DDGS().text(query, max_results=10, timelimit=timelimit, page=page)
-                for r in api_results:
-                    results.append(Source(
-                        url=r.get('href', ''),
-                        title=r.get('title', ''),
-                        snippet=r.get('body', ''),
-                        credibility=0.95,
-                        engine='DDG-Web'
-                    ))
+            # 捕获任何可能的异常，防止因为超时等原因导致整个搜索失败
+            api_results = self.ddgs_client.text(query, region=region, max_results=15, timelimit=timelimit)
+            for r in api_results:
+                results.append(Source(
+                    url=r.get('href', ''),
+                    title=r.get('title', ''),
+                    snippet=r.get('body', ''),
+                    credibility=0.95,
+                    engine='DDG-Web'
+                ))
         except Exception:
             pass
         return results
 
-    def _search_ddgs_news(self, query: str, timelimit: str = None) -> List[Source]:
+    def _search_ddgs_news(self, query: str, timelimit: str = None, region: str = "wt-wt") -> List[Source]:
         """使用官方 ddgs 库进行新闻搜索"""
+        if not self.ddgs_client:
+            return []
+            
         results = []
         try:
-            from ddgs import DDGS
-            api_results = DDGS().news(query, max_results=15, timelimit=timelimit)
+            api_results = self.ddgs_client.news(query, region=region, max_results=15, timelimit=timelimit)
             for r in api_results:
                 results.append(Source(
                     url=r.get('url', ''),
                     title=r.get('title', ''),
                     snippet=r.get('body', ''),
                     date=r.get('date', ''),
-                    credibility=0.98,  # 新闻源可信度更高
+                    credibility=0.98,
                     engine='DDG-News'
                 ))
         except Exception:
@@ -128,7 +138,6 @@ class UltimateSearcher:
                 m = re.search(r'RU=([^/]+)', href)
                 real_url = urllib.parse.unquote(m.group(1)) if m else href
                 
-                # 过滤图片搜索链接
                 if 'images.search.yahoo.com' in real_url or 'video.search.yahoo.com' in real_url:
                     continue
                 
@@ -155,7 +164,6 @@ class UltimateSearcher:
         """交叉验证和去重"""
         url_groups = {}
         for r in all_results:
-            # 简化URL进行匹配
             simplified = re.sub(r'^https?://(www\.)?', '', r.url).rstrip('/')
             simplified = simplified.split('#')[0].split('?')[0]
             
@@ -168,7 +176,6 @@ class UltimateSearcher:
         
         validated = []
         for url, group in url_groups.items():
-            # 优先选择 DDG 的结果
             group.sort(key=lambda x: 1 if x.engine.startswith('DDG') else 0, reverse=True)
             best_source = group[0]
             
@@ -187,23 +194,15 @@ class UltimateSearcher:
         validated.sort(key=lambda x: (x.cross_validated, x.credibility), reverse=True)
         return validated
 
-    def search(self, query: str, search_type: str = "auto", timelimit: str = None) -> Answer:
+    def search(self, query: str, search_type: str = "text", timelimit: str = None, region: str = "wt-wt") -> Answer:
         start_time = time.time()
         
-        # 自动推断搜索类型
-        is_news = False
-        if search_type == "news":
-            is_news = True
-        elif search_type == "auto":
-            news_keywords = ['news', 'latest', 'today', 'update', '新闻', '最新', '今日']
-            is_news = any(k in query.lower() for k in news_keywords)
-            
         engines = []
-        if is_news:
-            engines = [(self._search_ddgs_news, query, timelimit)]
+        if search_type == "news":
+            engines = [(self._search_ddgs_news, query, timelimit, region)]
         else:
             engines = [
-                (self._search_ddgs_text, query, timelimit),
+                (self._search_ddgs_text, query, timelimit, region),
                 (self._search_yahoo, query)
             ]
         
@@ -215,7 +214,6 @@ class UltimateSearcher:
                 
         validated_results = self._cross_validate(all_results)
         
-        # 提取摘要作为答案
         answer_text = ""
         if validated_results:
             answer_parts = []
@@ -232,7 +230,7 @@ class UltimateSearcher:
         
         return Answer(
             query=query,
-            search_type="news" if is_news else "text",
+            search_type=search_type,
             answer=answer_text,
             confidence=confidence,
             sources=validated_results[:15],
@@ -245,22 +243,23 @@ class UltimateSearcher:
         )
 
 def main():
-    parser = argparse.ArgumentParser(description="Free Web Search Ultimate (v6.0)")
+    parser = argparse.ArgumentParser(description="Free Web Search Ultimate (v7.0)")
     parser.add_argument("query", help="搜索关键词")
-    parser.add_argument("--type", choices=["auto", "text", "news"], default="auto", help="搜索类型: auto, text, news")
+    parser.add_argument("--type", choices=["text", "news"], default="text", help="搜索类型: text(默认网页), news(新闻)")
+    parser.add_argument("--region", default="wt-wt", help="地区代码，如 zh-cn, en-us, wt-wt(全球)")
     parser.add_argument("--timelimit", choices=["d", "w", "m", "y"], help="时间限制: d(天), w(周), m(月), y(年)")
     parser.add_argument("--json", action="store_true", help="输出JSON格式")
     
     args = parser.parse_args()
     
     searcher = UltimateSearcher()
-    answer = searcher.search(args.query, search_type=args.type, timelimit=args.timelimit)
+    answer = searcher.search(args.query, search_type=args.type, timelimit=args.timelimit, region=args.region)
     
     if args.json:
         print(json.dumps(asdict(answer), indent=2, ensure_ascii=False))
     else:
         print(f"\n{'='*60}")
-        print(f"🔍 搜索: {answer.query} (类型: {answer.search_type})")
+        print(f"🔍 搜索: {answer.query} (类型: {answer.search_type} | 地区: {args.region})")
         print(f"⏱️  耗时: {answer.elapsed_ms}ms | 置信度: {answer.confidence}")
         print(f"📊 结果: 找到 {answer.validation['unique_results']} 个独立结果，{answer.validation['cross_validated']} 个交叉验证")
         print(f"{'='*60}\n")
