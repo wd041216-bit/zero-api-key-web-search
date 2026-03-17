@@ -1,14 +1,14 @@
 ---
 name: free-web-search-ultimate
-version: "4.0.0"
+version: "5.0.0"
 description: >
   Zero-cost, privacy-first web search and browsing for AI agents.
-  Uses DuckDuckGo, Yahoo, and Qwant with cross-validation.
+  Uses official DuckDuckGo API (ddgs), DDG-HTML, and Yahoo with cross-validation.
   No API keys required.
 homepage: https://github.com/wd041216-bit/free-web-search-ultimate
 ---
 
-# Free Web Search Ultimate v4.0
+# Free Web Search Ultimate v5.0 (Super Workflow Upgraded)
 
 **Zero API Keys. High Reliability. Cross-Validated Results.**
 
@@ -16,10 +16,12 @@ This skill provides AI agents with reliable web search and page browsing capabil
 
 ## Features
 
-- **Multi-Engine Search**: Parallel queries to DuckDuckGo, Yahoo, and Qwant.
+- **Triple Engine Redundancy**: 
+  1. `DDG-API` (Primary, via official `ddgs` library)
+  2. `DDG-HTML` (Fallback)
+  3. `Yahoo` (Fallback)
 - **Cross-Validation**: Automatically groups and validates results across different engines to ensure credibility.
 - **Smart Parsing**: Resolves redirect URLs to provide real, clickable links.
-- **Anti-Bot Bypass**: Uses randomized User-Agents and identity headers to minimize blocking.
 - **Clean Browsing**: Extracts pure text content from web pages, stripping out scripts, styles, and boilerplate.
 
 ## Quick Start
@@ -54,15 +56,17 @@ Many web search skills rely on paid APIs (like Brave, Google, or Bing API) or us
 
 **Free Web Search Ultimate** solves this by:
 1. Not requiring any API keys.
-2. Using parallel requests to multiple engines.
-3. Automatically decoding redirect links so agents can actually browse the results.
+2. Using the official `ddgs` library as the primary engine for extreme stability.
+3. Using parallel fallback requests to HTML parsers if the API fails.
+4. Automatically decoding redirect links so agents can actually browse the results.
 
 ## Requirements
 
 - Python 3.8+
 - `beautifulsoup4`
 - `lxml`
+- `ddgs`
 
 ```bash
-pip install beautifulsoup4 lxml
+pip install -r requirements.txt
 ```

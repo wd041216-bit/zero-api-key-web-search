@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Free Web Search Ultimate - 超级搜索核心
-多引擎并行 + 智能解析 + 反爬虫 + 交叉验证
+Free Web Search Ultimate - 超级搜索核心 (v5.0 Super Workflow Upgraded)
+多引擎并行 + 智能解析 + 反爬虫 + 交叉验证 + 官方API集成
 """
 import argparse
 import json
 import re
 import ssl
-import sys
 import time
 import urllib.parse
 import urllib.request
@@ -55,17 +54,44 @@ class UltimateSearcher:
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         }
 
-    def _fetch(self, url: str) -> Optional[str]:
-        try:
-            req = urllib.request.Request(url, headers=self.headers)
-            with urllib.request.urlopen(req, timeout=self.timeout, context=ctx) as r:
-                return r.read().decode('utf-8', errors='ignore')
-        except Exception:
-            return None
+    def _fetch_with_retry(self, url: str, retries: int = 2) -> Optional[str]:
+        """带指数退避的重试机制"""
+        for attempt in range(retries):
+            try:
+                req = urllib.request.Request(url, headers=self.headers)
+                with urllib.request.urlopen(req, timeout=self.timeout, context=ctx) as r:
+                    return r.read().decode('utf-8', errors='ignore')
+            except Exception:
+                if attempt < retries - 1:
+                    time.sleep(2 ** attempt)
+        return None
 
-    def _search_ddg(self, query: str) -> List[Source]:
+    def _search_ddgs_api(self, query: str) -> List[Source]:
+        """使用官方 ddgs 库 (DuckDuckGo API)"""
+        results = []
+        try:
+            from ddgs import DDGS
+            # 使用 DDGS 官方库获取结果，无需解析 HTML
+            api_results = DDGS().text(query, max_results=10)
+            for r in api_results:
+                results.append(Source(
+                    url=r.get('href', ''),
+                    title=r.get('title', ''),
+                    snippet=r.get('body', ''),
+                    credibility=0.95,  # 官方 API 结果可信度高
+                    engine='DDG-API'
+                ))
+        except ImportError:
+            # 如果未安装 ddgs，静默失败，依赖 HTML 备用引擎
+            pass
+        except Exception:
+            pass
+        return results
+
+    def _search_ddg_html(self, query: str) -> List[Source]:
+        """备用：DuckDuckGo HTML 爬取"""
         q = urllib.parse.quote_plus(query)
-        html = self._fetch(f'https://html.duckduckgo.com/html/?q={q}')
+        html = self._fetch_with_retry(f'https://html.duckduckgo.com/html/?q={q}')
         if not html:
             return []
         
@@ -83,20 +109,25 @@ class UltimateSearcher:
                     m = re.search(r'uddg=([^&]+)', href)
                     real_url = urllib.parse.unquote(m.group(1)) if m else href
                     if real_url.startswith('http') and 'duckduckgo.com/y.js' not in real_url:
+                        # 修复 snippet 词语粘连问题：使用 separator=' '
+                        snippet_text = snip.get_text(separator=' ', strip=True) if snip else ''
+                        snippet_text = re.sub(r'\s+', ' ', snippet_text)
+                        
                         results.append(Source(
                             url=real_url,
-                            title=a.get_text(strip=True),
-                            snippet=snip.get_text(strip=True) if snip else '',
-                            credibility=0.9,
-                            engine='DuckDuckGo'
+                            title=a.get_text(separator=' ', strip=True),
+                            snippet=snippet_text,
+                            credibility=0.85,
+                            engine='DDG-HTML'
                         ))
         except Exception:
             pass
         return results
 
     def _search_yahoo(self, query: str) -> List[Source]:
+        """修复后的 Yahoo 搜索解析器"""
         q = urllib.parse.quote_plus(query)
-        html = self._fetch(f'https://search.yahoo.com/search?p={q}')
+        html = self._fetch_with_retry(f'https://search.yahoo.com/search?p={q}')
         if not html:
             return []
         
@@ -106,50 +137,33 @@ class UltimateSearcher:
             soup = BeautifulSoup(html, 'lxml')
             divs = soup.find_all('div', class_=re.compile('algo'))
             for div in divs[:8]:
-                h3 = div.find('h3') or div.find('h2')
-                a = h3.find('a') if h3 else div.find('a')
-                p = div.find('p')
-                if a:
-                    href = a.get('href', '')
-                    m = re.search(r'RU=([^/]+)', href)
-                    real_url = urllib.parse.unquote(m.group(1)) if m else href
-                    if real_url.startswith('http'):
-                        results.append(Source(
-                            url=real_url,
-                            title=a.get_text(strip=True),
-                            snippet=p.get_text(strip=True) if p else '',
-                            credibility=0.85,
-                            engine='Yahoo'
-                        ))
-        except Exception:
-            pass
-        return results
-
-    def _search_qwant(self, query: str) -> List[Source]:
-        q = urllib.parse.quote_plus(query)
-        html = self._fetch(f'https://lite.qwant.com/?q={q}')
-        if not html:
-            return []
-        
-        results = []
-        try:
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(html, 'lxml')
-            articles = soup.find_all('article', class_='result')
-            for art in articles[:8]:
-                h2 = art.find('h2')
-                a = h2.find('a') if h2 else None
-                p = art.find('p', class_='result-snippet')
-                if a:
-                    href = a.get('href', '')
-                    if href.startswith('http'):
-                        results.append(Source(
-                            url=href,
-                            title=a.get_text(strip=True),
-                            snippet=p.get_text(strip=True) if p else '',
-                            credibility=0.8,
-                            engine='Qwant'
-                        ))
+                # Yahoo 结构已变，真实链接在 data-matarget="algo" 的 a 标签里
+                a = div.find('a', attrs={'data-matarget': 'algo'}) or div.find('a')
+                if not a:
+                    continue
+                    
+                href = a.get('href', '')
+                # 从重定向 URL 中提取真实 URL
+                m = re.search(r'RU=([^/]+)', href)
+                real_url = urllib.parse.unquote(m.group(1)) if m else href
+                
+                # 修复 snippet 提取
+                snippet_div = div.find('div', class_=re.compile('compText'))
+                snippet_text = snippet_div.get_text(separator=' ', strip=True) if snippet_div else ''
+                snippet_text = re.sub(r'\s+', ' ', snippet_text)
+                
+                title = a.get_text(separator=' ', strip=True)
+                # 移除 Yahoo 标题中自带的域名后缀（如 "OpenAIopenai.com › index › gpt-4"）
+                title = re.sub(r'[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*›.*$', '', title).strip()
+                
+                if real_url.startswith('http'):
+                    results.append(Source(
+                        url=real_url,
+                        title=title,
+                        snippet=snippet_text,
+                        credibility=0.85,
+                        engine='Yahoo'
+                    ))
         except Exception:
             pass
         return results
@@ -158,7 +172,7 @@ class UltimateSearcher:
         """交叉验证和去重"""
         url_groups = {}
         for r in all_results:
-            # 简化URL进行匹配
+            # 简化URL进行匹配 (忽略 www, http/https, 路径尾斜杠)
             simplified = re.sub(r'^https?://(www\.)?', '', r.url).rstrip('/')
             simplified = simplified.split('#')[0].split('?')[0]
             
@@ -168,16 +182,20 @@ class UltimateSearcher:
         
         validated = []
         for url, group in url_groups.items():
+            # 优先选择 DDG-API 的结果，因为它的 snippet 最干净
+            group.sort(key=lambda x: 1 if x.engine == 'DDG-API' else 0, reverse=True)
             best_source = group[0]
-            if len(group) >= 2:
-                best_source.credibility = min(0.98, best_source.credibility + 0.1 * len(group))
-                best_source.cross_validated = True
-                best_source.engine = f"{best_source.engine} (+{len(group)-1})"
             
-            # 选择最长的snippet
-            best_snippet = max([s.snippet for s in group], key=len)
-            if best_snippet:
-                best_source.snippet = best_snippet
+            if len(group) >= 2:
+                best_source.credibility = min(0.99, best_source.credibility + 0.1 * len(group))
+                best_source.cross_validated = True
+                engines = set(s.engine for s in group)
+                best_source.engine = f"{best_source.engine} (+{len(engines)-1})"
+            
+            # 选择最长的且质量最好的 snippet
+            valid_snippets = [s.snippet for s in group if len(s.snippet) > 20]
+            if valid_snippets:
+                best_source.snippet = max(valid_snippets, key=len)
                 
             validated.append(best_source)
         
@@ -187,10 +205,11 @@ class UltimateSearcher:
     def search(self, query: str) -> Answer:
         start_time = time.time()
         
+        # 并行执行所有引擎
         engines = [
-            self._search_ddg,
-            self._search_yahoo,
-            self._search_qwant
+            self._search_ddgs_api,
+            self._search_ddg_html,
+            self._search_yahoo
         ]
         
         all_results = []
@@ -229,7 +248,7 @@ class UltimateSearcher:
         )
 
 def main():
-    parser = argparse.ArgumentParser(description="Free Web Search Ultimate")
+    parser = argparse.ArgumentParser(description="Free Web Search Ultimate (v5.0)")
     parser.add_argument("query", help="搜索关键词")
     parser.add_argument("--json", action="store_true", help="输出JSON格式")
     
