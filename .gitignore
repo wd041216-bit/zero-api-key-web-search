@@ -1,2 +1,57 @@
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
 *.egg-info/
+dist/
+build/
+sdist/
+develop-eggs/
+.eggs/
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Distribution / packaging
+*.whl
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Environments
+*.env
+.env.local
+.env.*.local
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Misc
+*.orig
+*.bak
+*.log
+*.tmp
+node_modules/
