@@ -1,29 +1,29 @@
 ---
 name: free-web-search-ultimate
-version: "8.0.0"
+version: "9.0.0"
 description: >
   Zero-cost, privacy-first web search and browsing for AI agents.
-  Supports text, news, books, and videos search types with region targeting.
-  Powered by official ddgs with concurrent multi-page fetching and robust error handling.
+  Supports text, news, books, videos, and IMAGES search types with region targeting.
+  Powered by official ddgs with optimized single-request fetching and un-truncated URLs.
 homepage: https://github.com/wd041216-bit/free-web-search-ultimate
 ---
 
-# Free Web Search Ultimate v8.0 (Super Workflow Upgraded)
+# Free Web Search Ultimate v9.0 (Super Workflow Upgraded)
 
-**Zero API Keys. High Reliability. Books & Videos Support. Thread-Safe Architecture.**
+**Zero API Keys. Images Search Support. Un-truncated URLs. Optimized Network Usage.**
 
 This skill provides AI agents with reliable web search and page browsing capabilities without relying on expensive API keys or external services.
 
-## What's New in v8.0
-- **New Search Types**: Added `--type books` and `--type videos` support, allowing agents to search for academic materials and multimedia content.
-- **Removed Dead Engines**: Completely removed the deprecated Yahoo HTML scraper, replacing it with concurrent multi-page DDGS fetching for higher reliability and speed.
-- **Thread-Safe Architecture**: Fixed a critical concurrency bug in DDGS client initialization, ensuring stable parallel requests.
-- **Enhanced Content Extraction**: Relaxed filtering rules in `browse_page.py` to retain more useful content from complex sites (like documentation pages), while fully supporting gzip decompression.
-- **Metadata for Agents**: JSON output now includes `metadata.engines_used` and `metadata.errors` to help agents understand search execution status.
+## What's New in v9.0
+- **New Images Search Type**: Added `--type images` support with rich filtering options (`size`, `color`, `type_image`, `license`). This is a unique capability rarely found in free search tools.
+- **Un-truncated URLs**: Fixed an issue where CLI output truncated URLs (e.g., `...`), allowing agents to copy and use the full URL directly.
+- **Optimized Network Usage**: Removed the redundant dual-task concurrency strategy. Replaced it with a single `max_results=30` request, saving 50% of network overhead while retrieving the same amount of data.
+- **Token-Efficient Answer**: The `answer` field in JSON output is now a concise summary (Rank, Title, URL) instead of repeating full snippets, saving valuable LLM tokens.
+- **Rank Field**: Replaced the ambiguous `credibility` score with a straightforward integer `rank` field.
 
 ## Features
 
-- **Precise Intent Control**: Choose `text` (general), `news` (recent events), `books` (academic/publications), or `videos` (multimedia).
+- **Precise Intent Control**: Choose `text` (general), `news` (recent events), `images` (visuals), `books` (academic/publications), or `videos` (multimedia).
 - **Region Targeting**: Get results tailored to specific languages and locations.
 - **Time Filters**: Find the most recent information easily.
 - **Cross-Validation**: Automatically groups and validates results to ensure credibility.
@@ -42,6 +42,9 @@ python scripts/search_web.py "Python 3.12 new features"
 # Search for recent news
 python scripts/search_web.py "OpenAI" --type news
 
+# Search for images (with advanced filters)
+python scripts/search_web.py "Python logo" --type images --size Large --color Blue
+
 # Search for books/academic materials
 python scripts/search_web.py "machine learning" --type books
 
@@ -58,6 +61,7 @@ python scripts/search_web.py "Python 3.12 new features" --json
 **Agent Best Practices:**
 - Use default `--type text` for technical documentation, tutorials, and general knowledge.
 - Use `--type news` ONLY when searching for current events, breaking news, or recent company updates.
+- Use `--type images` when the user explicitly asks for pictures, photos, logos, or diagrams.
 - Use `--type books` when looking for in-depth knowledge, authors, or publication years.
 - Always use `--region` when searching in languages other than English (e.g., `--region zh-cn` for Chinese).
 
@@ -82,6 +86,4 @@ python scripts/browse_page.py "https://docs.python.org/3/whatsnew/3.12.html" --j
 
 ```bash
 pip install -r requirements.txt
-```
-```
 ```

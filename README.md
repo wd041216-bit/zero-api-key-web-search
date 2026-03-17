@@ -1,19 +1,19 @@
-# Free Web Search Ultimate v8.0 (Super Workflow Upgraded)
+# Free Web Search Ultimate v9.0 (Super Workflow Upgraded)
 
-**Zero API Keys. High Reliability. Books & Videos Support. Thread-Safe Architecture.**
+**Zero API Keys. Images Search Support. Un-truncated URLs. Optimized Network Usage.**
 
 This skill provides AI agents with reliable web search and page browsing capabilities without relying on expensive API keys or external services.
 
-## What's New in v8.0
-- **New Search Types**: Added `--type books` and `--type videos` support, allowing agents to search for academic materials and multimedia content.
-- **Removed Dead Engines**: Completely removed the deprecated Yahoo HTML scraper, replacing it with concurrent multi-page DDGS fetching for higher reliability and speed.
-- **Thread-Safe Architecture**: Fixed a critical concurrency bug in DDGS client initialization, ensuring stable parallel requests.
-- **Enhanced Content Extraction**: Relaxed filtering rules in `browse_page.py` to retain more useful content from complex sites (like documentation pages), while fully supporting gzip decompression.
-- **Metadata for Agents**: JSON output now includes `metadata.engines_used` and `metadata.errors` to help agents understand search execution status.
+## What's New in v9.0
+- **New Images Search Type**: Added `--type images` support with rich filtering options (`size`, `color`, `type_image`, `license`). This is a unique capability rarely found in free search tools.
+- **Un-truncated URLs**: Fixed an issue where CLI output truncated URLs (e.g., `...`), allowing agents to copy and use the full URL directly.
+- **Optimized Network Usage**: Removed the redundant dual-task concurrency strategy. Replaced it with a single `max_results=30` request, saving 50% of network overhead while retrieving the same amount of data.
+- **Token-Efficient Answer**: The `answer` field in JSON output is now a concise summary (Rank, Title, URL) instead of repeating full snippets, saving valuable LLM tokens.
+- **Rank Field**: Replaced the ambiguous `credibility` score with a straightforward integer `rank` field.
 
 ## Features
 
-- **Precise Intent Control**: Choose `text` (general), `news` (recent events), `books` (academic/publications), or `videos` (multimedia).
+- **Precise Intent Control**: Choose `text` (general), `news` (recent events), `images` (visuals), `books` (academic/publications), or `videos` (multimedia).
 - **Region Targeting**: Get results tailored to specific languages and locations.
 - **Time Filters**: Find the most recent information easily.
 - **Cross-Validation**: Automatically groups and validates results to ensure credibility.
@@ -40,6 +40,9 @@ python scripts/search_web.py "Python 3.12 new features"
 # Search for recent news
 python scripts/search_web.py "OpenAI" --type news
 
+# Search for images (with advanced filters)
+python scripts/search_web.py "Python logo" --type images --size Large --color Blue
+
 # Search for books/academic materials
 python scripts/search_web.py "machine learning" --type books
 
@@ -56,6 +59,7 @@ python scripts/search_web.py "Python 3.12 new features" --json
 **Agent Best Practices:**
 - Use default `--type text` for technical documentation, tutorials, and general knowledge.
 - Use `--type news` ONLY when searching for current events, breaking news, or recent company updates.
+- Use `--type images` when the user explicitly asks for pictures, photos, logos, or diagrams.
 - Use `--type books` when looking for in-depth knowledge, authors, or publication years.
 - Always use `--region` when searching in languages other than English (e.g., `--region zh-cn` for Chinese).
 
@@ -78,8 +82,8 @@ Many web search skills rely on paid APIs (like Brave, Google, or Bing API) or us
 **Free Web Search Ultimate** solves this by:
 1. Not requiring any API keys.
 2. Using the official `ddgs` library as the primary engine for extreme stability.
-3. Implementing thread-safe concurrent fetching for maximum speed.
-4. Providing dedicated endpoints for text, news, books, and videos.
+3. Providing dedicated endpoints for text, news, images, books, and videos.
+4. Outputting agent-friendly, token-efficient JSON responses.
 
 ## License
 

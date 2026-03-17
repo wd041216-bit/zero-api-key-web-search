@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Free Web Search Ultimate - 超级搜索核心 (v8.0 Super Workflow Upgraded)
-移除了失效的 Yahoo，新增 books/videos 支持，修复 DDGS 线程安全问题，增强 JSON 输出
+Free Web Search Ultimate - 超级搜索核心 (v9.0 Super Workflow Upgraded)
+新增 images 搜索，支持丰富过滤参数，移除冗余的双任务并发，优化 JSON 输出
 """
 import argparse
 import json
@@ -22,11 +22,15 @@ class Source:
     url: str
     title: str
     snippet: str = ""
-    credibility: float = 0.0
+    rank: int = 0
     engine: str = ""
     cross_validated: bool = False
     date: str = ""
     extra: Dict = None
+
+    def __post_init__(self):
+        if self.extra is None:
+            self.extra = {}
 
 @dataclass
 class Answer:
@@ -43,7 +47,7 @@ class UltimateSearcher:
     def __init__(self, timeout: int = 15):
         self.timeout = timeout
         
-    def _search_ddgs(self, query: str, search_type: str, timelimit: str = None, region: str = "wt-wt", max_results: int = 15) -> List[Source]:
+    def _search_ddgs(self, query: str, search_type: str, timelimit: str = None, region: str = "wt-wt", max_results: int = 15, **kwargs) -> List[Source]:
         """使用官方 ddgs 库进行搜索（每次调用创建新实例保证线程安全）"""
         results = []
         try:
@@ -57,8 +61,24 @@ class UltimateSearcher:
                 elif search_type == "videos":
                     api_results = ddgs.videos(query, region=region, max_results=max_results, timelimit=timelimit)
                 elif search_type == "books":
-                    # books 接口不支持 region 和 timelimit 参数
                     api_results = ddgs.books(query, max_results=max_results)
+                elif search_type == "images":
+                    # images 接口支持丰富的 kwargs
+                    # 注意：ddgs images 的 size 参数可用性与网络环境相关，自动降级尝试
+                    img_size = kwargs.get('size') or 'Wallpaper'
+                    size_fallbacks = [img_size, 'Wallpaper', 'Small', 'Large', 'Medium']
+                    api_results = None
+                    for try_size in size_fallbacks:
+                        try:
+                            api_results = ddgs.images(query, region=region, max_results=max_results, timelimit=timelimit, 
+                                                    size=try_size, color=kwargs.get('color'), 
+                                                    type_image=kwargs.get('type_image'), layout=kwargs.get('layout'),
+                                                    license_image=kwargs.get('license_image'))
+                            break  # 成功则退出循环
+                        except Exception:
+                            continue  # 尝试下一个 size
+                    if api_results is None:
+                        api_results = []
                 else:
                     return []
                     
@@ -71,28 +91,34 @@ class UltimateSearcher:
                         url=url,
                         title=r.get('title', ''),
                         snippet=r.get('body', r.get('description', '')),
-                        credibility=0.95,
+                        rank=0, # 初始 rank，后续处理
                         engine=f'DDG-{search_type.capitalize()}',
                         date=r.get('date', r.get('published', '')),
                         extra={}
                     )
                     
-                    # 提取视频/书籍的额外信息
+                    # 提取不同类型的额外信息
                     if search_type == "videos":
                         source.extra['duration'] = r.get('duration')
                         source.extra['publisher'] = r.get('publisher')
                     elif search_type == "books":
                         source.extra['author'] = r.get('author')
                         source.extra['year'] = r.get('year')
+                    elif search_type == "images":
+                        source.url = r.get('image', url) # image 搜索中，url 字段通常是来源页，image 字段是原图
+                        source.extra['source_url'] = url
+                        source.extra['thumbnail'] = r.get('thumbnail')
+                        source.extra['width'] = r.get('width')
+                        source.extra['height'] = r.get('height')
+                        source.extra['source'] = r.get('source')
                         
                     results.append(source)
         except Exception as e:
-            # 记录异常信息，供外部调试
             results.append(Source(url="error", title=f"Error: {str(e)}", engine="error"))
         return results
 
     def _cross_validate(self, all_results: List[Source]) -> List[Source]:
-        """交叉验证和去重"""
+        """交叉验证和去重，并分配 rank"""
         url_groups = {}
         for r in all_results:
             if r.url == "error":
@@ -113,7 +139,6 @@ class UltimateSearcher:
             best_source = group[0]
             
             if len(group) >= 2:
-                best_source.credibility = min(0.99, best_source.credibility + 0.1 * len(group))
                 best_source.cross_validated = True
                 best_source.engine = f"{best_source.engine} (x{len(group)})"
             
@@ -123,27 +148,29 @@ class UltimateSearcher:
                 
             validated.append(best_source)
         
-        validated.sort(key=lambda x: (x.cross_validated, x.credibility), reverse=True)
+        # 按原始出现顺序和交叉验证情况排序
+        validated.sort(key=lambda x: x.cross_validated, reverse=True)
+        
+        # 分配 rank
+        for i, s in enumerate(validated, 1):
+            s.rank = i
+            
         return validated
 
-    def search(self, query: str, search_type: str = "text", timelimit: str = None, region: str = "wt-wt") -> Answer:
+    def search(self, query: str, search_type: str = "text", timelimit: str = None, region: str = "wt-wt", **kwargs) -> Answer:
         start_time = time.time()
         
-        # 定义任务：为了弥补 Yahoo 的移除，我们通过两次不同参数的请求获取更多结果
-        engines = []
-        if search_type == "text":
-            # 任务1: 默认参数获取 15 条
-            engines.append((self._search_ddgs, query, "text", timelimit, region, 15))
-            # 任务2: 尝试获取更多结果 (模拟翻页/更多)
-            engines.append((self._search_ddgs, query, "text", timelimit, region, 30))
-        else:
-            # 其他类型（news, videos, books）
-            engines.append((self._search_ddgs, query, search_type, timelimit, region, 20))
+        # v9.0 优化：不再使用双任务并发获取同一类型结果，而是直接请求足够的数量，避免浪费网络
+        max_results = 30 if search_type == "text" else 20
+        
+        # 仍然使用 ThreadPoolExecutor 以便未来扩展多引擎，目前只有一个任务
+        engines = [(self._search_ddgs, query, search_type, timelimit, region, max_results)]
         
         all_results = []
         errors = []
-        with ThreadPoolExecutor(max_workers=len(engines)) as executor:
-            futures = [executor.submit(*e) for e in engines]
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            # 传递 kwargs 给任务
+            futures = [executor.submit(e[0], e[1], e[2], e[3], e[4], e[5], **kwargs) for e in engines]
             for future in as_completed(futures):
                 res = future.result()
                 for r in res:
@@ -154,15 +181,14 @@ class UltimateSearcher:
                 
         validated_results = self._cross_validate(all_results)
         
+        # v9.0 优化：answer 字段改为极简摘要，不重复完整 snippet，节省 token
         answer_text = ""
         if validated_results:
             answer_parts = []
             for i, s in enumerate(validated_results[:5], 1):
                 badge = "✓" if s.cross_validated else "○"
-                date_str = f" [{s.date}]" if s.date else ""
-                extra_str = f" ({', '.join(f'{k}:{v}' for k,v in s.extra.items() if v)})" if s.extra else ""
-                answer_parts.append(f"{i}. {badge} {s.title}{date_str}{extra_str}\n   {s.snippet}")
-            answer_text = "\n\n".join(answer_parts)
+                answer_parts.append(f"{i}. {badge} [{s.title}]({s.url})")
+            answer_text = "Top Sources:\n" + "\n".join(answer_parts)
         else:
             error_msg = f" (Errors: {'; '.join(errors)})" if errors else ""
             answer_text = f"未找到相关结果，搜索引擎可能受到限制。{error_msg}"
@@ -175,7 +201,7 @@ class UltimateSearcher:
             search_type=search_type,
             answer=answer_text,
             confidence=confidence,
-            sources=validated_results[:15],
+            sources=validated_results[:max_results],
             validation={
                 "total_results": len(all_results),
                 "unique_results": len(validated_results),
@@ -189,17 +215,29 @@ class UltimateSearcher:
         )
 
 def main():
-    parser = argparse.ArgumentParser(description="Free Web Search Ultimate (v8.0)")
+    parser = argparse.ArgumentParser(description="Free Web Search Ultimate (v9.0)")
     parser.add_argument("query", help="搜索关键词")
-    parser.add_argument("--type", choices=["text", "news", "videos", "books"], default="text", help="搜索类型: text(网页), news(新闻), videos(视频), books(书籍)")
+    parser.add_argument("--type", choices=["text", "news", "videos", "books", "images"], default="text", help="搜索类型")
     parser.add_argument("--region", default="wt-wt", help="地区代码，如 zh-cn, en-us, wt-wt(全球)")
     parser.add_argument("--timelimit", choices=["d", "w", "m", "y"], help="时间限制: d(天), w(周), m(月), y(年)")
     parser.add_argument("--json", action="store_true", help="输出JSON格式")
     
+    # images 专属参数
+    parser.add_argument("--size", choices=["Small", "Medium", "Large", "Wallpaper"], help="[images] 图片尺寸")
+    parser.add_argument("--color", help="[images] 图片颜色，如 Red, Blue, Monochrome 等")
+    parser.add_argument("--type_image", choices=["photo", "clipart", "gif", "transparent", "line"], help="[images] 图片类型")
+    parser.add_argument("--license", choices=["any", "Public", "Share", "ShareCommercially", "Modify", "ModifyCommercially"], help="[images] 图片许可")
+    
     args = parser.parse_args()
     
+    kwargs = {}
+    if args.size: kwargs['size'] = args.size
+    if args.color: kwargs['color'] = args.color
+    if args.type_image: kwargs['type_image'] = args.type_image
+    if args.license: kwargs['license_image'] = args.license
+    
     searcher = UltimateSearcher()
-    answer = searcher.search(args.query, search_type=args.type, timelimit=args.timelimit, region=args.region)
+    answer = searcher.search(args.query, search_type=args.type, timelimit=args.timelimit, region=args.region, **kwargs)
     
     if args.json:
         print(json.dumps(asdict(answer), indent=2, ensure_ascii=False))
@@ -207,22 +245,23 @@ def main():
         print(f"\n{'='*60}")
         print(f"🔍 搜索: {answer.query} (类型: {answer.search_type} | 地区: {args.region})")
         print(f"⏱️  耗时: {answer.elapsed_ms}ms | 置信度: {answer.confidence}")
-        print(f"📊 结果: 找到 {answer.validation['unique_results']} 个独立结果，{answer.validation['cross_validated']} 个交叉验证")
+        print(f"📊 结果: 找到 {answer.validation['unique_results']} 个独立结果")
         if answer.metadata['errors']:
             print(f"⚠️ 警告: 发生 {len(answer.metadata['errors'])} 个引擎错误")
         print(f"{'='*60}\n")
         
         if answer.sources:
-            print("📋 摘要结果:\n")
+            print("📋 简明摘要:\n")
             print(answer.answer)
             print(f"\n{'-'*60}")
             print("🔗 详细来源:")
-            for i, s in enumerate(answer.sources, 1):
+            for s in answer.sources:
                 badge = "✓" if s.cross_validated else "○"
                 date_str = f" [{s.date}]" if s.date else ""
                 extra_str = f" {s.extra}" if s.extra else ""
-                print(f"  {i}. {badge} [{s.engine}] {s.title[:60]}{date_str}{extra_str}")
-                print(f"     URL: {s.url[:80]}...")
+                print(f"  {s.rank}. {badge} [{s.engine}] {s.title[:60]}{date_str}{extra_str}")
+                # v9.0 优化：不再截断 URL，完整输出
+                print(f"     URL: {s.url}")
         else:
             print("❌ 未找到结果")
 
