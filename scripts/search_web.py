@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Free Web Search Ultimate - 超级搜索核心 (v5.0 Super Workflow Upgraded)
-多引擎并行 + 智能解析 + 反爬虫 + 交叉验证 + 官方API集成
+Free Web Search Ultimate - 超级搜索核心 (v6.0 Super Workflow Upgraded)
+支持普通网页与新闻搜索 + 时间过滤 + 智能解析 + 交叉验证
 """
 import argparse
 import json
@@ -34,10 +34,12 @@ class Source:
     credibility: float = 0.0
     engine: str = ""
     cross_validated: bool = False
+    date: str = ""
 
 @dataclass
 class Answer:
     query: str
+    search_type: str
     answer: str
     confidence: str
     sources: List[Source]
@@ -66,66 +68,47 @@ class UltimateSearcher:
                     time.sleep(2 ** attempt)
         return None
 
-    def _search_ddgs_api(self, query: str) -> List[Source]:
-        """使用官方 ddgs 库 (DuckDuckGo API)"""
+    def _search_ddgs_text(self, query: str, timelimit: str = None) -> List[Source]:
+        """使用官方 ddgs 库进行网页搜索"""
         results = []
         try:
             from ddgs import DDGS
-            # 使用 DDGS 官方库获取结果，无需解析 HTML
-            api_results = DDGS().text(query, max_results=10)
-            for r in api_results:
-                results.append(Source(
-                    url=r.get('href', ''),
-                    title=r.get('title', ''),
-                    snippet=r.get('body', ''),
-                    credibility=0.95,  # 官方 API 结果可信度高
-                    engine='DDG-API'
-                ))
-        except ImportError:
-            # 如果未安装 ddgs，静默失败，依赖 HTML 备用引擎
-            pass
+            # page=1 和 page=2 混合获取更多结果
+            for page in [1, 2]:
+                api_results = DDGS().text(query, max_results=10, timelimit=timelimit, page=page)
+                for r in api_results:
+                    results.append(Source(
+                        url=r.get('href', ''),
+                        title=r.get('title', ''),
+                        snippet=r.get('body', ''),
+                        credibility=0.95,
+                        engine='DDG-Web'
+                    ))
         except Exception:
             pass
         return results
 
-    def _search_ddg_html(self, query: str) -> List[Source]:
-        """备用：DuckDuckGo HTML 爬取"""
-        q = urllib.parse.quote_plus(query)
-        html = self._fetch_with_retry(f'https://html.duckduckgo.com/html/?q={q}')
-        if not html:
-            return []
-        
+    def _search_ddgs_news(self, query: str, timelimit: str = None) -> List[Source]:
+        """使用官方 ddgs 库进行新闻搜索"""
         results = []
         try:
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(html, 'lxml')
-            divs = soup.find_all('div', class_='result')
-            for div in divs[:8]:
-                a = div.find('a', class_='result__a')
-                snip = div.find('a', class_='result__snippet')
-                if a:
-                    href = a.get('href', '')
-                    # Decode DDG redirect URL
-                    m = re.search(r'uddg=([^&]+)', href)
-                    real_url = urllib.parse.unquote(m.group(1)) if m else href
-                    if real_url.startswith('http') and 'duckduckgo.com/y.js' not in real_url:
-                        # 修复 snippet 词语粘连问题：使用 separator=' '
-                        snippet_text = snip.get_text(separator=' ', strip=True) if snip else ''
-                        snippet_text = re.sub(r'\s+', ' ', snippet_text)
-                        
-                        results.append(Source(
-                            url=real_url,
-                            title=a.get_text(separator=' ', strip=True),
-                            snippet=snippet_text,
-                            credibility=0.85,
-                            engine='DDG-HTML'
-                        ))
+            from ddgs import DDGS
+            api_results = DDGS().news(query, max_results=15, timelimit=timelimit)
+            for r in api_results:
+                results.append(Source(
+                    url=r.get('url', ''),
+                    title=r.get('title', ''),
+                    snippet=r.get('body', ''),
+                    date=r.get('date', ''),
+                    credibility=0.98,  # 新闻源可信度更高
+                    engine='DDG-News'
+                ))
         except Exception:
             pass
         return results
 
     def _search_yahoo(self, query: str) -> List[Source]:
-        """修复后的 Yahoo 搜索解析器"""
+        """Yahoo 搜索解析器 (作为备用)"""
         q = urllib.parse.quote_plus(query)
         html = self._fetch_with_retry(f'https://search.yahoo.com/search?p={q}')
         if not html:
@@ -137,23 +120,23 @@ class UltimateSearcher:
             soup = BeautifulSoup(html, 'lxml')
             divs = soup.find_all('div', class_=re.compile('algo'))
             for div in divs[:8]:
-                # Yahoo 结构已变，真实链接在 data-matarget="algo" 的 a 标签里
                 a = div.find('a', attrs={'data-matarget': 'algo'}) or div.find('a')
                 if not a:
                     continue
                     
                 href = a.get('href', '')
-                # 从重定向 URL 中提取真实 URL
                 m = re.search(r'RU=([^/]+)', href)
                 real_url = urllib.parse.unquote(m.group(1)) if m else href
                 
-                # 修复 snippet 提取
+                # 过滤图片搜索链接
+                if 'images.search.yahoo.com' in real_url or 'video.search.yahoo.com' in real_url:
+                    continue
+                
                 snippet_div = div.find('div', class_=re.compile('compText'))
                 snippet_text = snippet_div.get_text(separator=' ', strip=True) if snippet_div else ''
                 snippet_text = re.sub(r'\s+', ' ', snippet_text)
                 
                 title = a.get_text(separator=' ', strip=True)
-                # 移除 Yahoo 标题中自带的域名后缀（如 "OpenAIopenai.com › index › gpt-4"）
                 title = re.sub(r'[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*›.*$', '', title).strip()
                 
                 if real_url.startswith('http'):
@@ -172,18 +155,21 @@ class UltimateSearcher:
         """交叉验证和去重"""
         url_groups = {}
         for r in all_results:
-            # 简化URL进行匹配 (忽略 www, http/https, 路径尾斜杠)
+            # 简化URL进行匹配
             simplified = re.sub(r'^https?://(www\.)?', '', r.url).rstrip('/')
             simplified = simplified.split('#')[0].split('?')[0]
             
+            if not simplified:
+                continue
+                
             if simplified not in url_groups:
                 url_groups[simplified] = []
             url_groups[simplified].append(r)
         
         validated = []
         for url, group in url_groups.items():
-            # 优先选择 DDG-API 的结果，因为它的 snippet 最干净
-            group.sort(key=lambda x: 1 if x.engine == 'DDG-API' else 0, reverse=True)
+            # 优先选择 DDG 的结果
+            group.sort(key=lambda x: 1 if x.engine.startswith('DDG') else 0, reverse=True)
             best_source = group[0]
             
             if len(group) >= 2:
@@ -192,7 +178,6 @@ class UltimateSearcher:
                 engines = set(s.engine for s in group)
                 best_source.engine = f"{best_source.engine} (+{len(engines)-1})"
             
-            # 选择最长的且质量最好的 snippet
             valid_snippets = [s.snippet for s in group if len(s.snippet) > 20]
             if valid_snippets:
                 best_source.snippet = max(valid_snippets, key=len)
@@ -202,19 +187,29 @@ class UltimateSearcher:
         validated.sort(key=lambda x: (x.cross_validated, x.credibility), reverse=True)
         return validated
 
-    def search(self, query: str) -> Answer:
+    def search(self, query: str, search_type: str = "auto", timelimit: str = None) -> Answer:
         start_time = time.time()
         
-        # 并行执行所有引擎
-        engines = [
-            self._search_ddgs_api,
-            self._search_ddg_html,
-            self._search_yahoo
-        ]
+        # 自动推断搜索类型
+        is_news = False
+        if search_type == "news":
+            is_news = True
+        elif search_type == "auto":
+            news_keywords = ['news', 'latest', 'today', 'update', '新闻', '最新', '今日']
+            is_news = any(k in query.lower() for k in news_keywords)
+            
+        engines = []
+        if is_news:
+            engines = [(self._search_ddgs_news, query, timelimit)]
+        else:
+            engines = [
+                (self._search_ddgs_text, query, timelimit),
+                (self._search_yahoo, query)
+            ]
         
         all_results = []
         with ThreadPoolExecutor(max_workers=len(engines)) as executor:
-            futures = [executor.submit(engine, query) for engine in engines]
+            futures = [executor.submit(*e) for e in engines]
             for future in as_completed(futures):
                 all_results.extend(future.result())
                 
@@ -226,7 +221,8 @@ class UltimateSearcher:
             answer_parts = []
             for i, s in enumerate(validated_results[:5], 1):
                 badge = "✓" if s.cross_validated else "○"
-                answer_parts.append(f"{i}. {badge} {s.title}\n   {s.snippet}")
+                date_str = f" [{s.date}]" if s.date else ""
+                answer_parts.append(f"{i}. {badge} {s.title}{date_str}\n   {s.snippet}")
             answer_text = "\n\n".join(answer_parts)
         else:
             answer_text = "未找到相关结果，搜索引擎可能受到限制。"
@@ -236,9 +232,10 @@ class UltimateSearcher:
         
         return Answer(
             query=query,
+            search_type="news" if is_news else "text",
             answer=answer_text,
             confidence=confidence,
-            sources=validated_results[:10],
+            sources=validated_results[:15],
             validation={
                 "total_results": len(all_results),
                 "unique_results": len(validated_results),
@@ -248,20 +245,22 @@ class UltimateSearcher:
         )
 
 def main():
-    parser = argparse.ArgumentParser(description="Free Web Search Ultimate (v5.0)")
+    parser = argparse.ArgumentParser(description="Free Web Search Ultimate (v6.0)")
     parser.add_argument("query", help="搜索关键词")
+    parser.add_argument("--type", choices=["auto", "text", "news"], default="auto", help="搜索类型: auto, text, news")
+    parser.add_argument("--timelimit", choices=["d", "w", "m", "y"], help="时间限制: d(天), w(周), m(月), y(年)")
     parser.add_argument("--json", action="store_true", help="输出JSON格式")
     
     args = parser.parse_args()
     
     searcher = UltimateSearcher()
-    answer = searcher.search(args.query)
+    answer = searcher.search(args.query, search_type=args.type, timelimit=args.timelimit)
     
     if args.json:
         print(json.dumps(asdict(answer), indent=2, ensure_ascii=False))
     else:
         print(f"\n{'='*60}")
-        print(f"🔍 搜索: {answer.query}")
+        print(f"🔍 搜索: {answer.query} (类型: {answer.search_type})")
         print(f"⏱️  耗时: {answer.elapsed_ms}ms | 置信度: {answer.confidence}")
         print(f"📊 结果: 找到 {answer.validation['unique_results']} 个独立结果，{answer.validation['cross_validated']} 个交叉验证")
         print(f"{'='*60}\n")
@@ -273,7 +272,8 @@ def main():
             print("🔗 详细来源:")
             for i, s in enumerate(answer.sources, 1):
                 badge = "✓" if s.cross_validated else "○"
-                print(f"  {i}. {badge} [{s.engine}] {s.title[:60]}")
+                date_str = f" [{s.date}]" if s.date else ""
+                print(f"  {i}. {badge} [{s.engine}] {s.title[:60]}{date_str}")
                 print(f"     URL: {s.url[:80]}...")
         else:
             print("❌ 未找到结果")

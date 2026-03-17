@@ -1,27 +1,29 @@
 ---
 name: free-web-search-ultimate
-version: "5.0.0"
+version: "6.0.0"
 description: >
   Zero-cost, privacy-first web search and browsing for AI agents.
-  Uses official DuckDuckGo API (ddgs), DDG-HTML, and Yahoo with cross-validation.
-  No API keys required.
+  Supports both general text search and dedicated news search with time filters.
+  Powered by official ddgs and Yahoo with cross-validation.
 homepage: https://github.com/wd041216-bit/free-web-search-ultimate
 ---
 
-# Free Web Search Ultimate v5.0 (Super Workflow Upgraded)
+# Free Web Search Ultimate v6.0 (Super Workflow Upgraded)
 
-**Zero API Keys. High Reliability. Cross-Validated Results.**
+**Zero API Keys. High Reliability. Cross-Validated Results. News & Time Filters.**
 
 This skill provides AI agents with reliable web search and page browsing capabilities without relying on expensive API keys or external services.
 
+## What's New in v6.0
+- **News Search Mode**: Automatically detects news-related queries and uses a dedicated news engine with timestamps.
+- **Time Filtering**: Added `--timelimit` support (`d` for day, `w` for week, `m` for month, `y` for year).
+- **Streamlined Engines**: Removed redundant HTML scraping, relying purely on the official `ddgs` metasearch engine and Yahoo fallback.
+
 ## Features
 
-- **Triple Engine Redundancy**: 
-  1. `DDG-API` (Primary, via official `ddgs` library)
-  2. `DDG-HTML` (Fallback)
-  3. `Yahoo` (Fallback)
+- **Dual Mode Search**: Automatically switches between `text` and `news` search based on query intent.
+- **Time Filters**: Find the most recent information easily.
 - **Cross-Validation**: Automatically groups and validates results across different engines to ensure credibility.
-- **Smart Parsing**: Resolves redirect URLs to provide real, clickable links.
 - **Clean Browsing**: Extracts pure text content from web pages, stripping out scripts, styles, and boilerplate.
 
 ## Quick Start
@@ -33,6 +35,12 @@ Use `search_web.py` to search the internet. It returns cross-validated results w
 ```bash
 # Basic usage
 python scripts/search_web.py "Python 3.12 new features"
+
+# Search for recent news (auto-detected or forced)
+python scripts/search_web.py "OpenAI latest news" --type news
+
+# Search with time limit (past week)
+python scripts/search_web.py "machine learning" --timelimit w
 
 # JSON output for agent parsing
 python scripts/search_web.py "Python 3.12 new features" --json
@@ -49,16 +57,6 @@ python scripts/browse_page.py "https://docs.python.org/3/whatsnew/3.12.html"
 # JSON output
 python scripts/browse_page.py "https://docs.python.org/3/whatsnew/3.12.html" --json
 ```
-
-## Why Use This Skill?
-
-Many web search skills rely on paid APIs (like Brave, Google, or Bing API) or use single engines that often get blocked. 
-
-**Free Web Search Ultimate** solves this by:
-1. Not requiring any API keys.
-2. Using the official `ddgs` library as the primary engine for extreme stability.
-3. Using parallel fallback requests to HTML parsers if the API fails.
-4. Automatically decoding redirect links so agents can actually browse the results.
 
 ## Requirements
 

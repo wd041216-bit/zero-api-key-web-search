@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="free-web-search",
-    version="4.0.0",
+    version="6.0.0",
     author="wd041216-bit",
     author_email="",
     description="Zero-cost, privacy-first web search for AI agents",
@@ -32,6 +32,7 @@ setup(
         "urllib3>=1.26.0",
         "beautifulsoup4>=4.9.0",
         "lxml>=4.6.0",
+        "ddgs>=0.1.0",
     ],
     extras_require={
         "dynamic": ["playwright>=1.40.0"],
