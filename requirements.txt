@@ -1,0 +1,9 @@
+urllib3>=1.26.0
+beautifulsoup4>=4.9.0
+lxml>=4.6.0
+playwright>=1.40.0; extra == 'dynamic'
+pytest>=7.0.0; extra == 'dev'
+pytest-cov>=4.0.0; extra == 'dev'
+black>=23.0.0; extra == 'dev'
+flake8>=6.0.0; extra == 'dev'
+mypy>=1.0.0; extra == 'dev'
