@@ -18,6 +18,8 @@
 
 By default, every LLM—Claude, GPT-4, Gemini—answers questions from training data that can be months or years out of date. This plugin introduces a **Search-First Paradigm**: the LLM is instructed to use real-time web search as its **primary knowledge source**, not a fallback.
 
+[![free-web-search-ultimate MCP server](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate/badges/card.svg)](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate)
+
 ## 🏗️ Architecture
 
 <div align="center">
