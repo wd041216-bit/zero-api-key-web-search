@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="free-web-search-ultimate",
-    version="11.0.0",
+    version="12.0.0",
     author="wd041216-bit",
     author_email="",
     description="Universal Search-First Knowledge Acquisition Plugin for LLMs (MCP + CLI-Anything)",

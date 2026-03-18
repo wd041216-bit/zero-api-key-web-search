@@ -1,6 +1,6 @@
 ---
 name: free-web-search-ultimate
-version: "11.0.0"
+version: "12.0.0"
 description: >
   Universal Search-First Knowledge Acquisition Plugin for LLMs.
   Enables real-time web search and deep page browsing via MCP or CLI.
@@ -8,7 +8,7 @@ description: >
 homepage: https://github.com/wd041216-bit/free-web-search-ultimate
 ---
 
-# Free Web Search Ultimate v11.0 — Search-First Paradigm
+# Free Web Search Ultimate v12.0 — Search-First Paradigm
 
 ## Overview
 
@@ -123,15 +123,23 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-Install via pip from the GitHub repository:
+Install via pip (recommended):
 
 ```bash
-pip install git+https://github.com/wd041216-bit/free-web-search-ultimate.git
+pip install free-web-search-ultimate
+```
+
+Or clone and install from source:
+
+```bash
+git clone https://github.com/wd041216-bit/free-web-search-ultimate.git
+cd free-web-search-ultimate
+pip install -e .
 ```
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.10+
 - `beautifulsoup4`, `lxml`, `ddgs`, `mcp>=1.1.2`
 
 ## License
