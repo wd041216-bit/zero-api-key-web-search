@@ -24,9 +24,10 @@ logger = logging.getLogger("free-web-search-mcp")
 app = Server("free-web-search-ultimate")
 searcher = UltimateSearcher()
 
+# Evaluated once at startup; restart required to pick up changes to TAVILY_API_KEY.
 _tavily_available = bool(os.environ.get("TAVILY_API_KEY"))
 if _tavily_available:
-    logger.info("TAVILY_API_KEY detected — Tavily search provider is active")
+    logger.info("TAVILY_API_KEY detected — Tavily will be used when the provider is activated")
 else:
     logger.info("TAVILY_API_KEY not set — using DuckDuckGo only")
 
@@ -40,7 +41,7 @@ async def list_tools() -> list[Tool]:
     if _tavily_available:
         _search_desc = (
             _base_desc
-            + " Tavily is enabled alongside DuckDuckGo for enhanced result quality."
+            + " TAVILY_API_KEY detected — Tavily will be used when the provider is activated."
         )
     else:
         _search_desc = _base_desc
