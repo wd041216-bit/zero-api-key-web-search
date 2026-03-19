@@ -11,6 +11,7 @@ Entry points:
 """
 import argparse
 import json
+import os
 import re
 import ssl
 import time
@@ -215,6 +216,74 @@ class UltimateSearcher:
             )
         return results
 
+    def _search_tavily(
+        self,
+        query: str,
+        search_type: str,
+        timelimit: Optional[str] = None,
+        region: str = "wt-wt",
+        max_results: int = 15,
+        **kwargs,
+    ) -> List[Source]:
+        """Perform a search using the Tavily API.
+
+        Only supports 'text' and 'news' search types. For other types,
+        returns an empty list so the caller falls back to DuckDuckGo.
+
+        Args:
+            query: The search query string.
+            search_type: One of 'text', 'news'. Other types return [].
+            timelimit: Time filter (mapped to Tavily time_range parameter).
+            region: Unused (Tavily does not support region filtering).
+            max_results: Maximum number of results to fetch.
+            **kwargs: Additional parameters (unused).
+
+        Returns:
+            A list of Source objects. On error, returns a single Source with
+            url='error' and the error message in title.
+        """
+        if search_type not in ("text", "news"):
+            return []
+
+        results = []
+        try:
+            from tavily import TavilyClient
+
+            client = TavilyClient()
+
+            # Map timelimit to Tavily's time_range parameter
+            time_range_map = {"d": "day", "w": "week", "m": "month", "y": "year"}
+            tavily_kwargs = {
+                "query": query,
+                "max_results": max_results,
+                "search_depth": "advanced",
+            }
+            if search_type == "news":
+                tavily_kwargs["topic"] = "news"
+            if timelimit and timelimit in time_range_map:
+                tavily_kwargs["time_range"] = time_range_map[timelimit]
+
+            response = client.search(**tavily_kwargs)
+
+            for r in response.get("results", []):
+                url = r.get("url", "")
+                if not url:
+                    continue
+                results.append(Source(
+                    url=url,
+                    title=r.get("title", ""),
+                    snippet=r.get("content", ""),
+                    rank=0,
+                    engine=f"Tavily-{search_type.capitalize()}",
+                    date=r.get("published_date", ""),
+                    extra={"score": r.get("score")},
+                ))
+        except Exception as e:
+            results.append(
+                Source(url="error", title=f"Error: {str(e)}", engine="error")
+            )
+        return results
+
     def _cross_validate(self, all_results: List[Source]) -> List[Source]:
         """Deduplicate results and assign ranks based on cross-validation.
 
@@ -308,12 +377,14 @@ class UltimateSearcher:
         # Fetch enough results in a single request to avoid wasted network calls
         max_results = 30 if search_type == "text" else 20
 
-        # ThreadPoolExecutor kept for future multi-engine expansion
+        # Build engine list — Tavily added in parallel when API key is available
         engines = [(self._search_ddgs, query, search_type, timelimit, region, max_results)]
+        if os.environ.get("TAVILY_API_KEY") and search_type in ("text", "news"):
+            engines.append((self._search_tavily, query, search_type, timelimit, region, max_results))
 
         all_results = []
         errors = []
-        with ThreadPoolExecutor(max_workers=1) as executor:
+        with ThreadPoolExecutor(max_workers=len(engines)) as executor:
             futures = [
                 executor.submit(e[0], e[1], e[2], e[3], e[4], e[5], **kwargs)
                 for e in engines

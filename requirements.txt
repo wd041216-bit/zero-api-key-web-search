@@ -2,3 +2,5 @@ beautifulsoup4>=4.12.0
 lxml>=4.9.0
 ddgs>=0.1.0
 mcp>=1.1.2
+# Optional: install with pip install free-web-search-ultimate[tavily]
+# tavily-python>=0.3.0

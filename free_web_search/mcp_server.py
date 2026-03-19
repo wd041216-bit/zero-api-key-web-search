@@ -6,6 +6,7 @@ Allows seamless integration with Claude Desktop, Cursor, and other MCP-compatibl
 import asyncio
 import json
 import logging
+import os
 import sys
 from typing import Any, Dict, List, Optional
 
@@ -23,13 +24,32 @@ logger = logging.getLogger("free-web-search-mcp")
 app = Server("free-web-search-ultimate")
 searcher = UltimateSearcher()
 
+# Evaluated once at startup; restart required to pick up changes to TAVILY_API_KEY.
+_tavily_available = bool(os.environ.get("TAVILY_API_KEY"))
+if _tavily_available:
+    logger.info("TAVILY_API_KEY detected — Tavily will be used when the provider is activated")
+else:
+    logger.info("TAVILY_API_KEY not set — using DuckDuckGo only")
+
 @app.list_tools()
 async def list_tools() -> list[Tool]:
     """List available tools."""
+    _base_desc = (
+        "Search the web for real-time information, news, images, books, or videos. "
+        "Always use this to verify facts or get up-to-date information before answering."
+    )
+    if _tavily_available:
+        _search_desc = (
+            _base_desc
+            + " TAVILY_API_KEY detected — Tavily will be used when the provider is activated."
+        )
+    else:
+        _search_desc = _base_desc
+
     return [
         Tool(
             name="search_web",
-            description="Search the web for real-time information, news, images, books, or videos. Always use this to verify facts or get up-to-date information before answering.",
+            description=_search_desc,
             inputSchema={
                 "type": "object",
                 "properties": {
