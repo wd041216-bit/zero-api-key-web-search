@@ -244,7 +244,7 @@ class UltimateSearcher:
         try:
             from tavily import TavilyClient
 
-            client = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
+            client = TavilyClient()
 
             # Map timelimit codes to Tavily time_range values
             time_range_map = {"d": "day", "w": "week", "m": "month", "y": "year"}
@@ -379,7 +379,8 @@ class UltimateSearcher:
         engines = [(self._search_ddgs, query, search_type, timelimit, region, max_results)]
 
         if os.environ.get("TAVILY_API_KEY"):
-            engines.append((self._search_tavily, query, search_type, timelimit, region, max_results))
+            tavily_max = min(max_results, 20)
+            engines.append((self._search_tavily, query, search_type, timelimit, region, tavily_max))
 
         all_results = []
         errors = []
