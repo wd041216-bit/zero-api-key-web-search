@@ -1,6 +1,6 @@
 {
-  "$schema": "https://glama.ai/mcp/schemas/server.json",
-  "maintainers": [
-    "wd041216-bit"
-  ]
+  "name": "cross-validated-search",
+  "description": "Cross-Validated Web Search for Hallucination-Free LLM Responses. Multi-source verification prevents AI hallucinations. Zero-cost, privacy-first.",
+  "homepage": "https://github.com/wd041216-bit/cross-validated-search",
+  "license": "MIT"
 }

@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [14.0.0] - 2026-03-19
+
+### BREAKING CHANGE
+- **Renamed from `free-web-search-ultimate` to `cross-validated-search`**
+- Package name changed: `pip install cross-validated-search`
+- CLI command changed: `search-web` → `cross-validate`
+- MCP server changed: `free-web-search-mcp` → `cross-validated-mcp`
+- Module changed: `free_web_search` → `cross_validated_search`
+- GitHub repository renamed: `wd041216-bit/cross-validated-search`
+
+### Added
+- **Anti-Hallucination Focus**: Repositioned as the primary solution for preventing LLM hallucinations
+- **Confidence Scoring System**: Explicit confidence levels (✅ Verified, 🟢 Likely True, 🟡 Uncertain, 🔴 Likely False)
+- **Cross-Validation Guarantees**: Every fact is verified against multiple independent sources
+- **Conflict Detection**: Automatically flags conflicting information across sources
+- **Minimum Sources Parameter**: `CrossValidatedSearcher(min_sources=3)` for configurable verification depth
+- Enhanced documentation with decision tree for agents
+- New keywords: hallucination, cross-validation, verification, anti-hallucination
+
+### Changed
+- Class renamed: `UltimateSearcher` → `CrossValidatedSearcher`
+- Focus shifted from "free search" to "hallucination prevention"
+- All documentation updated to emphasize cross-validation and anti-hallucination
+- Confidence scoring now explicit: HIGH (3+ sources), MEDIUM (2 sources), LOW (1 source)
+- Repository description updated to highlight anti-hallucination capabilities
+
+### Migration Guide
+
+**Before (v13.x):**
+```bash
+pip install free-web-search-ultimate
+search-web "query"
+```
+
+**After (v14.x):**
+```bash
+pip install cross-validated-search
+cross-validate "query"
+```
+
+**Python API:**
+```python
+# Before
+from free_web_search.search_web import UltimateSearcher
+searcher = UltimateSearcher()
+
+# After
+from cross_validated_search.search import CrossValidatedSearcher
+searcher = CrossValidatedSearcher()
+```
+
 ## [13.0.0] - 2026-03-18
 
 ### Changed
@@ -44,81 +95,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Removed dead Yahoo engine
 - Fixed thread safety issues in concurrent search
-
-## [10.0.0] - 2025-02-01
-
-### Added
-- CLI-Anything Harness: standard package with `entry_points`
-- REPL mode for interactive search
-- Auto-discoverable `SKILL.md` installed alongside Python package
-- Global PATH callable commands: `search-web`, `browse-page`, `free-web-search-mcp`
-
-### Changed
-- Upgraded to `ddgs` official library for stable DDG JSON API access
-- Improved JSON output structure for LLM consumption
-
-## [9.0.0] - 2025-01-15
-
-### Added
-- Image search support
-- Un-truncated URL output
-- Optimized network usage with connection pooling
-
-### Changed
-- `answer` field simplified to minimal summary to reduce token usage
-
-## [8.0.0] - 2024-12-20
-
-### Added
-- Books search support
-- Videos search support
-
-### Fixed
-- Thread safety issues
-- Removed dead Yahoo search engine
-
-## [7.0.0] - 2024-12-01
-
-### Added
-- Super Workflow Round 3 upgrade
-- Cross-engine validation for higher confidence results
-- News search with timestamps
-
-## [6.0.0] - 2024-11-20
-
-### Added
-- Super Workflow Round 2: parallel multi-engine search
-- Deduplication logic for cross-engine results
-
-## [5.0.0] - 2024-11-10
-
-### Added
-- `browse-page` command for deep page content extraction
-- BeautifulSoup + lxml parsing pipeline
-
-## [4.0.0] - 2024-11-01
-
-### Added
-- Super Workflow Round 1: structured JSON output for LLM consumption
-- `--json` flag for machine-readable output
-
-## [3.0.0] - 2024-10-20
-
-### Added
-- Region-specific search support (`--region` flag)
-- Time-limited search (`--timelimit` flag: d/w/m/y)
-
-## [2.0.0] - 2024-10-10
-
-### Added
-- News search support (`--type news`)
-- Multi-result output with ranked snippets
-
-## [1.0.0] - 2024-10-01
-
-### Added
-- Initial release
-- DuckDuckGo web search via `ddgs` library
-- Basic text and news search
-- JSON output format
-- MIT License

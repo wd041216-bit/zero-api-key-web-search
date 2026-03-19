@@ -1,25 +1,22 @@
 <div align="center">
-  <img src="assets/banner.png" alt="Free Web Search Ultimate" width="100%"/>
-  <h1>🔍 Free Web Search Ultimate</h1>
-  <p><strong>Universal Search-First Knowledge Acquisition Plugin for LLMs</strong></p>
-  <p><em>One install. Every LLM. Real-time knowledge. Zero cost.</em></p>
+  <img src="assets/banner.png" alt="Cross-Validated Search" width="100%"/>
+  <h1>🔍 Cross-Validated Search</h1>
+  <p><strong>The Only Search Skill That Prevents LLM Hallucinations</strong></p>
+  <p><em>Multi-source verification. Zero hallucinations. Free forever.</em></p>
   
-  [![PyPI version](https://badge.fury.io/py/free-web-search-ultimate.svg)](https://pypi.org/project/free-web-search-ultimate/)
+  [![PyPI version](https://badge.fury.io/py/cross-validated-search.svg)](https://pypi.org/project/cross-validated-search/)
   [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
   [![MCP Ready](https://img.shields.io/badge/MCP-Ready-purple.svg)](https://modelcontextprotocol.io/)
   [![CLI-Anything](https://img.shields.io/badge/CLI--Anything-Compatible-success.svg)](https://github.com/HKUDS/CLI-Anything)
   [![OpenClaw](https://img.shields.io/badge/OpenClaw-Skill-orange.svg)](https://github.com/openclaw/awesome-openclaw)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-  [![free-web-search-ultimate MCP server](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate/badges/score.svg)](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate)
 </div>
 
 <br/>
 
-> **Stop letting your LLM guess. Give it the ability to search.**
+> **Stop hallucinations. Start verification.**
 
-By default, every LLM—Claude, GPT-4, Gemini—answers questions from training data that can be months or years out of date. This plugin introduces a **Search-First Paradigm**: the LLM is instructed to use real-time web search as its **primary knowledge source**, not a fallback.
-
-[![free-web-search-ultimate MCP server](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate/badges/card.svg)](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate)
+Every LLM hallucinates facts—Claude, GPT-4, Gemini, Llama—all of them. This plugin introduces **Cross-Validated Search**: every claim is verified against multiple independent sources before being presented as fact.
 
 ## 🏗️ Architecture
 
@@ -27,29 +24,29 @@ By default, every LLM—Claude, GPT-4, Gemini—answers questions from training 
   <img src="assets/architecture.png" alt="Architecture Diagram" width="90%"/>
 </div>
 
-One plugin, every ecosystem. Whether you use Claude Desktop, Cursor, OpenClaw, or a custom LangChain agent, this plugin connects your LLM to the live web through a unified interface.
+One plugin, every ecosystem. Whether you use Claude Desktop, Cursor, OpenClaw, or a custom LangChain agent, this plugin connects your LLM to verified facts through cross-validation.
 
-The `free_web_search/skills/` directory contains the auto-discoverable `SKILL.md` that CLI-Anything compatible frameworks (such as OpenClaw) load automatically at startup — no manual configuration required.
+## 🌟 The Cross-Validation Paradigm
 
-## 🌟 The "Search-First" Paradigm
-
-| Old Paradigm (Default LLM) | New Paradigm (This Plugin) |
+| Old Paradigm (Standard LLM) | New Paradigm (Cross-Validated Search) |
 |---|---|
-| Answers from training data | Answers from live web search |
-| Knowledge cutoff date | Always up-to-date |
-| May hallucinate facts | Cites verifiable sources |
-| Single knowledge source | Multi-source cross-validation |
+| Answers from training data | Answers from real-time web search |
+| May hallucinate facts | **Cross-validates facts across sources** |
+| Single knowledge source | **Multiple independent sources** |
+| No confidence score | **Confidence score per fact: ✅ 🟢 🟡 🔴** |
+| User must trust blindly | **Cites all sources for verification** |
 
-When this plugin is installed, the AI agent is instructed to:
-1. **Never Guess Facts** — Use `search-web` before answering any factual, technical, or real-time question.
-2. **Override Internal Knowledge** — Even if the LLM "knows" the answer, it verifies via search for topics prone to change.
-3. **Deep Verification** — If search snippets are insufficient, use `browse-page` to read the full source.
-4. **Cite Sources** — Always provide the source URLs in the final answer.
+When this plugin is installed, the AI agent:
+
+1. **Never Claims Unverified Facts** — Every factual claim is checked against multiple sources
+2. **Cross-Validates** — Facts must appear in 2+ sources to be marked as verified
+3. **Assigns Confidence** — Each fact gets a confidence score based on source agreement
+4. **Cites All Sources** — Every claim comes with verifiable URLs
 
 ## 📦 Installation
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 > **Requirements:** Python 3.10+
@@ -57,8 +54,8 @@ pip install free-web-search-ultimate
 Or install from source:
 
 ```bash
-git clone https://github.com/wd041216-bit/free-web-search-ultimate.git
-cd free-web-search-ultimate
+git clone https://github.com/wd041216-bit/cross-validated-search.git
+cd cross-validated-search
 pip install -e .
 ```
 
@@ -71,24 +68,20 @@ Add to your `claude_desktop_config.json` or Cursor MCP settings:
 ```json
 {
   "mcpServers": {
-    "free-web-search": {
-      "command": "free-web-search-mcp",
+    "cross-validated-search": {
+      "command": "cross-validated-mcp",
       "args": []
     }
   }
 }
 ```
 
-That's it. Claude and Cursor will now have access to `search_web` and `browse_page` tools.
-
 ### OpenClaw (via CLI-Anything)
 
 ```bash
 # Install — the skill is auto-discovered from the bundled SKILL.md
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
-
-OpenClaw reads the bundled `SKILL.md` and automatically loads the Search-First behavioral instructions.
 
 ### LangChain / Custom Agents
 
@@ -96,18 +89,18 @@ OpenClaw reads the bundled `SKILL.md` and automatically loads the Search-First b
 from langchain.tools import Tool
 import subprocess, json
 
-def search_web(query: str) -> str:
+def cross_validate_search(query: str) -> str:
     result = subprocess.run(
-        ["search-web", query, "--json"],
+        ["cross-validate", query, "--json"],
         capture_output=True, text=True
     )
     data = json.loads(result.stdout)
     return data.get("answer", "No results found.")
 
 search_tool = Tool(
-    name="search_web",
-    func=search_web,
-    description="Search the web for real-time information. Use this before answering any factual question."
+    name="cross_validate_search",
+    func=cross_validate_search,
+    description="Search the web with cross-validation. Every fact is verified against multiple sources."
 )
 ```
 
@@ -118,8 +111,8 @@ tools = [
     {
         "type": "function",
         "function": {
-            "name": "search_web",
-            "description": "Search the web for real-time information, news, or facts. Always call this before answering factual questions.",
+            "name": "cross_validate_search",
+            "description": "Search the web with multi-source cross-validation. Prevents hallucinations by verifying facts across independent sources.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -135,47 +128,55 @@ tools = [
 
 ## 💻 CLI Usage
 
-### `search-web` — Web Search
+### `cross-validate` — Cross-Validated Web Search
 
 ```bash
-# General knowledge
-search-web "Python 3.13 new features"
+# General knowledge (3+ sources, cross-validated)
+cross-validate "What is the population of Tokyo?"
 
-# Breaking news
-search-web "OpenAI GPT-5" --type news --timelimit w
+# Breaking news (multiple news sources)
+cross-validate "OpenAI GPT-5" --type news --timelimit w
 
-# Images
-search-web "neural network diagram" --type images
+# Images (verified sources)
+cross-validate "neural network diagram" --type images
 
 # Chinese search
-search-web "人工智能最新进展" --region zh-cn
+cross-validate "人工智能最新进展" --region zh-cn
 
 # JSON output for programmatic use
-search-web "quantum computing" --json
+cross-validate "quantum computing" --json
 ```
 
 ### `browse-page` — Deep Page Reading
 
 ```bash
 # Read full page content
-browse-page "https://docs.python.org/3/whatsnew/3.13.html"
+browse-page "https://arxiv.org/abs/2303.08774"
 
 # JSON output
-browse-page "https://arxiv.org/abs/2303.08774" --json
+browse-page "https://example.com/article" --json
 ```
+
+## 🎯 Confidence Scoring System
+
+| Score | Meaning | When to Use |
+|-------|---------|-------------|
+| ✅ Verified | 3+ sources agree, high authority | Cite as fact |
+| 🟢 Likely True | 2 sources agree, medium confidence | Cite with confidence note |
+| 🟡 Uncertain | Single source or minor conflicts | Flag as unverified |
+| 🔴 Likely False | Major contradictions or no sources | Do not use |
 
 ## 🏆 Why This Over Alternatives?
 
-| Feature | This Plugin | Tavily API | Serper API | Bing Search API |
-|---|---|---|---|---|
+| Feature | Cross-Validated Search | Tavily API | Serper API | Bing Search API |
+|---------|------------------------|-----------|------------|-----------------|
 | Cost | **Free** | $0.01/req | $0.001/req | $3/1000 req |
+| **Cross-Validation** | **Yes** | No | No | No |
+| **Confidence Score** | **Yes** | No | No | No |
+| **Hallucination Prevention** | **Yes** | No | No | No |
 | API Key Required | **No** | Yes | Yes | Yes |
-| Privacy | **Local** | Cloud | Cloud | Cloud |
 | MCP Support | **Yes** | Partial | No | No |
 | CLI-Anything | **Yes** | No | No | No |
-| Image Search | **Yes** | No | Yes | Yes |
-| Book Search | **Yes** | No | No | No |
-| Browse Page | **Yes** | Yes | No | No |
 
 ## 📄 License
 

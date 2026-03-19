@@ -1,0 +1,19 @@
+{
+  "name": "cross-validated-search",
+  "version": "14.0.0",
+  "description": "Cross-Validated Web Search for Hallucination-Free LLM Responses. Zero-cost web search with multi-source verification to prevent AI hallucinations.",
+  "author": "wd041216-bit",
+  "homepage": "https://github.com/wd041216-bit/cross-validated-search",
+  "tags": [
+    "llm",
+    "hallucination",
+    "cross-validation",
+    "web-search",
+    "mcp",
+    "cli-anything",
+    "openclaw",
+    "verification",
+    "anti-hallucination"
+  ],
+  "license": "MIT"
+}

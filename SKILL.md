@@ -1,104 +1,141 @@
 ---
 name: free-web-search-ultimate
-version: "13.0.0"
+version: "14.0.0"
 description: >
-  Universal Search-First Knowledge Acquisition Plugin for LLMs.
-  Enables real-time web search and deep page browsing via MCP or CLI.
+  Cross-Validated Web Search for Hallucination-Free LLM Responses.
+  Multi-source verification prevents AI hallucinations.
   Zero-cost, privacy-first, supports text/news/images/books/videos.
 homepage: https://github.com/wd041216-bit/free-web-search-ultimate
 ---
 
-# Free Web Search Ultimate v13.0 — Search-First Paradigm
+# Free Web Search Ultimate v14.0 — Cross-Validated Search
 
 ## Overview
 
-This skill enables real-time web search and page browsing for any LLM agent. It introduces a **Search-First** approach to knowledge acquisition: instead of relying solely on training data, the agent should use live web search as the primary source for factual, technical, and time-sensitive information.
+**The only search skill that actively prevents LLM hallucinations through multi-source cross-validation.**
+
+When an LLM answers a question, it may fabricate facts, hallucinate details, or rely on outdated training data. This skill solves that problem by:
+
+1. **Fetching multiple independent sources** from the web
+2. **Cross-validating facts across sources** to identify consensus
+3. **Providing confidence scores** (✅ Verified / 🟢 Likely True / 🟡 Uncertain / 🔴 Likely False)
+4. **Citing all sources** so users can verify claims
+
+## Why Cross-Validation Matters
+
+| Problem | Traditional LLM | With Cross-Validation |
+|---------|----------------|----------------------|
+| Fabricated facts | ❌ LLM may invent details | ✅ Only claims supported by multiple sources |
+| Outdated knowledge | ❌ Training data cutoff | ✅ Real-time web data |
+| Single-source bias | ❌ Depends on one source | ✅ Multiple independent sources |
+| No verification | ❌ User must trust blindly | ✅ Confidence score + citations |
 
 ## Core Behavior Guidelines
 
-When this skill is active, the agent should follow these guidelines:
+**Guideline 1 — Multi-Source Fetch**: Always fetch from 3+ independent sources for factual claims.
 
-**Guideline 1 — Search Before Answering**: For questions involving facts, current events, software versions, statistics, people, companies, or technical documentation, call `search-web` before generating a response.
+**Guideline 2 — Cross-Validation**: Verify facts appear in at least 2 sources before marking as ✅ Verified.
 
-**Guideline 2 — Treat Training Data as a Starting Point**: Training data has a cutoff date. For any claim that may have changed recently, verify it via search.
+**Guideline 3 — Confidence Scoring**: Assign confidence levels based on source agreement:
+- ✅ **Verified**: 3+ sources agree, high-authority sources
+- 🟢 **Likely True**: 2 sources agree, medium confidence
+- 🟡 **Uncertain**: Single source or conflicting reports
+- 🔴 **Likely False**: No sources or major contradictions
 
-**Guideline 3 — Deep-Dive When Needed**: If search snippets don't provide enough detail, use `browse-page` to read the full source document.
+**Guideline 4 — Always Cite**: Every factual statement must include source URLs.
 
-**Guideline 4 — Always Cite Sources**: Every factual statement in the final response should be accompanied by the source URL from search results.
-
-**Guideline 5 — Prefer News for Recency**: For anything that happened in the last year, use `search-web --type news` to get the most recent information.
+**Guideline 5 — Prefer News for Recency**: For events within the last year, use `--type news` for the most current data.
 
 ## Available Commands
 
-### `search-web` — Real-Time Web Search
+### `search-web` — Cross-Validated Web Search
 
 ```bash
-# General knowledge (default)
-search-web "query here"
+# General knowledge (3+ sources, cross-validated)
+search-web "What is the population of Tokyo?"
 
-# Current events and news
-search-web "query here" --type news
+# News search with time filter
+search-web "OpenAI GPT-5 release date" --type news --timelimit w
 
-# Images
-search-web "query here" --type images
+# Images (verified sources)
+search-web "neural network architecture diagram" --type images
 
-# Academic / books
-search-web "query here" --type books
+# Books and academic sources
+search-web "transformer attention mechanism" --type books
 
-# Videos
-search-web "query here" --type videos
+# Region-specific (Chinese, Japanese, etc.)
+search-web "人工智能最新进展" --region zh-cn
 
-# Region-specific (e.g., Chinese)
-search-web "查询内容" --region zh-cn
-
-# Time-limited (d=day, w=week, m=month, y=year)
-search-web "query here" --timelimit w
-
-# Machine-readable JSON output
-search-web "query here" --json
+# JSON output for programmatic use
+search-web "quantum computing" --json
 ```
 
 ### `browse-page` — Deep Page Reading
 
 ```bash
 # Read full content of a URL
-browse-page "https://example.com/article"
+browse-page "https://arxiv.org/abs/2303.08774"
 
 # JSON output
 browse-page "https://example.com/article" --json
 ```
 
+## Confidence Scoring System
+
+| Score | Meaning | Action |
+|-------|---------|--------|
+| ✅ Verified | 3+ sources agree, high authority | Safe to cite as fact |
+| 🟢 Likely True | 2 sources agree, medium confidence | Cite with confidence note |
+| 🟡 Uncertain | Single source or minor conflicts | Flag as "unverified" |
+| 🔴 Likely False | Major contradictions or no sources | Do not use, flag as unreliable |
+
 ## Decision Tree for Agents
 
 ```
-User asks a question
+User asks a factual question
         │
         ▼
-Is it purely creative/hypothetical?
-   YES → Answer directly
+Is it creative/hypothetical?
+   YES → Answer directly (no search needed)
    NO  ▼
 Does it involve facts, events, versions, or data?
    YES ▼
-Run: search-web "<query>" [--type news if recent event]
+Run: search-web "<query>" [--type news if recent]
         │
         ▼
-Are snippets sufficient to answer?
-   YES → Synthesize answer + cite sources
-   NO  ▼
-Run: browse-page "<top_result_url>"
+What is the confidence score?
+   ┌─────────────────────────────────────────────────────────┐
+   │ ✅ Verified    → Report as fact, cite all sources       │
+   │ 🟢 Likely True → Report with confidence, cite sources   │
+   │ 🟡 Uncertain   → Report with caveat, suggest verification│
+   │ 🔴 Likely False→ Do not use, explain contradictions      │
+   └─────────────────────────────────────────────────────────┘
         │
         ▼
-Synthesize answer from full page content + cite source
+Are there conflicting sources?
+   YES → Present both viewpoints with citations
+   NO  → Synthesize answer with unified citation
 ```
 
-## Why Search-First?
+## Anti-Hallucination Guarantees
 
-| Default LLM Behavior | Search-First Behavior |
-|---|---|
-| Answers from training data | Answers from live web |
-| Knowledge cutoff applies | Always up-to-date |
-| May produce outdated facts | Cites verifiable sources |
-| Single knowledge source | Multi-source cross-validation |
+When using this skill, you get:
+
+1. **No Single-Source Claims** — Every fact is verified against multiple sources
+2. **Confidence Transparency** — You know exactly how confident the system is
+3. **Source Attribution** — Every claim comes with verifiable URLs
+4. **Conflict Detection** — Conflicting information is flagged, not hidden
+5. **Recency Guarantee** — For time-sensitive topics, results are from the specified time window
+
+## Supported Search Types
+
+| Type | Use Case | Cross-Validation |
+|------|----------|-------------------|
+| `text` | General knowledge, facts | ✅ Multi-source agreement |
+| `news` | Current events, recent updates | ✅ Multiple news sources |
+| `images` | Visual references, diagrams | ✅ Verified image sources |
+| `videos` | Tutorials, presentations | ✅ Multiple video platforms |
+| `books` | Academic, in-depth topics | ✅ Cross-book verification |
 
 ## Integration
 
