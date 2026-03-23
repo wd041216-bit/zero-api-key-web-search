@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs", "searxng"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://news.example.com/merger-closed",
+      "title": "Reports say the merger closed this week",
+      "snippet": "Several reports say the Example merger closed this week after late-stage approvals.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    },
+    {
+      "url": "https://factcheck.example.org/merger-delay",
+      "title": "Fact check disputes the merger timeline",
+      "snippet": "A fact check says the Example merger did not close this week and calls the claim false.",
+      "engine": "SEARXNG-Text",
+      "date": "2026-03-20"
+    }
+  ],
+  "pages": {}
+}

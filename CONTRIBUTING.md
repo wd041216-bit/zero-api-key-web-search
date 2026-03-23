@@ -1,6 +1,6 @@
-# Contributing to Free Web Search Ultimate
+# Contributing to Cross-Validated Search
 
-Thank you for your interest in contributing to **Free Web Search Ultimate**! This document outlines the process for contributing to this project.
+Thank you for your interest in contributing to **Cross-Validated Search**. This document outlines the process for contributing to this project.
 
 ## Table of Contents
 
@@ -21,25 +21,25 @@ By participating in this project, you agree to maintain a respectful and inclusi
 Before contributing, please:
 
 1. Read the [README.md](README.md) to understand the project's purpose and architecture.
-2. Check the [open issues](https://github.com/wd041216-bit/free-web-search-ultimate/issues) to see if your idea or bug has already been reported.
+2. Check the [open issues](https://github.com/wd041216-bit/cross-validated-search/issues) to see if your idea or bug has already been reported.
 3. For significant changes, open an issue first to discuss the proposed change before submitting a PR.
 
 ## Development Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/wd041216-bit/free-web-search-ultimate.git
-cd free-web-search-ultimate
+git clone https://github.com/wd041216-bit/cross-validated-search.git
+cd cross-validated-search
 
 # Create a virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-# Install in development mode with all dependencies
-pip install -e ".[dev]"
+# Install in development mode
+pip install -e .
 
-# Verify installation
-search-web "test query"
+# Run the test suite
+python -m unittest discover -s tests -v
 ```
 
 ## How to Contribute
@@ -103,7 +103,7 @@ chore: update CI workflow to Python 3.12
 
 1. Ensure your PR description clearly explains the problem and solution.
 2. Reference any related issues using `Fixes #<issue-number>`.
-3. Make sure all CI checks pass (linting, tests).
+3. Make sure all CI checks pass.
 4. Request a review from a maintainer.
 5. PRs are merged using squash merge to keep the history clean.
 
@@ -111,14 +111,13 @@ chore: update CI workflow to Python 3.12
 
 ```bash
 # Run all tests
-python -m pytest tests/ -v
-
-# Run with coverage report
-python -m pytest tests/ --cov=free_web_search --cov-report=term-missing
+python -m unittest discover -s tests -v
 
 # Run a specific test file
-python -m pytest tests/test_search_web.py -v
+python -m unittest tests.test_search_web -v
 ```
+
+CLI smoke tests use `tests/fixtures/fake_ddgs/` so they stay deterministic without depending on the live search backend.
 
 When adding new features, please include:
 
@@ -132,4 +131,4 @@ If you discover a security vulnerability, please do **not** open a public issue.
 
 ---
 
-Thank you for helping make Free Web Search Ultimate better for everyone!
+Thank you for helping make Cross-Validated Search better for everyone.

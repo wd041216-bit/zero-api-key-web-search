@@ -1,16 +1,14 @@
 ---
 name: cross-validated-search
 description: >
-  Cross-Validated Web Search for Hallucination-Free LLM Responses.
-  Multi-source verification prevents AI hallucinations.
-  Zero-cost, privacy-first, supports text/news/images/books/videos.
+  Cross-Validated Web Search for AI agents.
+  Use multi-source search, confidence scoring, and citations for factual queries.
 version: "15.0.0"
-user-invocable: true
 ---
 
 # Cross-Validated Search for Continue
 
-Work like a researcher: Always verify facts with multiple sources before answering.
+Work like a researcher: verify factual claims with multiple sources before answering.
 
 ## Installation
 
@@ -21,73 +19,29 @@ pip install free-web-search-ultimate
 ## Commands
 
 ```bash
-# General knowledge (cross-validated)
 search-web "What is the population of Tokyo?"
-
-# News search with time filter
 search-web "OpenAI GPT-5 release date" --type news --timelimit w
-
-# Images (verified sources)
 search-web "neural network architecture diagram" --type images
-
-# Academic sources
-search-web "transformer attention mechanism" --type books
-
-# Region-specific
 search-web "人工智能最新进展" --region zh-cn
-
-# JSON output
-search-web "quantum computing" --json
-
-# Read full page content
 browse-page "https://arxiv.org/abs/2303.08774"
 ```
 
 ## When to Use
 
-**Trigger:**
-- Factual questions about events, people, dates, statistics
-- Questions about recent events (< 1 year)
-- Questions requiring verification
-- User asks for sources or citations
+- Factual questions about events, people, dates, releases, or statistics
+- Recent information that may have changed since model training
+- Claims that need citations or cross-checking
+- Questions where conflicting sources should be surfaced instead of hidden
 
 ## Confidence Levels
 
 | Score | Meaning | Action |
 |-------|---------|--------|
-| ✅ Verified | 3+ sources agree, high authority | Report as fact |
-| 🟢 Likely True | 2 sources agree, medium confidence | Cite with note |
-| 🟡 Uncertain | Single source or minor conflicts | Flag as unverified |
-| 🔴 Likely False | Major contradictions or no sources | Do not use |
-
-## Anti-Hallucination Guarantees
-
-1. **Multi-Source Verification** — Facts verified against multiple independent sources
-2. **Confidence Scoring** — Clear indication of reliability
-3. **Source Attribution** — Every claim includes verifiable URLs
-4. **Conflict Detection** — Conflicting information flagged
-5. **Time-Sensitive Results** — Recent results for current events
-
-## MCP Integration
-
-For Continue with MCP support:
-
-```json
-{
-  "mcpServers": {
-    "free-web-search": {
-      "command": "free-web-search-mcp",
-      "args": []
-    }
-  }
-}
-```
-
-## Requirements
-
-- Python 3.10+
-- `beautifulsoup4`, `lxml`, `ddgs`, `mcp>=1.1.2`
+| ✅ Verified | 3+ sources agree, high authority | Safe to cite as fact |
+| 🟢 Likely True | 2 sources agree, medium confidence | Cite with a confidence note |
+| 🟡 Uncertain | Single source or conflicting reports | Flag as unverified |
+| 🔴 Likely False | Major contradictions or no support | Do not present as fact |
 
 ## License
 
-MIT-0 — Free to use, modify, and redistribute.
+MIT License.

@@ -1,6 +1,6 @@
 {
   "name": "cross-validated-search",
-  "description": "Cross-Validated Web Search for Hallucination-Free LLM Responses. Multi-source verification prevents AI hallucinations. Zero-cost, privacy-first.",
+  "description": "Source-backed web search, page reading, and evidence-aware claim checking for AI agents. Zero-cost, privacy-first, and keyless by default.",
   "homepage": "https://github.com/wd041216-bit/cross-validated-search",
   "license": "MIT"
 }

@@ -1,71 +1,161 @@
 <div align="center">
   <img src="assets/banner.png" alt="Cross-Validated Search" width="100%"/>
-  <h1>🔍 Cross-Validated Search</h1>
-  <p><strong>The Only Search Skill That Prevents LLM Hallucinations</strong></p>
-  <p><em>Multi-source verification. Zero hallucinations. Free forever.</em></p>
-  
-  [![PyPI version](https://badge.fury.io/py/cross-validated-search.svg)](https://pypi.org/project/cross-validated-search/)
+  <h1>Cross-Validated Search</h1>
+  <p><strong>Evidence-aware web search, browsing, and claim verification for AI agents.</strong></p>
+  <p><em>CLI + MCP + skill surfaces for Gemini, OpenClaw, and other agent runtimes.</em></p>
+
+  [![PyPI package](https://badge.fury.io/py/free-web-search-ultimate.svg)](https://pypi.org/project/free-web-search-ultimate/)
   [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
   [![MCP Ready](https://img.shields.io/badge/MCP-Ready-purple.svg)](https://modelcontextprotocol.io/)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 </div>
 
-<br/>
+Cross-Validated Search is an evidence-aware verification layer for AI agents. It combines live web search, page reading, and claim checking so an agent can surface supporting evidence, conflicting evidence, and source-backed confidence before presenting factual answers.
 
-> **Stop hallucinations. Start verification.**
+> Compatibility note: the project brand is `Cross-Validated Search`, while the published Python package and stable CLI remain `free-web-search-ultimate`, `search-web`, `browse-page`, `verify-claim`, and `free-web-search-mcp`.
 
-Every LLM hallucinates facts—Claude, GPT-4, Gemini, Llama—all of them. This plugin introduces **Cross-Validated Search**: every claim is verified against multiple independent sources before being presented as fact.
+> Recommended free path: `ddgs + self-hosted SearXNG`. Configure `CROSS_VALIDATED_SEARCH_SEARXNG_URL` to unlock a free second provider and stronger evidence reports.
 
-## 🏗️ Architecture
+## Indexer Quick Review
 
-<div align="center">
-  <img src="assets/architecture.png" alt="Architecture Diagram" width="90%"/>
-</div>
+If you are reviewing this repo for collection or ecosystem inclusion, the fastest path is:
 
-One plugin, every ecosystem. Whether you use Claude Code, Cursor, Copilot, Gemini, OpenClaw, or a custom agent, this plugin connects your LLM to verified facts through cross-validation.
+1. verify the flagship workflow:
+   `evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json`
+2. review the ecosystem contract:
+   [docs/ecosystem-readiness.md](docs/ecosystem-readiness.md)
+3. review the free dual-provider bootstrap:
+   [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md)
 
-## 🌟 Supported Platforms
+## 60-second verification
 
-| Platform | Support | Configuration |
-|----------|---------|--------------|
-| **Claude Code** | ✅ Native | `.claude-plugin/SKILL.md` |
-| **Cursor** | ✅ Native | `.cursor/rules/` |
-| **GitHub Copilot** | ✅ Native | `.github/copilot/` |
-| **Gemini CLI** | ✅ Native | `.gemini/SKILL.md` |
-| **Continue** | ✅ Native | `.continue/skills/` |
-| **Kiro** | ✅ Native | `.kiro/steering/` |
-| **OpenCode** | ✅ Native | `.opencode/instructions.md` |
-| **Codex** | ✅ Native | `.codex/SKILL.md` |
-| **OpenClaw** | ✅ Native | `free_web_search/skills/SKILL.md` |
-| **MCP Servers** | ✅ MCP | `free-web-search-mcp` |
-| **CLI** | ✅ Universal | `search-web`, `browse-page` |
-| **LangChain** | ✅ Tool wrapper | Python integration |
-| **OpenAI Function Calling** | ✅ JSON schema | Function definitions |
+Install and verify the public surface:
 
-## 🌟 The Cross-Validation Paradigm
+```bash
+pip install free-web-search-ultimate
+search-web "Python 3.13 release" --json
+verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
+evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+```
 
-| Old Paradigm (Standard LLM) | New Paradigm (Cross-Validated Search) |
-|---|---|
-| Answers from training data | Answers from real-time web search |
-| May hallucinate facts | **Cross-validates facts across sources** |
-| Single knowledge source | **Multiple independent sources** |
-| No confidence score | **Confidence score per fact: ✅ 🟢 🟡 🔴** |
-| User must trust blindly | **Cites all sources for verification** |
+Typical `evidence-report` JSON shape:
 
-When this plugin is installed, the AI agent:
+```json
+{
+  "verdict": "contested",
+  "confidence": "MEDIUM",
+  "coverage_warnings": [
+    "Single-provider evidence path. Add another provider when possible."
+  ],
+  "analysis": {
+    "report_model": "evidence-report-v2",
+    "provider_diversity": 1,
+    "page_aware": true,
+    "support_score": 1.42,
+    "conflict_score": 0.61,
+    "coverage_warning_count": 1
+  }
+}
+```
 
-1. **Never Claims Unverified Facts** — Every factual claim is checked against multiple sources
-2. **Cross-Validates** — Facts must appear in 2+ sources to be marked as verified
-3. **Assigns Confidence** — Each fact gets a confidence score based on source agreement
-4. **Cites All Sources** — Every claim comes with verifiable URLs
+If you are evaluating the repo for ecosystem collection, start with [docs/ecosystem-readiness.md](docs/ecosystem-readiness.md).
 
-## 📦 Installation
+## Why this exists
+
+Most search wrappers stop at “here are some results.” This repository goes one step further:
+
+- returns structured search results with citations
+- reads full pages when snippets are not enough
+- classifies evidence as supporting, conflicting, or neutral
+- generates a higher-level evidence report with citation-ready sources and next steps
+- exposes explainable confidence signals instead of a black-box claim
+- works across CLI, MCP, Gemini, OpenClaw, and other agent workflows
+
+## Current capabilities
+
+### `search-web`
+
+Use live search for factual or time-sensitive queries.
+
+```bash
+search-web "Python 3.13 release"
+search-web "OpenAI release news" --type news --timelimit w
+search-web "人工智能最新进展" --region zh-cn --json
+```
+
+### `browse-page`
+
+Read the full text of a URL when snippets are not enough.
+
+```bash
+browse-page "https://example.com/article"
+browse-page "https://example.com/article" --json
+```
+
+### `verify-claim`
+
+Check whether a claim looks supported, contested, likely false, or still under-evidenced.
+
+```bash
+verify-claim "Python 3.13 is the latest stable release"
+verify-claim "OpenAI released GPT-5 this week" --timelimit w --json
+verify-claim "Python 3.13 is the latest stable release" --with-pages --max-pages 2
+```
+
+### `evidence-report`
+
+Generate a compact report that combines search, verification, citations, and follow-up guidance.
+
+```bash
+evidence-report "Python 3.13 stable release"
+evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+```
+
+The report now includes:
+
+- verdict rationale that explains why the score landed where it did
+- stance summary buckets for supporting, conflicting, and neutral evidence
+- coverage warnings when provider diversity, domain diversity, or page-aware depth look weak
+- citation-ready source digests and recommended next steps
+
+## Free dual-provider setup
+
+If you want the strongest free setup, self-host SearXNG and pair it with `ddgs`:
+
+```bash
+./scripts/start-searxng.sh
+export CROSS_VALIDATED_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+./scripts/validate-free-path.sh
+```
+
+Or use the compose file directly:
+
+```bash
+cp .env.searxng.example .env
+docker compose -f docker-compose.searxng.yml up -d
+```
+
+Full setup and validation guide: [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md).
+
+The current verification model is `evidence-aware-heuristic-v3`, and the flagship report surface is `evidence-report-v2`. Together they use:
+
+- keyword overlap between the claim and returned evidence
+- contradiction markers in titles and snippets
+- source-quality heuristics
+- source freshness when a parseable date exists
+- domain diversity across the evidence set
+- optional page text from top fetched sources
+- optional provider diversity when a second provider is configured
+
+Details and limitations are documented in [docs/trust-model.md](docs/trust-model.md).
+For a quick product-level comparison with plain search wrappers, see [docs/why-not-just-search.md](docs/why-not-just-search.md).
+The next calibration step is outlined in [docs/benchmark-plan.md](docs/benchmark-plan.md).
+
+## Installation
 
 ```bash
 pip install free-web-search-ultimate
 ```
-
-> **Requirements:** Python 3.10+
 
 Or install from source:
 
@@ -75,63 +165,39 @@ cd cross-validated-search
 pip install -e .
 ```
 
-### 🚀 Enhanced Version (with API Providers)
+Python 3.10+ is required.
 
-Need more search providers? Check out the **[with-api-providers](https://github.com/wd041216-bit/cross-validated-search/tree/with-api-providers)** branch:
+## Platform support
 
-```bash
-# Install enhanced version with Tavily support
-pip install git+https://github.com/wd041216-bit/cross-validated-search@with-api-providers
-```
+| Surface | Status | Notes |
+| --- | --- | --- |
+| CLI | Yes | `search-web`, `browse-page`, `verify-claim`, `evidence-report` |
+| MCP | Yes | `free-web-search-mcp` |
+| Gemini CLI | Yes | `.gemini/SKILL.md` |
+| OpenClaw | Yes | `free_web_search/skills/SKILL.md` |
+| Claude Code / Cursor / Continue / Copilot | Yes | Bundled skill and instruction files |
 
-**Enhanced features:**
-- 🔍 **Tavily API** — Premium search quality (requires `TAVILY_API_KEY`)
-- 🔄 **Parallel execution** — Multiple engines running concurrently
-- 📊 **Better relevance** — Advanced search depth options
+## Verification model
 
-> **Note:** The enhanced version requires API keys. The main branch remains **free and keyless**.
+`verify-claim` returns one of five verdicts:
 
-## 🔌 Integration Guide
+| Verdict | Meaning |
+| --- | --- |
+| `supported` | Strong support, low conflict, and enough domain diversity |
+| `likely_supported` | Evidence leans positive but is not decisive |
+| `contested` | Support and conflict both carry meaningful weight |
+| `likely_false` | Conflict is strong and support is weak |
+| `insufficient_evidence` | Evidence exists but is too weak for a firmer claim |
 
-### Claude Code
+This is an evidence-aware heuristic system, not a fact-level proof engine. Today it still has three important limits:
 
-The `.claude-plugin/SKILL.md` is automatically detected. Just install the package:
+- default install still starts with `ddgs`; the recommended collection-grade free path is `ddgs + self-hosted searxng`
+- page-aware verification is optional and still heuristic rather than full-document entailment
+- no benchmark-driven confidence calibration yet
 
-```bash
-pip install free-web-search-ultimate
-```
+## MCP example
 
-### Cursor
-
-Copy `.cursor/rules/cross-validated-search.md` to your project, or install globally:
-
-```bash
-pip install free-web-search-ultimate
-```
-
-### GitHub Copilot
-
-The `.github/copilot/instructions.md` is automatically detected by VS Code Copilot.
-
-### Gemini CLI
-
-The `.gemini/SKILL.md` is automatically detected when installed.
-
-### Continue
-
-Copy `.continue/skills/cross-validated-search/` to your Continue skills directory.
-
-### OpenClaw (CLI-Anything)
-
-```bash
-pip install free-web-search-ultimate
-```
-
-The skill is auto-discovered from the bundled `SKILL.md`.
-
-### MCP Integration (Claude Desktop, Cursor, Continue)
-
-Add to your `claude_desktop_config.json` or MCP settings:
+Add the server to your MCP client:
 
 ```json
 {
@@ -144,101 +210,35 @@ Add to your `claude_desktop_config.json` or MCP settings:
 }
 ```
 
-### LangChain / Custom Agents
+## Development
 
-```python
-from langchain.tools import Tool
-import subprocess, json
-
-def cross_validate_search(query: str) -> str:
-    result = subprocess.run(
-        ["search-web", query, "--json"],
-        capture_output=True, text=True
-    )
-    data = json.loads(result.stdout)
-    return data.get("answer", "No results found.")
-
-search_tool = Tool(
-    name="cross_validate_search",
-    func=cross_validate_search,
-    description="Search the web with cross-validation. Every fact is verified against multiple sources."
-)
-```
-
-### OpenAI Function Calling
-
-```python
-tools = [
-    {
-        "type": "function",
-        "function": {
-            "name": "cross_validate_search",
-            "description": "Search the web with multi-source cross-validation. Prevents hallucinations by verifying facts across independent sources.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string", "description": "The search query"},
-                    "type": {"type": "string", "enum": ["text", "news", "images", "videos", "books"], "default": "text"}
-                },
-                "required": ["query"]
-            }
-        }
-    }
-]
-```
-
-## 💻 CLI Usage
-
-### `search-web` — Cross-Validated Web Search
+Run the test suite:
 
 ```bash
-# General knowledge (3+ sources, cross-validated)
-search-web "What is the population of Tokyo?"
-
-# Breaking news (multiple news sources)
-search-web "OpenAI GPT-5" --type news --timelimit w
-
-# Images (verified sources)
-search-web "neural network diagram" --type images
-
-# Chinese search
-search-web "人工智能最新进展" --region zh-cn
-
-# JSON output for programmatic use
-search-web "quantum computing" --json
+python -m unittest discover -s tests -v
 ```
 
-### `browse-page` — Deep Page Reading
+Build distributables:
 
 ```bash
-# Read full page content
-browse-page "https://arxiv.org/abs/2303.08774"
-
-# JSON output
-browse-page "https://example.com/article" --json
+python -m build
 ```
 
-## 🎯 Confidence Scoring System
+Run deterministic benchmark regressions:
 
-| Score | Meaning | When to Use |
-|-------|---------|-------------|
-| ✅ Verified | 3+ sources agree, high authority | Cite as fact |
-| 🟢 Likely True | 2 sources agree, medium confidence | Cite with confidence note |
-| 🟡 Uncertain | Single source or minor conflicts | Flag as unverified |
-| 🔴 Likely False | Major contradictions or no sources | Do not use |
+```bash
+python benchmarks/run_benchmark.py
+```
 
-## 🏆 Why This Over Alternatives?
+## Roadmap
 
-| Feature | Cross-Validated Search | Tavily API | Serper API | Bing Search API |
-|---------|------------------------|-----------|------------|-----------------|
-| Cost | **Free** | $0.01/req | $0.001/req | $3/1000 req |
-| **Cross-Validation** | **Yes** | No | No | No |
-| **Confidence Score** | **Yes** | No | No | No |
-| **Hallucination Prevention** | **Yes** | No | No | No |
-| API Key Required | **No** | Yes | Yes | Yes |
-| IDE Support | **10+** | Limited | No | No |
-| MCP Support | **Yes** | Partial | No | No |
+The next upgrades needed for ecosystem-grade collection are:
 
-## 📄 License
+1. calibrate provider weighting and add stronger provider-specific tests
+2. improve page-aware verification beyond snippet and keyword heuristics
+3. add benchmark fixtures and regression scoring
+4. improve the flagship `evidence-report` workflow with richer source summarization and calibration
 
-MIT-0 License — free for personal and commercial use. No attribution required.
+## License
+
+MIT License.

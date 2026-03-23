@@ -1,0 +1,16 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://example.com/analysis",
+      "title": "Analysts discuss VendorX strategy",
+      "snippet": "Analysts discuss VendorX strategy and acquisition rumors without confirmation.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    }
+  ],
+  "pages": {}
+}

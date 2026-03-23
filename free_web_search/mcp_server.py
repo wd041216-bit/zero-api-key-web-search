@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
-"""
-Free Web Search Ultimate - MCP Server (Model Context Protocol)
-Allows seamless integration with Claude Desktop, Cursor, and other MCP-compatible clients.
+"""Cross-Validated Search MCP server.
+
+The public project brand is Cross-Validated Search while the stable MCP server
+command remains ``free-web-search-mcp`` for compatibility.
 """
 import asyncio
-import json
 import logging
 import sys
-from typing import Any, Dict, List, Optional
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
-from free_web_search.search_web import UltimateSearcher
+from free_web_search.core import UltimateSearcher
 from free_web_search.browse_page import browse
 
 # Configure logging
@@ -52,6 +51,11 @@ async def list_tools() -> list[Tool]:
                         "type": "string",
                         "enum": ["d", "w", "m", "y", ""],
                         "description": "Time limit for results: 'd' (day), 'w' (week), 'm' (month), 'y' (year). Leave empty for no limit."
+                    },
+                    "providers": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng']."
                     }
                 },
                 "required": ["query"]
@@ -75,6 +79,99 @@ async def list_tools() -> list[Tool]:
                 },
                 "required": ["url"]
             }
+        ),
+        Tool(
+            name="verify_claim",
+            description="Evaluate whether a factual claim looks supported, contested, or under-evidenced based on corroborating search results.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "claim": {
+                        "type": "string",
+                        "description": "The factual claim to verify."
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "Region code (default: wt-wt).",
+                        "default": "wt-wt"
+                    },
+                    "timelimit": {
+                        "type": "string",
+                        "enum": ["d", "w", "m", "y", ""],
+                        "description": "Optional freshness window for the underlying evidence search."
+                    },
+                    "providers": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng']."
+                    },
+                    "with_pages": {
+                        "type": "boolean",
+                        "description": "Fetch a few top pages and refine the classification using page text."
+                    },
+                    "deep": {
+                        "type": "boolean",
+                        "description": "Alias for with_pages. Enables page-aware verification."
+                    },
+                    "max_pages": {
+                        "type": "integer",
+                        "description": "Maximum number of pages to fetch when with_pages is true.",
+                        "default": 3
+                    }
+                },
+                "required": ["claim"]
+            }
+        ),
+        Tool(
+            name="evidence_report",
+            description="Generate a higher-level evidence report that combines search, verification, citation-ready sources, and recommended next steps.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Search query used to gather evidence."
+                    },
+                    "claim": {
+                        "type": "string",
+                        "description": "Optional explicit claim to verify. Defaults to the query text."
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "Region code (default: wt-wt).",
+                        "default": "wt-wt"
+                    },
+                    "timelimit": {
+                        "type": "string",
+                        "enum": ["d", "w", "m", "y", ""],
+                        "description": "Optional freshness window for the underlying evidence search."
+                    },
+                    "providers": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng']."
+                    },
+                    "with_pages": {
+                        "type": "boolean",
+                        "description": "Fetch a few top pages and refine the classification using page text."
+                    },
+                    "deep": {
+                        "type": "boolean",
+                        "description": "Alias for with_pages. Enables page-aware verification."
+                    },
+                    "max_pages": {
+                        "type": "integer",
+                        "description": "Maximum number of pages to fetch when with_pages is true.",
+                        "default": 3
+                    },
+                    "max_sources": {
+                        "type": "integer",
+                        "description": "Maximum number of sources to include in the report digest.",
+                        "default": 5
+                    }
+                },
+                "required": ["query"]
+            }
         )
     ]
 
@@ -87,6 +184,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             search_type = arguments.get("type", "text")
             region = arguments.get("region", "wt-wt")
             timelimit = arguments.get("timelimit")
+            providers = arguments.get("providers")
             if timelimit == "":
                 timelimit = None
                 
@@ -96,7 +194,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 query=query,
                 search_type=search_type,
                 region=region,
-                timelimit=timelimit
+                timelimit=timelimit,
+                providers=providers,
             )
             
             # Format the output for the LLM
@@ -129,6 +228,148 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 result_text = f"Error fetching {url}: {result.get('error', 'Unknown error')}"
                 
             return [TextContent(type="text", text=result_text)]
+
+        elif name == "verify_claim":
+            claim = arguments.get("claim")
+            region = arguments.get("region", "wt-wt")
+            timelimit = arguments.get("timelimit")
+            providers = arguments.get("providers")
+            with_pages = arguments.get("with_pages", False)
+            deep = arguments.get("deep", False)
+            max_pages = arguments.get("max_pages", 3)
+            if timelimit == "":
+                timelimit = None
+
+            logger.info(f"Executing verify_claim: claim='{claim}', region='{region}'")
+            verification = searcher.verify_claim(
+                claim=claim,
+                region=region,
+                timelimit=timelimit,
+                providers=providers,
+                include_pages=with_pages or deep,
+                deep=deep,
+                max_pages=max_pages,
+            )
+
+            result_text = f"Claim: {verification.claim}\n"
+            result_text += f"Verdict: {verification.verdict}\n"
+            result_text += f"Confidence: {verification.confidence}\n"
+            result_text += f"{verification.summary}\n\n"
+            result_text += (
+                "Evidence Model: "
+                f"{verification.analysis['verification_model']['name']} | "
+                f"support={verification.analysis['support_score']:.2f} | "
+                f"conflict={verification.analysis['conflict_score']:.2f} | "
+                f"domains={verification.analysis['domain_diversity']} | "
+                f"providers={verification.analysis['provider_diversity']} | "
+                f"pages={verification.analysis['page_fetches_succeeded']}/{verification.analysis['page_fetches_attempted']}\n\n"
+            )
+
+            if verification.supporting_sources:
+                result_text += "Supporting sources:\n"
+                for index, source in enumerate(verification.supporting_sources[:5], 1):
+                    evidence = source.extra.get("verification", {})
+                    result_text += (
+                        f"{index}. {source.title}\n"
+                        f"   URL: {source.url}\n"
+                        f"   Strength: {evidence.get('evidence_strength', 0)}\n"
+                    )
+                result_text += "\n"
+
+            if verification.conflicting_sources:
+                result_text += "Conflicting sources:\n"
+                for index, source in enumerate(verification.conflicting_sources[:5], 1):
+                    evidence = source.extra.get("verification", {})
+                    result_text += (
+                        f"{index}. {source.title}\n"
+                        f"   URL: {source.url}\n"
+                        f"   Strength: {evidence.get('evidence_strength', 0)}\n"
+                    )
+                result_text += "\n"
+
+            return [TextContent(type="text", text=result_text)]
+
+        elif name == "evidence_report":
+            query = arguments.get("query")
+            claim = arguments.get("claim")
+            region = arguments.get("region", "wt-wt")
+            timelimit = arguments.get("timelimit")
+            providers = arguments.get("providers")
+            with_pages = arguments.get("with_pages", False)
+            deep = arguments.get("deep", False)
+            max_pages = arguments.get("max_pages", 3)
+            max_sources = arguments.get("max_sources", 5)
+            if timelimit == "":
+                timelimit = None
+
+            logger.info(f"Executing evidence_report: query='{query}', region='{region}'")
+            report = searcher.evidence_report(
+                query=query,
+                claim=claim,
+                region=region,
+                timelimit=timelimit,
+                providers=providers,
+                include_pages=with_pages or deep,
+                deep=deep,
+                max_pages=max_pages,
+                max_sources=max_sources,
+            )
+
+            result_text = f"Evidence Report Query: {report.query}\n"
+            result_text += f"Claim: {report.claim}\n"
+            result_text += f"Verdict: {report.verdict}\n"
+            result_text += f"Confidence: {report.confidence}\n"
+            result_text += f"{report.executive_summary}\n"
+            result_text += f"{report.verification_summary}\n\n"
+            result_text += (
+                "Report Model: "
+                f"{report.analysis['report_model']} | "
+                f"search_confidence={report.analysis['search_confidence']} | "
+                f"support={report.analysis['support_score']:.2f} | "
+                f"conflict={report.analysis['conflict_score']:.2f} | "
+                f"providers={report.analysis['provider_diversity']} | "
+                f"pages={report.analysis['page_fetches_succeeded']}/{report.analysis['page_fetches_attempted']}\n\n"
+            )
+
+            if report.verdict_rationale:
+                result_text += "Why this verdict:\n"
+                for item in report.verdict_rationale:
+                    result_text += f"- {item}\n"
+                result_text += "\n"
+
+            if report.coverage_warnings:
+                result_text += "Coverage warnings:\n"
+                for item in report.coverage_warnings:
+                    result_text += f"- {item}\n"
+                result_text += "\n"
+
+            if report.stance_summary:
+                result_text += "Stance summary:\n"
+                for label, bucket in report.stance_summary.items():
+                    domains = ", ".join(bucket["top_domains"]) or "none"
+                    result_text += (
+                        f"- {label}: count={bucket['count']} score={bucket['score']} "
+                        f"domains={domains}\n"
+                    )
+                result_text += "\n"
+
+            if report.source_digest:
+                result_text += "Source digest:\n"
+                for index, item in enumerate(report.source_digest, 1):
+                    result_text += (
+                        f"{index}. {item['title']}\n"
+                        f"   URL: {item['url']}\n"
+                        f"   Class: {item['classification']}\n"
+                        f"   Strength: {item['evidence_strength']}\n"
+                    )
+                result_text += "\n"
+
+            if report.next_steps:
+                result_text += "Next steps:\n"
+                for step in report.next_steps:
+                    result_text += f"- {step}\n"
+
+            return [TextContent(type="text", text=result_text)]
             
         else:
             raise ValueError(f"Unknown tool: {name}")
@@ -139,7 +380,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 
 async def main():
     """Run the MCP server."""
-    logger.info("Starting Free Web Search Ultimate MCP Server...")
+    logger.info("Starting Cross-Validated Search MCP Server...")
     async with stdio_server() as (read_stream, write_stream):
         await app.run(read_stream, write_stream, app.create_initialization_options())
 

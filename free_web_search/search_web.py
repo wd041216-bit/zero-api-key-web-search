@@ -1,370 +1,23 @@
 #!/usr/bin/env python3
-"""Free Web Search Ultimate - Universal Search Core (v13.0).
+"""CLI entry point for the stable search-web command."""
 
-Supports standard Python package entry_points, REPL interactive mode,
-and SKILL.md auto-discovery for CLI-Anything compatibility.
-
-Entry points:
-    search-web: Main CLI for web/news/image/video/book search
-    browse-page: Page content extractor
-    free-web-search-mcp: MCP server for LLM tool use
-"""
 import argparse
 import json
-import re
-import ssl
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import asdict, dataclass
-from typing import Dict, List, Optional
+from dataclasses import asdict
 
-# Disable SSL verification globally to handle restrictive network environments
-ctx = ssl.create_default_context()
-ctx.check_hostname = False
-ctx.verify_mode = ssl.CERT_NONE
-
-
-@dataclass
-class Source:
-    """A single search result source.
-
-    Attributes:
-        url: The URL of the source.
-        title: The title of the page or article.
-        snippet: A short excerpt or description.
-        rank: The result rank (1-based, assigned after deduplication).
-        engine: The search engine that returned this result.
-        cross_validated: Whether this URL appeared in multiple engine results.
-        date: Publication or update date (if available).
-        extra: Additional type-specific metadata (e.g., image dimensions).
-    """
-
-    url: str
-    title: str
-    snippet: str = ""
-    rank: int = 0
-    engine: str = ""
-    cross_validated: bool = False
-    date: str = ""
-    extra: Dict = None
-
-    def __post_init__(self):
-        if self.extra is None:
-            self.extra = {}
-
-
-@dataclass
-class Answer:
-    """The complete answer returned by UltimateSearcher.search().
-
-    Attributes:
-        query: The original search query.
-        search_type: The type of search performed (text, news, images, etc.).
-        answer: A brief markdown-formatted summary of the top sources.
-        confidence: Confidence level: HIGH, MEDIUM, or LOW.
-        sources: List of deduplicated and ranked Source objects.
-        validation: Statistics about result counts and cross-validation.
-        metadata: Engine usage info and any errors encountered.
-        elapsed_ms: Total search time in milliseconds.
-    """
-
-    query: str
-    search_type: str
-    answer: str
-    confidence: str
-    sources: List[Source]
-    validation: Dict
-    metadata: Dict
-    elapsed_ms: int
-
-
-class UltimateSearcher:
-    """Universal web searcher using DuckDuckGo with cross-validation.
-
-    Supports text, news, images, videos, and books search types.
-    Results are deduplicated and ranked by cross-validation confidence.
-
-    Example:
-        searcher = UltimateSearcher()
-        answer = searcher.search("Python 3.12 release notes")
-        for source in answer.sources[:5]:
-            print(source.title, source.url)
-    """
-
-    def __init__(self, timeout: int = 15):
-        """Initialize the searcher.
-
-        Args:
-            timeout: HTTP request timeout in seconds (default: 15).
-        """
-        self.timeout = timeout
-
-    def _search_ddgs(
-        self,
-        query: str,
-        search_type: str,
-        timelimit: Optional[str] = None,
-        region: str = "wt-wt",
-        max_results: int = 15,
-        **kwargs,
-    ) -> List[Source]:
-        """Perform a search using the ddgs library (thread-safe, new instance per call).
-
-        Args:
-            query: The search query string.
-            search_type: One of 'text', 'news', 'videos', 'books', 'images'.
-            timelimit: Time filter — 'd' (day), 'w' (week), 'm' (month), 'y' (year),
-                or None for no limit.
-            region: DuckDuckGo region code, e.g. 'wt-wt' (global), 'zh-cn', 'en-us'.
-            max_results: Maximum number of raw results to fetch.
-            **kwargs: Additional type-specific parameters (e.g., size, color for images).
-
-        Returns:
-            A list of Source objects. On error, returns a single Source with
-            url='error' and the error message in title.
-        """
-        results = []
-        try:
-            from ddgs import DDGS
-            with DDGS(timeout=self.timeout) as ddgs:
-                if search_type == "text":
-                    api_results = ddgs.text(
-                        query,
-                        region=region,
-                        max_results=max_results,
-                        timelimit=timelimit,
-                    )
-                elif search_type == "news":
-                    api_results = ddgs.news(
-                        query,
-                        region=region,
-                        max_results=max_results,
-                        timelimit=timelimit,
-                    )
-                elif search_type == "videos":
-                    api_results = ddgs.videos(
-                        query,
-                        region=region,
-                        max_results=max_results,
-                        timelimit=timelimit,
-                    )
-                elif search_type == "books":
-                    api_results = ddgs.books(query, max_results=max_results)
-                elif search_type == "images":
-                    # Images API supports rich kwargs; auto-fallback on size errors
-                    img_size = kwargs.get("size") or "Wallpaper"
-                    size_fallbacks = [img_size, "Wallpaper", "Small", "Large", "Medium"]
-                    api_results = None
-                    for try_size in size_fallbacks:
-                        try:
-                            api_results = ddgs.images(
-                                query,
-                                region=region,
-                                max_results=max_results,
-                                timelimit=timelimit,
-                                size=try_size,
-                                color=kwargs.get("color"),
-                                type_image=kwargs.get("type_image"),
-                                layout=kwargs.get("layout"),
-                                license_image=kwargs.get("license_image"),
-                            )
-                            break
-                        except Exception:
-                            continue
-                    if api_results is None:
-                        api_results = []
-                else:
-                    return []
-
-                for r in api_results:
-                    url = r.get("href", r.get("url", r.get("content", "")))
-                    if not url:
-                        continue
-
-                    source = Source(
-                        url=url,
-                        title=r.get("title", ""),
-                        snippet=r.get("body", r.get("description", "")),
-                        rank=0,  # Assigned later after deduplication
-                        engine=f"DDG-{search_type.capitalize()}",
-                        date=r.get("date", r.get("published", "")),
-                        extra={},
-                    )
-
-                    # Extract type-specific extra metadata
-                    if search_type == "videos":
-                        source.extra["duration"] = r.get("duration")
-                        source.extra["publisher"] = r.get("publisher")
-                    elif search_type == "books":
-                        source.extra["author"] = r.get("author")
-                        source.extra["year"] = r.get("year")
-                    elif search_type == "images":
-                        # For images, 'image' field is the direct image URL;
-                        # 'href'/'url' is the source page URL
-                        source.url = r.get("image", url)
-                        source.extra["source_url"] = url
-                        source.extra["thumbnail"] = r.get("thumbnail")
-                        source.extra["width"] = r.get("width")
-                        source.extra["height"] = r.get("height")
-                        source.extra["source"] = r.get("source")
-
-                    results.append(source)
-        except Exception as e:
-            results.append(
-                Source(url="error", title=f"Error: {str(e)}", engine="error")
-            )
-        return results
-
-    def _cross_validate(self, all_results: List[Source]) -> List[Source]:
-        """Deduplicate results and assign ranks based on cross-validation.
-
-        URLs are normalized (scheme and www stripped) before grouping.
-        Results appearing from multiple engines are marked as cross-validated
-        and ranked higher.
-
-        Args:
-            all_results: Raw list of Source objects from all engines.
-
-        Returns:
-            Deduplicated and ranked list of Source objects, sorted with
-            cross-validated results first.
-        """
-        url_groups: Dict[str, List[Source]] = {}
-        for r in all_results:
-            if r.url == "error":
-                continue
-
-            simplified = re.sub(r"^https?://(www\.)?", "", r.url).rstrip("/")
-            simplified = simplified.split("#")[0].split("?")[0]
-
-            if not simplified:
-                continue
-
-            if simplified not in url_groups:
-                url_groups[simplified] = []
-            url_groups[simplified].append(r)
-
-        validated = []
-        for url, group in url_groups.items():
-            best_source = group[0]
-
-            if len(group) >= 2:
-                best_source.cross_validated = True
-                best_source.engine = f"{best_source.engine} (x{len(group)})"
-
-            # Use the longest snippet available across duplicates
-            valid_snippets = [s.snippet for s in group if len(s.snippet) > 20]
-            if valid_snippets:
-                best_source.snippet = max(valid_snippets, key=len)
-
-            validated.append(best_source)
-
-        # Cross-validated results first, then by original order
-        validated.sort(key=lambda x: x.cross_validated, reverse=True)
-
-        # Assign 1-based ranks
-        for i, s in enumerate(validated, 1):
-            s.rank = i
-
-        return validated
-
-    def search(
-        self,
-        query: str,
-        search_type: str = "text",
-        timelimit: Optional[str] = None,
-        region: str = "wt-wt",
-        **kwargs,
-    ) -> Answer:
-        """Search the web and return a structured Answer.
-
-        Args:
-            query: The search query string.
-            search_type: Type of search — 'text' (default), 'news', 'images',
-                'videos', or 'books'.
-            timelimit: Time filter — 'd' (past day), 'w' (past week),
-                'm' (past month), 'y' (past year), or None for no limit.
-            region: DuckDuckGo region code (default: 'wt-wt' for global).
-                Use 'zh-cn' for Chinese results, 'en-us' for US English, etc.
-            **kwargs: Additional type-specific parameters forwarded to the
-                underlying search engine (e.g., size='Large' for images).
-
-        Returns:
-            An Answer object containing the query, sources, confidence level,
-            validation statistics, and elapsed time.
-
-        Example:
-            searcher = UltimateSearcher()
-            answer = searcher.search(
-                "OpenAI GPT-4o release",
-                search_type="news",
-                timelimit="w",
-            )
-            print(answer.confidence)   # HIGH / MEDIUM / LOW
-            print(answer.sources[0].url)
-        """
-        start_time = time.time()
-
-        # Fetch enough results in a single request to avoid wasted network calls
-        max_results = 30 if search_type == "text" else 20
-
-        # ThreadPoolExecutor kept for future multi-engine expansion
-        engines = [(self._search_ddgs, query, search_type, timelimit, region, max_results)]
-
-        all_results = []
-        errors = []
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            futures = [
-                executor.submit(e[0], e[1], e[2], e[3], e[4], e[5], **kwargs)
-                for e in engines
-            ]
-            for future in as_completed(futures):
-                res = future.result()
-                for r in res:
-                    if r.url == "error":
-                        errors.append(r.title)
-                    else:
-                        all_results.append(r)
-
-        validated_results = self._cross_validate(all_results)
-
-        # Build a concise markdown summary of the top 5 sources
-        if validated_results:
-            answer_parts = []
-            for i, s in enumerate(validated_results[:5], 1):
-                badge = "✓" if s.cross_validated else "○"
-                answer_parts.append(f"{i}. {badge} [{s.title}]({s.url})")
-            answer_text = "Top Sources:\n" + "\n".join(answer_parts)
-        else:
-            error_detail = f" (Errors: {'; '.join(errors)})" if errors else ""
-            answer_text = f"No results found. The search engine may be rate-limited.{error_detail}"
-
-        cross_count = sum(1 for s in validated_results if s.cross_validated)
-        confidence = "HIGH" if cross_count >= 2 else ("MEDIUM" if validated_results else "LOW")
-
-        return Answer(
-            query=query,
-            search_type=search_type,
-            answer=answer_text,
-            confidence=confidence,
-            sources=validated_results[:max_results],
-            validation={
-                "total_results": len(all_results),
-                "unique_results": len(validated_results),
-                "cross_validated": cross_count,
-            },
-            metadata={
-                "engines_used": [e[2] for e in engines],
-                "errors": errors,
-            },
-            elapsed_ms=int((time.time() - start_time) * 1000),
-        )
+from free_web_search.core import (
+    Answer,
+    CrossValidatedSearcher,
+    Source,
+    UltimateSearcher,
+    VerificationResult,
+)
 
 
 def main():
     """CLI entry point for search-web command."""
     parser = argparse.ArgumentParser(
-        description="Free Web Search Ultimate (v13.0)",
+        description="Cross-Validated Search CLI (package: free-web-search-ultimate)",
         epilog=(
             "Examples:\n"
             "  search-web \"Python 3.12\"\n"
@@ -399,6 +52,12 @@ def main():
         "--json",
         action="store_true",
         help="Output results in JSON format",
+    )
+    parser.add_argument(
+        "--provider",
+        action="append",
+        dest="providers",
+        help="Search provider to use. Repeat to enable multiple providers, e.g. --provider ddgs --provider searxng",
     )
 
     # Image-specific parameters
@@ -435,7 +94,7 @@ def main():
         skill_msg = f"\n📖 SKILL.md: {skill_path}" if os.path.exists(skill_path) else ""
 
         print(f"\n{'='*60}")
-        print("🔍 Free Web Search Ultimate REPL (v13.0)")
+        print("🔍 Cross-Validated Search REPL")
         print("Type your query and press Enter. Type 'exit' or 'quit' to quit.")
         print("Advanced options can be appended after the query, e.g.:")
         print("  apple --type news")
@@ -472,6 +131,7 @@ def main():
                         search_type=parsed_repl.type,
                         timelimit=parsed_repl.timelimit,
                         region=parsed_repl.region,
+                        providers=parsed_repl.providers,
                         **kwargs,
                     )
                     print(
@@ -505,6 +165,7 @@ def main():
         search_type=args.type,
         timelimit=args.timelimit,
         region=args.region,
+        providers=args.providers,
         **kwargs,
     )
 

@@ -1,0 +1,16 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://docs.python.org/3/whatsnew/3.13.html",
+      "title": "Official Python 3.13 documentation",
+      "snippet": "Official release notes confirm Python 3.13 remains the stable release.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    }
+  ],
+  "pages": {}
+}

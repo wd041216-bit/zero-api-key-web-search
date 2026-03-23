@@ -1,14 +1,27 @@
-"""
-Unit tests for free_web_search.search_web module.
-"""
+"""Unit tests for free_web_search.search_web module."""
+from pathlib import Path
 import json
+import os
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-sys.path.insert(0, ".")
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from free_web_search.search_web import Answer, Source, UltimateSearcher
+from free_web_search.providers.base import ProviderResult
+
+
+class FakeProvider:
+    def __init__(self, name, results=None, error=None):
+        self.name = name
+        self._results = results or []
+        self._error = error
+
+    def search(self, query, search_type, timelimit=None, region="wt-wt", max_results=15, **kwargs):
+        if self._error is not None:
+            raise self._error
+        return list(self._results)
 
 
 class TestSourceDataclass(unittest.TestCase):
@@ -47,61 +60,140 @@ class TestUltimateSearcher(unittest.TestCase):
         """UltimateSearcher should store the timeout value."""
         self.assertEqual(self.searcher.timeout, 5)
 
-    @patch("free_web_search.search_web.DDGS")
-    def test_search_ddgs_text_returns_sources(self, mock_ddgs_class):
-        """_search_ddgs should return a list of Source objects for text search."""
-        mock_ddgs = MagicMock()
-        mock_ddgs_class.return_value.__enter__ = MagicMock(return_value=mock_ddgs)
-        mock_ddgs_class.return_value.__exit__ = MagicMock(return_value=False)
-        mock_ddgs.text.return_value = [
-            {
-                "href": "https://example.com",
-                "title": "Example",
-                "body": "A test snippet",
-            }
-        ]
-        results = self.searcher._search_ddgs("test query", "text", max_results=5)
-        self.assertIsInstance(results, list)
-        if results:
-            self.assertIsInstance(results[0], Source)
-            self.assertEqual(results[0].url, "https://example.com")
-
-    @patch("free_web_search.search_web.DDGS")
-    def test_search_ddgs_handles_exception(self, mock_ddgs_class):
-        """_search_ddgs should return an empty list when DDGS raises an exception."""
-        mock_ddgs_class.return_value.__enter__ = MagicMock(
-            side_effect=Exception("Network error")
-        )
-        mock_ddgs_class.return_value.__exit__ = MagicMock(return_value=False)
-        results = self.searcher._search_ddgs("test query", "text")
-        self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 0)
-
     def test_search_returns_answer_object(self):
         """search() should return an Answer dataclass instance."""
-        with patch.object(
-            self.searcher,
-            "_search_ddgs",
-            return_value=[
-                Source(
-                    url="https://example.com",
-                    title="Example",
-                    snippet="snippet",
-                    rank=1,
-                    engine="ddgs",
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [
+                        ProviderResult(
+                            url="https://example.com",
+                            title="Example",
+                            snippet="snippet",
+                        )
+                    ],
                 )
             ],
-        ):
-            result = self.searcher.search("python testing", search_type="text")
-            self.assertIsInstance(result, Answer)
-            self.assertEqual(result.query, "python testing")
-            self.assertIn("sources", result.__dataclass_fields__)
+        )
+        result = searcher.search("python testing", search_type="text")
+        self.assertIsInstance(result, Answer)
+        self.assertEqual(result.query, "python testing")
+        self.assertIn("sources", result.__dataclass_fields__)
+        self.assertEqual(result.metadata["providers_used"], ["ddgs"])
+
+    def test_search_provider_handles_exception(self):
+        """Provider failures should be surfaced as search errors, not crashes."""
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[FakeProvider("ddgs", error=RuntimeError("Network error"))],
+        )
+
+        result = searcher.search("python testing", search_type="text")
+
+        self.assertEqual(result.sources, [])
+        self.assertEqual(result.metadata["providers_used"], [])
+        self.assertTrue(any("Network error" in error for error in result.metadata["errors"]))
 
     def test_search_empty_query(self):
         """search() should handle empty queries gracefully."""
-        with patch.object(self.searcher, "_search_ddgs", return_value=[]):
-            result = self.searcher.search("", search_type="text")
-            self.assertIsInstance(result, Answer)
+        searcher = UltimateSearcher(timeout=5, providers=[FakeProvider("ddgs", [])])
+        result = searcher.search("", search_type="text")
+        self.assertIsInstance(result, Answer)
+
+    def test_search_can_aggregate_multiple_providers(self):
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [
+                        ProviderResult(
+                            url="https://example.com/ddgs",
+                            title="DDGS result",
+                            snippet="snippet",
+                        )
+                    ],
+                ),
+                FakeProvider(
+                    "searxng",
+                    [
+                        ProviderResult(
+                            url="https://example.org/searx",
+                            title="SearXNG result",
+                            snippet="snippet",
+                        )
+                    ],
+                ),
+            ],
+        )
+        result = searcher.search(
+            "python release",
+            providers=["ddgs", "searxng"],
+        )
+
+        self.assertEqual(result.metadata["providers_used"], ["ddgs", "searxng"])
+        self.assertEqual(result.validation["providers_requested"], ["ddgs", "searxng"])
+        self.assertGreaterEqual(len(result.sources), 2)
+
+    def test_default_providers_detects_searxng_env(self):
+        with patch.dict(os.environ, {"CROSS_VALIDATED_SEARCH_SEARXNG_URL": "https://searx.example"}, clear=False):
+            providers = [provider.name for provider in self.searcher._default_providers()]
+        self.assertEqual(providers, ["ddgs", "searxng"])
+
+    def test_default_providers_detects_searxng_alias_env(self):
+        with patch.dict(os.environ, {"SEARXNG_URL": "https://searx.example"}, clear=False):
+            providers = [provider.name for provider in self.searcher._default_providers()]
+        self.assertEqual(providers, ["ddgs", "searxng"])
+
+    def test_search_metadata_includes_free_provider_guidance(self):
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [
+                        ProviderResult(
+                            url="https://example.com",
+                            title="Example",
+                            snippet="snippet",
+                        )
+                    ],
+                )
+            ],
+        )
+        result = searcher.search("python release", search_type="text")
+        guidance = result.metadata["provider_guidance"]
+        self.assertEqual(guidance["free_recommended_pair"], ["ddgs", "searxng"])
+        self.assertIn("CROSS_VALIDATED_SEARCH_SEARXNG_URL", guidance["free_setup_hint"])
+        self.assertFalse(guidance["searxng_configured"])
+
+    def test_search_metadata_marks_free_dual_provider_active(self):
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [
+                        ProviderResult(
+                            url="https://example.com",
+                            title="Example",
+                            snippet="snippet",
+                        )
+                    ],
+                )
+            ],
+        )
+        with patch.dict(os.environ, {"CROSS_VALIDATED_SEARCH_SEARXNG_URL": "https://searx.example"}, clear=False):
+            result = searcher.search("python release", search_type="text")
+        guidance = result.metadata["provider_guidance"]
+        self.assertTrue(guidance["searxng_configured"])
+        self.assertEqual(guidance["recommended_next_step"], "Free dual-provider path is active.")
+
+    def test_search_rejects_unknown_provider(self):
+        with self.assertRaises(ValueError):
+            self.searcher.search("python", providers=["unknown"])
 
 
 class TestAnswerSerialization(unittest.TestCase):
@@ -109,29 +201,31 @@ class TestAnswerSerialization(unittest.TestCase):
 
     def test_answer_json_serializable(self):
         """Answer object should be serializable to JSON."""
-        searcher = UltimateSearcher(timeout=5)
-        with patch.object(
-            searcher,
-            "_search_ddgs",
-            return_value=[
-                Source(
-                    url="https://example.com",
-                    title="Test",
-                    snippet="test snippet",
-                    rank=1,
-                    engine="ddgs",
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [
+                        ProviderResult(
+                            url="https://example.com",
+                            title="Test",
+                            snippet="test snippet",
+                        )
+                    ],
                 )
             ],
-        ):
-            result = searcher.search("test", search_type="text")
-            from dataclasses import asdict
+        )
+        result = searcher.search("test", search_type="text")
+        from dataclasses import asdict
 
-            result_dict = asdict(result)
-            json_str = json.dumps(result_dict)
-            self.assertIsInstance(json_str, str)
-            parsed = json.loads(json_str)
-            self.assertIn("query", parsed)
-            self.assertIn("sources", parsed)
+        result_dict = asdict(result)
+        json_str = json.dumps(result_dict)
+        self.assertIsInstance(json_str, str)
+        parsed = json.loads(json_str)
+        self.assertIn("query", parsed)
+        self.assertIn("sources", parsed)
+        self.assertIn("provider_guidance", parsed["metadata"])
 
 
 if __name__ == "__main__":

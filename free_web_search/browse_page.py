@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Free Web Search Ultimate - Web Page Browser and Text Extractor (v13.0).
+"""Cross-Validated Search - Web Page Browser and Text Extractor.
 
 Fetches a URL, handles gzip/deflate decompression, and extracts readable
 text content using BeautifulSoup (with a regex fallback).
@@ -11,14 +11,10 @@ import argparse
 import gzip
 import json
 import re
-import ssl
 import sys
 import urllib.request
 
-# Disable SSL verification globally to handle restrictive network environments
-ctx = ssl.create_default_context()
-ctx.check_hostname = False
-ctx.verify_mode = ssl.CERT_NONE
+from free_web_search.transport import build_ssl_context, insecure_ssl_enabled
 
 
 def extract_text(html: str):
@@ -105,9 +101,11 @@ def browse(url: str, max_chars: int = 10000) -> dict:
         "Accept-Encoding": "gzip, deflate",
     }
 
+    context = build_ssl_context()
+
     try:
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=15, context=ctx) as r:
+        with urllib.request.urlopen(req, timeout=15, context=context) as r:
             raw = r.read()
             encoding = r.headers.get("Content-Encoding", "")
 
@@ -130,19 +128,21 @@ def browse(url: str, max_chars: int = 10000) -> dict:
                 "content": content,
                 "truncated": is_truncated,
                 "total_length": len(text),
+                "insecure_ssl": insecure_ssl_enabled(),
             }
     except Exception as e:
         return {
             "status": "error",
             "url": url,
             "error": str(e),
+            "insecure_ssl": insecure_ssl_enabled(),
         }
 
 
 def main():
     """CLI entry point for browse-page command."""
     parser = argparse.ArgumentParser(
-        description="Free Web Search Ultimate - Web Page Browser (v13.0)",
+        description="Cross-Validated Search page reader (package: free-web-search-ultimate)",
         epilog=(
             "Examples:\n"
             "  browse-page https://example.com\n"

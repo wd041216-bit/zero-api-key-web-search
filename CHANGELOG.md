@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Aligned README, contributing docs, and bundled skill docs with the current published package and CLI surface.
+- Corrected the repository license wording to match the actual `LICENSE` file.
+- Updated the test suite to validate the active `free_web_search.search_web` and `browse_page` implementations.
+- Updated CI to fail on real test regressions instead of continuing after errors.
+- Consolidated search logic into a shared core to reduce drift between `search_web.py` and `search.py`.
+- Switched TLS handling to secure-by-default with explicit opt-in insecure mode for constrained environments.
+- Added CLI and MCP smoke tests plus a modern `pyproject.toml` packaging source of truth.
+- Tightened public docs and platform instructions so they describe the current evidence-aware implementation instead of overstating guarantees.
+
+### Added
+- Added `verify-claim`, a first-pass evidence workflow that classifies search results as supporting, conflicting, or neutral and returns a structured verdict.
+- Added `evidence-report`, a higher-level workflow that combines search, verification, citation-ready source digests, and recommended next steps.
+- Added MCP support for `verify_claim` so agent clients can request claim verification directly.
+- Added MCP support for `evidence_report` so agent clients can request a compact evidence package directly.
+- Added a self-hosted SearXNG setup guide for the recommended free dual-provider path.
+- Added `docker-compose.searxng.yml`, `scripts/start-searxng.sh`, and `scripts/validate-free-path.sh` for lower-friction local SearXNG bootstrapping.
+- Added trust-model, release, support, and security docs plus reproducible quickstart examples.
+- Added build and wheel-install validation to CI for release-grade packaging checks.
+- Added evidence-aware verification metadata such as score breakdown, provider diversity, and contention summaries.
+- Added an explainable evidence model document at `docs/verification-model.md`.
+
+### Changed
+- Upgraded `verify-claim` to `evidence-aware-heuristic-v2` with source-quality, freshness, and domain-diversity scoring.
+- Expanded CLI and MCP outputs to expose weighted support/conflict signals for auditability.
+- Expanded the flagship CLI, MCP, README, and platform skill surfaces to expose `evidence-report` as the preferred reviewer-facing workflow.
+- Improved free-path guidance so warnings and docs now point directly to self-hosted `searxng` as the recommended second provider.
+- Updated README and skill surfaces to describe the current evidence model without overclaiming beyond the implementation.
+
 ## [15.0.0] - 2026-03-20
 
 ### Added
@@ -42,25 +73,23 @@ To enable IDE-specific features:
 
 ## [14.0.0] - 2026-03-19
 
-### BREAKING CHANGE
-- **Renamed from `free-web-search-ultimate` to `cross-validated-search`**
-- Package name changed: `pip install cross-validated-search`
-- CLI command changed: `search-web` → `cross-validate`
-- MCP server changed: `free-web-search-mcp` → `cross-validated-mcp`
-- Module changed: `free_web_search` → `cross_validated_search`
-- GitHub repository renamed: `wd041216-bit/cross-validated-search`
+### Changed
+- Repository branding shifted toward **Cross-Validated Search** and the GitHub repository moved to `wd041216-bit/cross-validated-search`.
+- The published compatibility surface remained stable:
+  - package: `free-web-search-ultimate`
+  - CLI: `search-web`, `browse-page`
+  - MCP server: `free-web-search-mcp`
+  - Python module: `free_web_search`
 
 ### Added
 - **Anti-Hallucination Focus**: Repositioned as the primary solution for preventing LLM hallucinations
 - **Confidence Scoring System**: Explicit confidence levels (✅ Verified, 🟢 Likely True, 🟡 Uncertain, 🔴 Likely False)
 - **Cross-Validation Guarantees**: Every fact is verified against multiple independent sources
 - **Conflict Detection**: Automatically flags conflicting information across sources
-- **Minimum Sources Parameter**: `CrossValidatedSearcher(min_sources=3)` for configurable verification depth
 - Enhanced documentation with decision tree for agents
 - New keywords: hallucination, cross-validation, verification, anti-hallucination
 
 ### Changed
-- Class renamed: `UltimateSearcher` → `CrossValidatedSearcher`
 - Focus shifted from "free search" to "hallucination prevention"
 - All documentation updated to emphasize cross-validation and anti-hallucination
 - Confidence scoring now explicit: HIGH (3+ sources), MEDIUM (2 sources), LOW (1 source)
@@ -68,27 +97,13 @@ To enable IDE-specific features:
 
 ### Migration Guide
 
-**Before (v13.x):**
+**No install or command migration was required in v14.x.**
+
+The repository branding changed, but the supported install and command surface stayed:
+
 ```bash
 pip install free-web-search-ultimate
 search-web "query"
-```
-
-**After (v14.x):**
-```bash
-pip install cross-validated-search
-cross-validate "query"
-```
-
-**Python API:**
-```python
-# Before
-from free_web_search.search_web import UltimateSearcher
-searcher = UltimateSearcher()
-
-# After
-from cross_validated_search.search import CrossValidatedSearcher
-searcher = CrossValidatedSearcher()
 ```
 
 ## [13.0.0] - 2026-03-18

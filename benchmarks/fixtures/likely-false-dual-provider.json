@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs", "searxng"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://updates.example.com/example-statement-correction",
+      "title": "Correction says the statement is false",
+      "snippet": "An official correction says the Example statement is false, inaccurate, and should not be repeated after the correction.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    },
+    {
+      "url": "https://factcheck.example.org/example-statement",
+      "title": "Fact check rejects the corrected claim",
+      "snippet": "A fact check says the Example statement remains incorrect after the correction and is not accurate.",
+      "engine": "SEARXNG-Text",
+      "date": "2026-03-19"
+    }
+  ],
+  "pages": {}
+}

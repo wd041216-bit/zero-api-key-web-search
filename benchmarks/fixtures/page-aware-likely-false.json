@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://example.org/correction-page",
+      "title": "Statement update",
+      "snippet": "An update discusses the statement but does not summarize the correction in the snippet.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    }
+  ],
+  "pages": {
+    "https://example.org/correction-page": {
+      "status": "success",
+      "url": "https://example.org/correction-page",
+      "title": "Correction page",
+      "content": "This correction explains the statement is false, incorrect, and should no longer be treated as true.",
+      "truncated": false,
+      "total_length": 103
+    }
+  }
+}

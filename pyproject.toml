@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "free-web-search-ultimate"
+version = "15.0.0"
+description = "Evidence-aware web search, browsing, and claim verification for AI agents."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+  { name = "wd041216-bit", email = "wd041216@uw.edu" }
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "urllib3>=1.26.0",
+  "beautifulsoup4>=4.9.0",
+  "lxml>=4.6.0",
+  "ddgs>=0.1.0",
+  "mcp>=1.1.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/wd041216-bit/cross-validated-search"
+Repository = "https://github.com/wd041216-bit/cross-validated-search"
+Issues = "https://github.com/wd041216-bit/cross-validated-search/issues"
+Changelog = "https://github.com/wd041216-bit/cross-validated-search/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/wd041216-bit/cross-validated-search/tree/main/docs"
+
+[project.scripts]
+search-web = "free_web_search.search_web:main"
+browse-page = "free_web_search.browse_page:main"
+free-web-search-mcp = "free_web_search.mcp_server:run"
+verify-claim = "free_web_search.verify_claim:main"
+evidence-report = "free_web_search.evidence_report:main"
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2.2",
+  "twine>=6.1.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["free_web_search*"]
+
+[tool.setuptools.package-data]
+free_web_search = ["skills/*.md"]

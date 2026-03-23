@@ -1,93 +1,43 @@
 ---
 name: cross-validated-search
 description: >
-  Cross-Validated Web Search for Hallucination-Free LLM Responses.
-  Multi-source verification prevents AI hallucinations.
-  Zero-cost, privacy-first, supports text/news/images/books/videos.
+  Gemini-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
+  Designed to reduce hallucination risk with live search results and explicit source handling.
 version: "15.0.0"
 user-invocable: true
 ---
 
 # Cross-Validated Search for Gemini CLI
 
-Work like a researcher: Always verify facts with multiple sources before answering.
+Use this skill when Gemini needs current information, supporting sources, or a quick support/conflict read on a factual claim.
 
-## Installation
+## Install
 
 ```bash
 pip install free-web-search-ultimate
 ```
 
-## Commands
+## Core Commands
 
 ```bash
-# General knowledge (cross-validated)
-search-web "What is the population of Tokyo?"
-
-# News search with time filter
-search-web "OpenAI GPT-5 release date" --type news --timelimit w
-
-# Images (verified sources)
-search-web "neural network architecture diagram" --type images
-
-# Academic sources
-search-web "transformer attention mechanism" --type books
-
-# Region-specific
-search-web "人工智能最新进展" --region zh-cn
-
-# JSON output
-search-web "quantum computing" --json
-
-# Read full page content
-browse-page "https://arxiv.org/abs/2303.08774"
+search-web "latest Python release" --type news --timelimit w
+verify-claim "Python 3.13 is the latest stable release" --json
+browse-page "https://docs.python.org/3/whatsnew/"
 ```
 
 ## When to Use
 
-**Trigger:**
-- Factual questions about events, people, dates, statistics
-- Questions about recent events (< 1 year)
-- Questions requiring verification
-- User asks for sources or citations
+- factual questions about people, companies, dates, versions, or statistics
+- recent events or time-sensitive changes
+- tasks that require citations
+- cases where conflicting sources should be shown explicitly
 
-## Confidence Levels
+## Limits
 
-| Score | Meaning | Action |
-|-------|---------|--------|
-| ✅ Verified | 3+ sources agree, high authority | Report as fact |
-| 🟢 Likely True | 2 sources agree, medium confidence | Cite with note |
-| 🟡 Uncertain | Single source or minor conflicts | Flag as unverified |
-| 🔴 Likely False | Major contradictions or no sources | Do not use |
-
-## Anti-Hallucination Guarantees
-
-1. **Multi-Source Verification** — Facts verified against multiple independent sources
-2. **Confidence Scoring** — Clear indication of reliability
-3. **Source Attribution** — Every claim includes verifiable URLs
-4. **Conflict Detection** — Conflicting information flagged
-5. **Time-Sensitive Results** — Recent results for current events
-
-## MCP Integration
-
-For Gemini CLI with MCP support:
-
-```json
-{
-  "mcpServers": {
-    "free-web-search": {
-      "command": "free-web-search-mcp",
-      "args": []
-    }
-  }
-}
-```
-
-## Requirements
-
-- Python 3.10+
-- `beautifulsoup4`, `lxml`, `ddgs`, `mcp>=1.1.2`
+- `verify-claim` is a heuristic first pass, not a fact-level proof engine.
+- The default provider path is `ddgs`.
+- Conflicts are surfaced, not automatically resolved.
 
 ## License
 
-MIT-0 — Free to use, modify, and redistribute.
+MIT License.

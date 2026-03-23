@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs", "searxng"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://docs.python.org/3/whatsnew/3.13.html",
+      "title": "Python 3.13 documentation overview",
+      "snippet": "Official documentation confirms Python 3.13 is the current stable release.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    },
+    {
+      "url": "https://www.python.org/downloads/release/python-3130/",
+      "title": "Python 3.13.0 release page",
+      "snippet": "Python.org release notes identify Python 3.13 as the stable release line.",
+      "engine": "SEARXNG-Text",
+      "date": "2026-03-19"
+    }
+  ],
+  "pages": {}
+}

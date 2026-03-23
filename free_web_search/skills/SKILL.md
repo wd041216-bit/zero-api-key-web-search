@@ -1,139 +1,59 @@
 ---
-name: free-web-search-ultimate
-version: "11.0.0"
+name: cross-validated-search
+version: "15.0.0"
 description: >
-  Universal Search-First Knowledge Acquisition Plugin for LLMs.
-  Enables real-time web search and deep page browsing via MCP or CLI.
-  Zero-cost, privacy-first, supports text/news/images/books/videos.
-homepage: https://github.com/wd041216-bit/free-web-search-ultimate
+  OpenClaw skill for source-backed web search, page reading, and evidence-aware claim checking.
+  Use it to verify factual answers with live search results and explicit source handling.
+homepage: https://github.com/wd041216-bit/cross-validated-search
 ---
 
-# Free Web Search Ultimate v11.0 — Search-First Paradigm
+# Cross-Validated Search for OpenClaw
 
-## Overview
+This skill gives OpenClaw a practical verification workflow:
 
-This skill enables real-time web search and page browsing for any LLM agent. It introduces a **Search-First** approach to knowledge acquisition: instead of relying solely on training data, the agent should use live web search as the primary source for factual, technical, and time-sensitive information.
+- `search-web` for live search results
+- `browse-page` for reading the full content of a source
+- `verify-claim` for support/conflict classification
+- `evidence-report` for a citation-ready summary with next steps
 
-## Core Behavior Guidelines
-
-When this skill is active, the agent should follow these guidelines:
-
-**Guideline 1 — Search Before Answering**: For questions involving facts, current events, software versions, statistics, people, companies, or technical documentation, call `search-web` before generating a response.
-
-**Guideline 2 — Treat Training Data as a Starting Point**: Training data has a cutoff date. For any claim that may have changed recently, verify it via search.
-
-**Guideline 3 — Deep-Dive When Needed**: If search snippets don't provide enough detail, use `browse-page` to read the full source document.
-
-**Guideline 4 — Always Cite Sources**: Every factual statement in the final response should be accompanied by the source URL from search results.
-
-**Guideline 5 — Prefer News for Recency**: For anything that happened in the last year, use `search-web --type news` to get the most recent information.
-
-## Available Commands
-
-### `search-web` — Real-Time Web Search
+## Install
 
 ```bash
-# General knowledge (default)
-search-web "query here"
-
-# Current events and news
-search-web "query here" --type news
-
-# Images
-search-web "query here" --type images
-
-# Academic / books
-search-web "query here" --type books
-
-# Videos
-search-web "query here" --type videos
-
-# Region-specific (e.g., Chinese)
-search-web "查询内容" --region zh-cn
-
-# Time-limited (d=day, w=week, m=month, y=year)
-search-web "query here" --timelimit w
-
-# Machine-readable JSON output
-search-web "query here" --json
+pip install free-web-search-ultimate
 ```
 
-### `browse-page` — Deep Page Reading
+## Minimum verification
 
 ```bash
-# Read full content of a URL
-browse-page "https://example.com/article"
-
-# JSON output
-browse-page "https://example.com/article" --json
+search-web "OpenAI API pricing" --type news --timelimit w
+verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
+evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
 ```
 
-## Decision Tree for Agents
+## Recommended flow
 
-```
-User asks a question
-        │
-        ▼
-Is it purely creative/hypothetical?
-   YES → Answer directly
-   NO  ▼
-Does it involve facts, events, versions, or data?
-   YES ▼
-Run: search-web "<query>" [--type news if recent event]
-        │
-        ▼
-Are snippets sufficient to answer?
-   YES → Synthesize answer + cite sources
-   NO  ▼
-Run: browse-page "<top_result_url>"
-        │
-        ▼
-Synthesize answer from full page content + cite source
-```
+1. Run `search-web` for factual or recent questions.
+2. Use `browse-page` on the most relevant source when snippets are not enough.
+3. Use `verify-claim` when a concrete claim needs a support/conflict summary.
+4. Use `evidence-report` when you want a compact evidence package with citations and next steps.
+5. Use `--deep` when the claim matters enough to justify page-aware verification.
+6. Cite the returned URLs in the final answer.
 
-## Why Search-First?
+## What success looks like
 
-| Default LLM Behavior | Search-First Behavior |
-|---|---|
-| Answers from training data | Answers from live web |
-| Knowledge cutoff applies | Always up-to-date |
-| May produce outdated facts | Cites verifiable sources |
-| Single knowledge source | Multi-source cross-validation |
+- the verdict is explicit
+- the result includes support and conflict scores
+- `page_aware` is true when deep verification ran
+- the recommended free path is `ddgs + self-hosted searxng`
+- source URLs are ready to cite
 
-## Integration
+## Limits
 
-This skill works with:
-- **OpenClaw** — native skill integration
-- **Claude Desktop / Cursor** — via MCP server (`free-web-search-mcp`)
-- **LangChain** — via Python tool wrappers
-- **OpenAI Function Calling** — via JSON schema definitions
-
-## MCP Server Setup (Claude Desktop / Cursor)
-
-Add to your `claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "free-web-search": {
-      "command": "free-web-search-mcp",
-      "args": []
-    }
-  }
-}
-```
-
-Install via pip from the GitHub repository:
-
-```bash
-pip install git+https://github.com/wd041216-bit/free-web-search-ultimate.git
-```
-
-## Requirements
-
-- Python 3.8+
-- `beautifulsoup4`, `lxml`, `ddgs`, `mcp>=1.1.2`
+- `verify-claim` is heuristic and evidence-aware, not a proof engine.
+- The default provider path is `ddgs`.
+- The recommended free upgrade path is self-hosted `searxng` via `CROSS_VALIDATED_SEARCH_SEARXNG_URL`.
+- Conflicting sources are surfaced, not automatically reconciled.
 
 ## License
 
-MIT-0 — Free to use, modify, and redistribute. No attribution required.
+MIT License.
