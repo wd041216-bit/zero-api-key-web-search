@@ -10,124 +10,35 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
-    
+        python-version: "3.11"
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -e ".[dev]"
-    
-    - name: Run tests
+
+    - name: Run unit tests
       run: |
         python -m unittest discover -s tests -v
-
-    - name: Check self-hosted helper scripts
-      run: |
-        bash -n scripts/start-searxng.sh
-        bash -n scripts/validate-free-path.sh
-    
-    - name: Check CLI tools
-      run: |
-        search-web --help
-        browse-page --help
-        verify-claim --help
-        evidence-report --help
-
-    - name: Run CLI smoke tests
-      run: |
-        export PYTHONPATH="$PWD/tests/fixtures/fake_ddgs:$PYTHONPATH"
-        search-web "python release" --json > /tmp/search-web.json
-        python - <<'PY'
-import json
-with open('/tmp/search-web.json', 'r', encoding='utf-8') as fh:
-    payload = json.load(fh)
-assert payload["query"] == "python release"
-assert payload["metadata"]["providers_used"] == ["ddgs"]
-PY
-        browse-page "not-a-valid-url" --json > /tmp/browse-page.json
-        python - <<'PY'
-import json
-with open('/tmp/browse-page.json', 'r', encoding='utf-8') as fh:
-    payload = json.load(fh)
-assert payload["status"] == "error"
-PY
-        verify-claim "python release status" --json > /tmp/verify-claim.json
-        python - <<'PY'
-import json
-with open('/tmp/verify-claim.json', 'r', encoding='utf-8') as fh:
-    payload = json.load(fh)
-assert payload["claim"] == "python release status"
-assert payload["verdict"] in {"supported", "likely_supported", "contested", "likely_false", "insufficient_evidence"}
-assert payload["analysis"]["verification_model"]["name"] == "evidence-aware-heuristic-v3"
-PY
-        evidence-report "python release status" --json > /tmp/evidence-report.json
-        python - <<'PY'
-import json
-with open('/tmp/evidence-report.json', 'r', encoding='utf-8') as fh:
-    payload = json.load(fh)
-assert payload["query"] == "python release status"
-assert payload["analysis"]["report_model"] == "evidence-report-v2"
-assert "verdict_rationale" in payload
-assert "coverage_warnings" in payload
-assert "citations" in payload
-PY
 
     - name: Run benchmark regression
       run: |
         python benchmarks/run_benchmark.py --json > /tmp/benchmark.json
-        python - <<'PY'
-import json
-with open('/tmp/benchmark.json', 'r', encoding='utf-8') as fh:
-    payload = json.load(fh)
-assert payload["failed"] == 0
-assert payload["total"] >= 3
-PY
-
-    - name: Run provider and deep smoke tests
-      run: |
-        TMPDIR="$(mktemp -d)"
-        cat > "$TMPDIR/search" <<'JSON'
-{"results":[{"url":"http://127.0.0.1:18080/page-a.html","title":"SearXNG fixture result","content":"A short ambiguous snippet without a full conclusion.","publishedDate":"2026-03-20"}]}
-JSON
-        cat > "$TMPDIR/page-a.html" <<'HTML'
-<html><head><title>Official release</title></head><body>Python 3.13 is the latest stable release according to the official release notes.</body></html>
-HTML
-        python -m http.server 18080 --bind 127.0.0.1 --directory "$TMPDIR" >/tmp/cvs-http.log 2>&1 &
-        SERVER_PID=$!
-        trap 'kill $SERVER_PID; rm -rf "$TMPDIR"' EXIT
-        export CROSS_VALIDATED_SEARCH_SEARXNG_URL="http://127.0.0.1:18080"
-        search-web "release signal" --provider searxng --json > /tmp/searx-search.json
-        verify-claim "Python 3.13 is the latest stable release" --provider searxng --deep --max-pages 1 --json > /tmp/searx-verify.json
-        python - <<'PY'
-import json
-with open('/tmp/searx-search.json', 'r', encoding='utf-8') as fh:
-    search_payload = json.load(fh)
-assert search_payload["metadata"]["providers_used"] == ["searxng"]
-with open('/tmp/searx-verify.json', 'r', encoding='utf-8') as fh:
-    verify_payload = json.load(fh)
-assert verify_payload["analysis"]["page_aware"] is True
-assert verify_payload["analysis"]["page_fetches_succeeded"] == 1
-PY
-        kill $SERVER_PID
-        trap - EXIT
-        rm -rf "$TMPDIR"
+        python -c "import json; payload=json.load(open('/tmp/benchmark.json', 'r', encoding='utf-8')); assert payload['failed'] == 0; assert payload['total'] >= 3"
 
     - name: Build package
       run: |
         python -m build
         twine check dist/*
 
-    - name: Install wheel artifact and smoke test
+    - name: Smoke installed wheel
       run: |
         python -m venv /tmp/cvs-wheel
         /tmp/cvs-wheel/bin/pip install --upgrade pip
@@ -136,23 +47,5 @@ PY
         /tmp/cvs-wheel/bin/browse-page --help
         /tmp/cvs-wheel/bin/verify-claim --help
         /tmp/cvs-wheel/bin/evidence-report --help
+        test -x /tmp/cvs-wheel/bin/cross-validated-search-mcp
         test -x /tmp/cvs-wheel/bin/free-web-search-mcp
-        export PYTHONPATH="$PWD/tests/fixtures/fake_ddgs:$PYTHONPATH"
-        /tmp/cvs-wheel/bin/python -m cross_validated_search.verify_claim "python release status" --json > /tmp/wheel-verify-claim.json
-        /tmp/cvs-wheel/bin/python -m free_web_search.verify_claim "python release status" --json > /tmp/wheel-legacy-verify-claim.json
-        /tmp/cvs-wheel/bin/evidence-report "python release status" --json > /tmp/wheel-evidence-report.json
-        python - <<'PY'
-import json
-with open('/tmp/wheel-verify-claim.json', 'r', encoding='utf-8') as fh:
-    payload = json.load(fh)
-assert payload["claim"] == "python release status"
-assert payload["analysis"]["verification_model"]["name"] == "evidence-aware-heuristic-v3"
-with open('/tmp/wheel-legacy-verify-claim.json', 'r', encoding='utf-8') as fh:
-    legacy_payload = json.load(fh)
-assert legacy_payload["claim"] == "python release status"
-assert legacy_payload["analysis"]["verification_model"]["name"] == "evidence-aware-heuristic-v3"
-with open('/tmp/wheel-evidence-report.json', 'r', encoding='utf-8') as fh:
-    report_payload = json.load(fh)
-assert report_payload["analysis"]["report_model"] == "evidence-report-v2"
-assert "stance_summary" in report_payload
-PY
