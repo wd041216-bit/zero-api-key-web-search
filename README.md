@@ -4,7 +4,7 @@
   <p><strong>Evidence-aware web search, browsing, and claim verification for AI agents.</strong></p>
   <p><em>CLI + MCP + skill surfaces for Gemini, OpenClaw, and other agent runtimes.</em></p>
 
-  [![PyPI package](https://badge.fury.io/py/free-web-search-ultimate.svg)](https://pypi.org/project/free-web-search-ultimate/)
+  [![PyPI package](https://badge.fury.io/py/cross-validated-search.svg)](https://pypi.org/project/cross-validated-search/)
   [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
   [![MCP Ready](https://img.shields.io/badge/MCP-Ready-purple.svg)](https://modelcontextprotocol.io/)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -12,7 +12,7 @@
 
 Cross-Validated Search is an evidence-aware verification layer for AI agents. It combines live web search, page reading, and claim checking so an agent can surface supporting evidence, conflicting evidence, and source-backed confidence before presenting factual answers.
 
-> Compatibility note: the project brand is `Cross-Validated Search`, while the published Python package and stable CLI remain `free-web-search-ultimate`, `search-web`, `browse-page`, `verify-claim`, and `free-web-search-mcp`.
+> Canonical names in v16: package `cross-validated-search`, module `cross_validated_search`, and MCP command `cross-validated-search-mcp`. Legacy `free_web_search` imports and `free-web-search-mcp` remain available as compatibility aliases.
 
 > Recommended free path: `ddgs + self-hosted SearXNG`. Configure `CROSS_VALIDATED_SEARCH_SEARXNG_URL` to unlock a free second provider and stronger evidence reports.
 
@@ -32,7 +32,7 @@ If you are reviewing this repo for collection or ecosystem inclusion, the fastes
 Install and verify the public surface:
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 search-web "Python 3.13 release" --json
 verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
 evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
@@ -154,7 +154,7 @@ The next calibration step is outlined in [docs/benchmark-plan.md](docs/benchmark
 ## Installation
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 Or install from source:
@@ -172,9 +172,9 @@ Python 3.10+ is required.
 | Surface | Status | Notes |
 | --- | --- | --- |
 | CLI | Yes | `search-web`, `browse-page`, `verify-claim`, `evidence-report` |
-| MCP | Yes | `free-web-search-mcp` |
+| MCP | Yes | `cross-validated-search-mcp` |
 | Gemini CLI | Yes | `.gemini/SKILL.md` |
-| OpenClaw | Yes | `free_web_search/skills/SKILL.md` |
+| OpenClaw | Yes | `cross_validated_search/skills/SKILL.md` |
 | Claude Code / Cursor / Continue / Copilot | Yes | Bundled skill and instruction files |
 
 ## Verification model
@@ -202,8 +202,8 @@ Add the server to your MCP client:
 ```json
 {
   "mcpServers": {
-    "free-web-search": {
-      "command": "free-web-search-mcp",
+    "cross-validated-search": {
+      "command": "cross-validated-search-mcp",
       "args": []
     }
   }

@@ -5,7 +5,7 @@ When answering factual questions, always prefer cross-validated web search over 
 ## Installation
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Trigger Conditions
@@ -92,7 +92,7 @@ For Cursor with MCP support:
 {
   "mcpServers": {
     "free-web-search": {
-      "command": "free-web-search-mcp",
+      "command": "cross-validated-search-mcp",
       "args": []
     }
   }

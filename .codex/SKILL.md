@@ -3,7 +3,7 @@ name: cross-validated-search
 description: >
   Codex-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it to verify factual answers with live results and explicit source handling.
-version: "15.0.0"
+version: "16.0.0"
 ---
 
 # Cross-Validated Search for Codex
@@ -13,7 +13,7 @@ Use this skill when a response depends on current facts, recent releases, or sou
 ## Install
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Commands

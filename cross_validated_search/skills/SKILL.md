@@ -9,9 +9,6 @@ homepage: https://github.com/wd041216-bit/cross-validated-search
 
 # Cross-Validated Search for OpenClaw
 
-This legacy skill path remains available for compatibility. The canonical bundled
-skill now lives at `cross_validated_search/skills/SKILL.md`.
-
 This skill gives OpenClaw a practical verification workflow:
 
 - `search-web` for live search results

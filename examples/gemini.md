@@ -3,7 +3,7 @@
 Install the package:
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 Use it for factual or recent queries:

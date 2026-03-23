@@ -1,6 +1,6 @@
 ---
 name: cross-validated-search
-version: "15.0.0"
+version: "16.0.0"
 description: >
   Source-backed web search, page reading, and evidence-aware claim checking for AI agents.
   Designed to reduce hallucination risk by surfacing corroborating and conflicting sources.
@@ -26,7 +26,7 @@ Use this skill when a task needs live search results, source-backed verification
 ## Install
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Core Commands
@@ -59,11 +59,12 @@ evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest 
 ## Compatibility Names
 
 - Repository: `cross-validated-search`
-- Package: `free-web-search-ultimate`
-- Module: `free_web_search`
+- Package: `cross-validated-search`
+- Module: `cross_validated_search`
 - CLI: `search-web`, `browse-page`, `verify-claim`
 - Flagship CLI: `evidence-report`
-- MCP: `free-web-search-mcp`
+- MCP: `cross-validated-search-mcp`
+- Legacy aliases: `free_web_search`, `free-web-search-mcp`
 
 ## Limits
 

@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Search the web

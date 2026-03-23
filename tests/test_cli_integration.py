@@ -45,7 +45,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_search_web_json_cli(self):
         result = subprocess.run(
-            ["search-web", "python release", "--json"],
+            [sys.executable, "-m", "cross_validated_search.search_web", "python release", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -59,7 +59,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_verify_claim_json_cli(self):
         result = subprocess.run(
-            [sys.executable, "-m", "free_web_search.verify_claim", "python release status", "--json"],
+            [sys.executable, "-m", "cross_validated_search.verify_claim", "python release status", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -75,12 +75,24 @@ class TestCliIntegration(unittest.TestCase):
         self.assertIn("verification_model", payload["analysis"])
         self.assertEqual(payload["analysis"]["verification_model"]["name"], "evidence-aware-heuristic-v3")
 
+    def test_legacy_verify_claim_module_alias(self):
+        result = subprocess.run(
+            [sys.executable, "-m", "free_web_search.verify_claim", "python release status", "--json"],
+            capture_output=True,
+            text=True,
+            check=True,
+            env=self._env_with_fake_ddgs(),
+        )
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload["claim"], "python release status")
+        self.assertEqual(payload["analysis"]["verification_model"]["name"], "evidence-aware-heuristic-v3")
+
     def test_evidence_report_json_cli(self):
         result = subprocess.run(
             [
                 sys.executable,
                 "-m",
-                "free_web_search.evidence_report",
+                "cross_validated_search.evidence_report",
                 "python release status",
                 "--json",
             ],
@@ -108,7 +120,13 @@ class TestCliIntegration(unittest.TestCase):
             server, thread, port = self._serve_tempdir(tmpdir)
             try:
                 result = subprocess.run(
-                    ["browse-page", f"http://127.0.0.1:{port}/index.html", "--json"],
+                    [
+                        sys.executable,
+                        "-m",
+                        "cross_validated_search.browse_page",
+                        f"http://127.0.0.1:{port}/index.html",
+                        "--json",
+                    ],
                     capture_output=True,
                     text=True,
                     check=True,
@@ -145,7 +163,15 @@ class TestCliIntegration(unittest.TestCase):
             env["CROSS_VALIDATED_SEARCH_SEARXNG_URL"] = f"http://127.0.0.1:{port}"
             try:
                 result = subprocess.run(
-                    ["search-web", "release signal", "--provider", "searxng", "--json"],
+                    [
+                        sys.executable,
+                        "-m",
+                        "cross_validated_search.search_web",
+                        "release signal",
+                        "--provider",
+                        "searxng",
+                        "--json",
+                    ],
                     capture_output=True,
                     text=True,
                     check=True,
@@ -198,7 +224,7 @@ class TestCliIntegration(unittest.TestCase):
                     [
                         sys.executable,
                         "-m",
-                        "free_web_search.verify_claim",
+                        "cross_validated_search.verify_claim",
                         "Python 3.13 is the latest stable release",
                         "--provider",
                         "searxng",
@@ -263,7 +289,7 @@ class TestCliIntegration(unittest.TestCase):
                     [
                         sys.executable,
                         "-m",
-                        "free_web_search.evidence_report",
+                        "cross_validated_search.evidence_report",
                         "Python 3.13 stable release",
                         "--claim",
                         "Python 3.13 is the latest stable release",

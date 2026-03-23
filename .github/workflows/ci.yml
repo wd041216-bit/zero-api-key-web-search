@@ -135,8 +135,10 @@ PY
         /tmp/cvs-wheel/bin/browse-page --help
         /tmp/cvs-wheel/bin/verify-claim --help
         /tmp/cvs-wheel/bin/evidence-report --help
+        test -x /tmp/cvs-wheel/bin/free-web-search-mcp
         export PYTHONPATH="$PWD/tests/fixtures/fake_ddgs:$PYTHONPATH"
-        /tmp/cvs-wheel/bin/python -m free_web_search.verify_claim "python release status" --json > /tmp/wheel-verify-claim.json
+        /tmp/cvs-wheel/bin/python -m cross_validated_search.verify_claim "python release status" --json > /tmp/wheel-verify-claim.json
+        /tmp/cvs-wheel/bin/python -m free_web_search.verify_claim "python release status" --json > /tmp/wheel-legacy-verify-claim.json
         /tmp/cvs-wheel/bin/evidence-report "python release status" --json > /tmp/wheel-evidence-report.json
         python - <<'PY'
 import json
@@ -144,6 +146,10 @@ with open('/tmp/wheel-verify-claim.json', 'r', encoding='utf-8') as fh:
     payload = json.load(fh)
 assert payload["claim"] == "python release status"
 assert payload["analysis"]["verification_model"]["name"] == "evidence-aware-heuristic-v3"
+with open('/tmp/wheel-legacy-verify-claim.json', 'r', encoding='utf-8') as fh:
+    legacy_payload = json.load(fh)
+assert legacy_payload["claim"] == "python release status"
+assert legacy_payload["analysis"]["verification_model"]["name"] == "evidence-aware-heuristic-v3"
 with open('/tmp/wheel-evidence-report.json', 'r', encoding='utf-8') as fh:
     report_payload = json.load(fh)
 assert report_payload["analysis"]["report_model"] == "evidence-report-v2"

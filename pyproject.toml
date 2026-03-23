@@ -3,8 +3,8 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "free-web-search-ultimate"
-version = "15.0.0"
+name = "cross-validated-search"
+version = "16.0.0"
 description = "Evidence-aware web search, browsing, and claim verification for AI agents."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -41,11 +41,12 @@ Changelog = "https://github.com/wd041216-bit/cross-validated-search/blob/main/CH
 Documentation = "https://github.com/wd041216-bit/cross-validated-search/tree/main/docs"
 
 [project.scripts]
-search-web = "free_web_search.search_web:main"
-browse-page = "free_web_search.browse_page:main"
+search-web = "cross_validated_search.search_web:main"
+browse-page = "cross_validated_search.browse_page:main"
+cross-validated-search-mcp = "cross_validated_search.mcp_server:run"
 free-web-search-mcp = "free_web_search.mcp_server:run"
-verify-claim = "free_web_search.verify_claim:main"
-evidence-report = "free_web_search.evidence_report:main"
+verify-claim = "cross_validated_search.verify_claim:main"
+evidence-report = "cross_validated_search.evidence_report:main"
 
 [project.optional-dependencies]
 dev = [
@@ -54,7 +55,8 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["free_web_search*"]
+include = ["cross_validated_search*", "free_web_search*"]
 
 [tool.setuptools.package-data]
+cross_validated_search = ["skills/*.md"]
 free_web_search = ["skills/*.md"]

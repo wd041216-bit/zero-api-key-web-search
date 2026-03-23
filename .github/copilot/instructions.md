@@ -5,7 +5,7 @@ Use Cross-Validated Search when Copilot needs live search results, source-backed
 ## Install
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Commands

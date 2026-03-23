@@ -20,10 +20,10 @@ It is not just a search wrapper because it combines:
 | Surface | Name |
 | --- | --- |
 | Repository | `cross-validated-search` |
-| PyPI package | `free-web-search-ultimate` |
-| Python module | `free_web_search` |
+| PyPI package | `cross-validated-search` |
+| Python module | `cross_validated_search` |
 | CLI | `search-web`, `browse-page`, `verify-claim`, `evidence-report` |
-| MCP server | `free-web-search-mcp` |
+| MCP server | `cross-validated-search-mcp` |
 
 ## Current maturity
 
@@ -36,11 +36,11 @@ It is not just a search wrapper because it combines:
 ## Minimum verification flow
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 search-web "Python 3.13 release" --json
 verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
 evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
-free-web-search-mcp
+cross-validated-search-mcp
 ```
 
 ## Platform entry points
@@ -48,7 +48,7 @@ free-web-search-mcp
 | Platform | Entry |
 | --- | --- |
 | Gemini | [GEMINI.md](../GEMINI.md), [`.gemini/SKILL.md`](../.gemini/SKILL.md) |
-| OpenClaw | [`free_web_search/skills/SKILL.md`](../free_web_search/skills/SKILL.md) |
+| OpenClaw | [`cross_validated_search/skills/SKILL.md`](../cross_validated_search/skills/SKILL.md) |
 | Codex | [`.codex/SKILL.md`](../.codex/SKILL.md) |
 | Claude Code | [`.claude-plugin/SKILL.md`](../.claude-plugin/SKILL.md) |
 | Copilot | [`.github/copilot/instructions.md`](../.github/copilot/instructions.md) |

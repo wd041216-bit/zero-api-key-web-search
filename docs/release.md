@@ -45,7 +45,7 @@ Check these files before release:
 - `README.md`
 - `GEMINI.md`
 - `SKILL.md`
-- `free_web_search/skills/SKILL.md`
+- `cross_validated_search/skills/SKILL.md`
 - `.gemini/SKILL.md`
 - `.claude-plugin/SKILL.md`
 - `.codex/SKILL.md`
@@ -56,10 +56,10 @@ Check these files before release:
 Keep these names consistent:
 
 - repository: `cross-validated-search`
-- package: `free-web-search-ultimate`
-- module: `free_web_search`
+- package: `cross-validated-search`
+- module: `cross_validated_search`
 - CLI: `search-web`, `browse-page`, `verify-claim`, `evidence-report`
-- MCP: `free-web-search-mcp`
+- MCP: `cross-validated-search-mcp`
 
 ## Release policy
 

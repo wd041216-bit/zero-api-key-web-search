@@ -3,7 +3,7 @@ name: cross-validated-search
 description: >
   Gemini-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Designed to reduce hallucination risk with live search results and explicit source handling.
-version: "15.0.0"
+version: "16.0.0"
 user-invocable: true
 ---
 
@@ -14,7 +14,7 @@ Use this skill when Gemini needs current information, supporting sources, or a q
 ## Install
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Core Commands

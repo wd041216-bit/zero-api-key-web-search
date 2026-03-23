@@ -3,10 +3,10 @@
 Install the package:
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
-The OpenClaw entry point is bundled at `free_web_search/skills/SKILL.md`.
+The OpenClaw entry point is bundled at `cross_validated_search/skills/SKILL.md`.
 
 Minimal flow:
 

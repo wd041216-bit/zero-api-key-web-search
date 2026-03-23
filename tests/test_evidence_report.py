@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from free_web_search.core import Answer, UltimateSearcher, Source
+from cross_validated_search.core import Answer, UltimateSearcher, Source
 
 
 class TestEvidenceReport(unittest.TestCase):

@@ -3,7 +3,7 @@ name: cross-validated-search
 description: >
   Cross-Validated Web Search for AI agents.
   Use multi-source search, confidence scoring, and citations for factual queries.
-version: "15.0.0"
+version: "16.0.0"
 ---
 
 # Cross-Validated Search for Continue
@@ -13,7 +13,7 @@ Work like a researcher: verify factual claims with multiple sources before answe
 ## Installation
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Commands

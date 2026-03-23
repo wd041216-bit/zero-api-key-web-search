@@ -5,7 +5,7 @@ Use cross-validated search when you need verified facts.
 ## Installation
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Commands

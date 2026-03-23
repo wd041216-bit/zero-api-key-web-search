@@ -3,7 +3,7 @@ name: cross-validated-search
 description: >
   Claude Code skill for source-backed web search, page reading, and evidence-aware claim checking.
   Designed to reduce hallucination risk by surfacing corroborating and conflicting sources.
-version: "15.0.0"
+version: "16.0.0"
 user-invocable: true
 allowed-tools: "Bash"
 hooks:
@@ -23,7 +23,7 @@ Use this skill when Claude Code needs current facts, supporting sources, or a qu
 ## Install
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Core Commands

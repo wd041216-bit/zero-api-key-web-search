@@ -1,4 +1,4 @@
-"""Unit tests for free_web_search.search_web module."""
+"""Unit tests for cross_validated_search.search_web module."""
 from pathlib import Path
 import json
 import os
@@ -8,8 +8,8 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from free_web_search.search_web import Answer, Source, UltimateSearcher
-from free_web_search.providers.base import ProviderResult
+from cross_validated_search.search_web import Answer, Source, UltimateSearcher
+from cross_validated_search.providers.base import ProviderResult
 
 
 class FakeProvider:

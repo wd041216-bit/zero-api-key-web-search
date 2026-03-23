@@ -5,7 +5,7 @@ Use cross-validated web search when you need accurate, verified information.
 ## Installation
 
 ```bash
-pip install free-web-search-ultimate
+pip install cross-validated-search
 ```
 
 ## Commands

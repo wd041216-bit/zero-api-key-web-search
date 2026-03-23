@@ -1,6 +1,6 @@
 {
   "name": "cross-validated-search",
-  "version": "15.0.0",
+  "version": "16.0.0",
   "description": "Source-backed web search, page reading, and evidence-aware claim checking for AI agents. Privacy-first, keyless by default, and compatible with Gemini, OpenClaw, MCP, Codex, Claude Code, and more.",
   "author": "wd041216-bit",
   "homepage": "https://github.com/wd041216-bit/cross-validated-search",

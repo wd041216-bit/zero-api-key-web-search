@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Renamed the canonical PyPI package to `cross-validated-search` and the canonical Python module to `cross_validated_search`.
+- Kept `free_web_search` imports and `free-web-search-mcp` available as compatibility aliases for existing integrations.
+- Switched packaging, Docker, CI, and platform docs to point at the canonical v16 names.
+
 ### Fixed
 - Aligned README, contributing docs, and bundled skill docs with the current published package and CLI surface.
 - Corrected the repository license wording to match the actual `LICENSE` file.
-- Updated the test suite to validate the active `free_web_search.search_web` and `browse_page` implementations.
+- Updated the test suite to validate the active `cross_validated_search.search_web` and `browse_page` implementations.
 - Updated CI to fail on real test regressions instead of continuing after errors.
 - Consolidated search logic into a shared core to reduce drift between `search_web.py` and `search.py`.
 - Switched TLS handling to secure-by-default with explicit opt-in insecure mode for constrained environments.

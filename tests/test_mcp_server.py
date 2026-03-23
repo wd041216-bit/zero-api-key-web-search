@@ -5,8 +5,8 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from free_web_search.core import Answer, Source
-from free_web_search.mcp_server import call_tool, list_tools
+from cross_validated_search.core import Answer, Source
+from cross_validated_search.mcp_server import call_tool, list_tools
 
 
 class TestMcpServer(unittest.IsolatedAsyncioTestCase):
@@ -35,7 +35,7 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
             elapsed_ms=5,
         )
 
-        with patch("free_web_search.mcp_server.searcher.search", return_value=fake_answer):
+        with patch("cross_validated_search.mcp_server.searcher.search", return_value=fake_answer):
             result = await call_tool("search_web", {"query": "python"})
 
         self.assertEqual(len(result), 1)
@@ -44,7 +44,7 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
 
     async def test_call_tool_browse_page(self):
         with patch(
-            "free_web_search.mcp_server.browse",
+            "cross_validated_search.mcp_server.browse",
             return_value={
                 "status": "success",
                 "url": "https://example.com",
@@ -92,7 +92,7 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
             },
         )()
 
-        with patch("free_web_search.mcp_server.searcher.verify_claim", return_value=fake_result):
+        with patch("cross_validated_search.mcp_server.searcher.verify_claim", return_value=fake_result):
             result = await call_tool("verify_claim", {"claim": "python"})
 
         self.assertEqual(len(result), 1)
@@ -122,7 +122,7 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
             },
         )()
 
-        with patch("free_web_search.mcp_server.searcher.verify_claim", return_value=fake_result) as mock_verify:
+        with patch("cross_validated_search.mcp_server.searcher.verify_claim", return_value=fake_result) as mock_verify:
             await call_tool(
                 "verify_claim",
                 {"claim": "python", "providers": ["searxng"], "deep": True, "max_pages": 1},
@@ -177,7 +177,7 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
             },
         )()
 
-        with patch("free_web_search.mcp_server.searcher.evidence_report", return_value=fake_report):
+        with patch("cross_validated_search.mcp_server.searcher.evidence_report", return_value=fake_report):
             result = await call_tool("evidence_report", {"query": "python release"})
 
         self.assertEqual(len(result), 1)
@@ -215,7 +215,7 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
             },
         )()
 
-        with patch("free_web_search.mcp_server.searcher.evidence_report", return_value=fake_report) as mock_report:
+        with patch("cross_validated_search.mcp_server.searcher.evidence_report", return_value=fake_report) as mock_report:
             await call_tool(
                 "evidence_report",
                 {

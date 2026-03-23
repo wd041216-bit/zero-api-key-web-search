@@ -1,4 +1,4 @@
-"""Unit tests for free_web_search.browse_page module."""
+"""Unit tests for cross_validated_search.browse_page module."""
 from pathlib import Path
 import sys
 import unittest
@@ -6,13 +6,13 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from free_web_search.browse_page import browse
+from cross_validated_search.browse_page import browse
 
 
 class TestBrowsePage(unittest.TestCase):
     """Tests for the browse() function."""
 
-    @patch("free_web_search.browse_page.urllib.request.urlopen")
+    @patch("cross_validated_search.browse_page.urllib.request.urlopen")
     def test_browse_returns_success_payload(self, mock_urlopen):
         """browse() should return a success payload for a valid URL."""
         mock_response = MagicMock()
@@ -36,7 +36,7 @@ class TestBrowsePage(unittest.TestCase):
         self.assertIn("Hello, this is a test page", result["content"])
         self.assertIn("insecure_ssl", result)
 
-    @patch("free_web_search.browse_page.urllib.request.urlopen")
+    @patch("cross_validated_search.browse_page.urllib.request.urlopen")
     def test_browse_handles_network_error(self, mock_urlopen):
         """browse() should return an error payload on network failures."""
         mock_urlopen.side_effect = Exception("Connection refused")
@@ -52,7 +52,7 @@ class TestBrowsePage(unittest.TestCase):
         self.assertIsInstance(result, dict)
         self.assertEqual(result["status"], "error")
 
-    @patch("free_web_search.browse_page.urllib.request.urlopen")
+    @patch("cross_validated_search.browse_page.urllib.request.urlopen")
     def test_browse_truncates_content(self, mock_urlopen):
         """browse() should truncate long content while reporting the full length."""
         mock_response = MagicMock()
