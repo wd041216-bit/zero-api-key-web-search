@@ -7,6 +7,7 @@
   [![PyPI package](https://img.shields.io/pypi/v/cross-validated-search?label=pypi%20package)](https://pypi.org/project/cross-validated-search/)
   [![Python Version](https://img.shields.io/pypi/pyversions/cross-validated-search)](https://python.org)
   [![MCP Ready](https://img.shields.io/badge/MCP-Ready-purple.svg)](https://modelcontextprotocol.io/)
+  [![Glama MCP server](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate/badges/score.svg)](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 </div>
 
