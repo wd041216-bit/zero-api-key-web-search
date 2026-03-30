@@ -10,6 +10,7 @@ platforms:
   - cursor
   - copilot
   - gemini
+  - manus
   - continue
   - kiro
   - opencode
@@ -28,6 +29,9 @@ Use this skill when a task needs live search results, source-backed verification
 ```bash
 pip install cross-validated-search
 ```
+
+For Claude Code, the repository also ships `.claude/skills/cross-validated-search/SKILL.md`.
+For Manus-style Agent Skills workflows, use this root `SKILL.md` plus [docs/manus.md](docs/manus.md).
 
 ## Core Commands
 

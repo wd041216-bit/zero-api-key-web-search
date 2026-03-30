@@ -2,7 +2,7 @@
   <img src="assets/banner.svg" alt="Cross-Validated Search" width="100%"/>
   <h1>Cross-Validated Search</h1>
   <p><strong>Evidence-aware web search, browsing, and claim verification for AI agents.</strong></p>
-  <p><em>CLI + MCP + skill surfaces for Gemini, OpenClaw, and other agent runtimes.</em></p>
+  <p><em>CLI + MCP + skill surfaces for Gemini, Claude Code, OpenClaw, Manus, and other agent runtimes.</em></p>
 
   [![PyPI package](https://img.shields.io/pypi/v/cross-validated-search?label=pypi%20package)](https://pypi.org/project/cross-validated-search/)
   [![Python Version](https://img.shields.io/pypi/pyversions/cross-validated-search)](https://python.org)
@@ -29,6 +29,8 @@ If you are reviewing this repo for collection or ecosystem inclusion, the fastes
    [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md)
 4. review Gemini gallery readiness:
    [docs/gemini-submission-checklist.md](docs/gemini-submission-checklist.md)
+5. review Claude Code and Manus setup notes:
+   [docs/claude-code.md](docs/claude-code.md), [docs/manus.md](docs/manus.md)
 
 ## 60-second verification
 
@@ -178,7 +180,9 @@ Python 3.10+ is required.
 | MCP | Yes | `cross-validated-search-mcp` |
 | Gemini CLI | Yes | `gemini-extension.json`, root `skills/`, and `.gemini/SKILL.md` |
 | OpenClaw | Yes | `cross_validated_search/skills/SKILL.md` |
-| Claude Code / Cursor / Continue / Copilot | Yes | Bundled skill and instruction files |
+| Claude Code | Yes | `.claude/skills/cross-validated-search/SKILL.md` |
+| Cursor / Continue / Copilot | Yes | Bundled instruction and skill files |
+| Manus | Yes | Root `SKILL.md` plus [docs/manus.md](docs/manus.md) |
 
 ## Verification model
 
