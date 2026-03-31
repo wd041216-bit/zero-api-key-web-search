@@ -1,0 +1,20 @@
+<svg width="1200" height="260" viewBox="0 0 1200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="260" rx="24" fill="#EFF6FF"/>
+  <text x="44" y="68" fill="#0F172A" font-family="Arial, sans-serif" font-size="34" font-weight="700">Benchmark snapshot</text>
+  <text x="44" y="108" fill="#334155" font-family="Arial, sans-serif" font-size="20">Deterministic regression coverage for the flagship verification path.</text>
+  <rect x="44" y="148" width="180" height="72" rx="18" fill="#1D4ED8"/>
+  <text x="88" y="188" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="28" font-weight="700">12 / 12</text>
+  <text x="80" y="211" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="16">benchmark fixtures</text>
+  <rect x="252" y="148" width="220" height="72" rx="18" fill="#0F766E"/>
+  <text x="292" y="188" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="28" font-weight="700">5 verdicts</text>
+  <text x="291" y="211" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="16">supported to insufficient</text>
+  <rect x="500" y="148" width="228" height="72" rx="18" fill="#7C3AED"/>
+  <text x="533" y="188" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="28" font-weight="700">Page-aware</text>
+  <text x="548" y="211" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="16">and snippet-only paths</text>
+  <rect x="756" y="148" width="194" height="72" rx="18" fill="#EA580C"/>
+  <text x="809" y="188" fill="#FFEDD5" font-family="Arial, sans-serif" font-size="28" font-weight="700">CLI + MCP</text>
+  <text x="800" y="211" fill="#FFEDD5" font-family="Arial, sans-serif" font-size="16">contract regression</text>
+  <rect x="978" y="148" width="178" height="72" rx="18" fill="#0F172A"/>
+  <text x="1005" y="188" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="28" font-weight="700">Evidence</text>
+  <text x="1020" y="211" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="16">not just links</text>
+</svg>

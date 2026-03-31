@@ -6,16 +6,26 @@
 
   [![PyPI package](https://img.shields.io/pypi/v/cross-validated-search?label=pypi%20package)](https://pypi.org/project/cross-validated-search/)
   [![Python Version](https://img.shields.io/pypi/pyversions/cross-validated-search)](https://python.org)
-  [![MCP Ready](https://img.shields.io/badge/MCP-Ready-purple.svg)](https://modelcontextprotocol.io/)
-  [![Glama MCP server](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate/badges/score.svg)](https://glama.ai/mcp/servers/wd041216-bit/free-web-search-ultimate)
+  [![MCP Ready](https://img.shields.io/badge/MCP-Ready-0f766e.svg)](https://modelcontextprotocol.io/)
+  [![Evidence Reports](https://img.shields.io/badge/Evidence%20Reports-Yes-1d4ed8.svg)](./docs/evidence-report.md)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 </div>
 
-Cross-Validated Search is an evidence-aware verification layer for AI agents. It combines live web search, page reading, and claim checking so an agent can surface supporting evidence, conflicting evidence, and source-backed confidence before presenting factual answers.
+Cross-Validated Search is the flagship repo for source-backed agent answers. It combines live web search, page reading, and claim checking so an agent can surface supporting evidence, conflicting evidence, and source-backed confidence before presenting factual answers.
 
 > Canonical names in v16: package `cross-validated-search`, module `cross_validated_search`, and MCP command `cross-validated-search-mcp`. Legacy `free_web_search` imports and `free-web-search-mcp` remain available as compatibility aliases.
 
 > Recommended free path: `ddgs + self-hosted SearXNG`. Configure `CROSS_VALIDATED_SEARCH_SEARXNG_URL` to unlock a free second provider and stronger evidence reports.
+
+## At a glance
+
+- one install gives you `search-web`, `browse-page`, `verify-claim`, and `evidence-report`
+- one repo covers CLI, MCP, Gemini, Claude Code, OpenClaw, Manus, and Copilot-adjacent workflows
+- one flagship workflow turns raw search results into an evidence artifact with rationale, conflicts, and next steps
+
+## Workflow at a glance
+
+![Cross-Validated Search workflow](assets/workflow.svg)
 
 ## Indexer Quick Review
 
@@ -64,6 +74,30 @@ Typical `evidence-report` JSON shape:
 ```
 
 If you are evaluating the repo for ecosystem collection, start with [docs/ecosystem-readiness.md](docs/ecosystem-readiness.md).
+
+## Ecosystem surfaces
+
+| Surface | Entry | Why it matters |
+| --- | --- | --- |
+| CLI | `search-web`, `browse-page`, `verify-claim`, `evidence-report` | fastest way to verify the repo in under a minute |
+| MCP | `cross-validated-search-mcp` | works with MCP-native agent runtimes |
+| Gemini | [GEMINI.md](GEMINI.md), [`.gemini/SKILL.md`](.gemini/SKILL.md) | gallery / extension readiness |
+| Claude Code | [`.claude/skills/cross-validated-search/SKILL.md`](.claude/skills/cross-validated-search/SKILL.md) | local skill install path |
+| OpenClaw | [`cross_validated_search/skills/SKILL.md`](cross_validated_search/skills/SKILL.md) | bundled skill surface |
+| Manus | [SKILL.md](SKILL.md), [docs/manus.md](docs/manus.md) | GitHub-import-friendly skill |
+
+## Demo transcript
+
+```bash
+$ search-web "Python 3.13 release" --json
+... ranked sources with citations ...
+
+$ verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
+{"verdict":"likely_supported","confidence":"MEDIUM", ...}
+
+$ evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+{"verdict":"contested","confidence":"MEDIUM","analysis":{"provider_diversity":1,"page_aware":true}}
+```
 
 ## Why this exists
 
@@ -155,6 +189,9 @@ The current verification model is `evidence-aware-heuristic-v3`, and the flagshi
 Details and limitations are documented in [docs/trust-model.md](docs/trust-model.md).
 For a quick product-level comparison with plain search wrappers, see [docs/why-not-just-search.md](docs/why-not-just-search.md).
 The next calibration step is outlined in [docs/benchmark-plan.md](docs/benchmark-plan.md).
+Quick repository-level context lives in [docs/use-cases.md](docs/use-cases.md), [docs/benchmarks.md](docs/benchmarks.md), and [docs/external-threads.md](docs/external-threads.md).
+
+![Benchmark snapshot](assets/benchmark-card.svg)
 
 ## Installation
 

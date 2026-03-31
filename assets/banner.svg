@@ -1,83 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720" role="img" aria-labelledby="title desc">
-  <title id="title">Cross-Validated Search Banner</title>
-  <desc id="desc">Evidence-aware search and verification for AI agents.</desc>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#07111f"/>
-      <stop offset="55%" stop-color="#0b1f35"/>
-      <stop offset="100%" stop-color="#122a40"/>
-    </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#8ce0ff"/>
-      <stop offset="55%" stop-color="#55a8ff"/>
-      <stop offset="100%" stop-color="#44f0c2"/>
-    </linearGradient>
-    <linearGradient id="chip" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#10253c"/>
-      <stop offset="100%" stop-color="#0f2e49"/>
-    </linearGradient>
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="16" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-
-  <rect width="1600" height="720" fill="url(#bg)"/>
-  <circle cx="258" cy="258" r="158" fill="#12345a" opacity="0.38"/>
-  <circle cx="258" cy="258" r="118" fill="none" stroke="#4fb1ff" stroke-width="4" opacity="0.55"/>
-  <circle cx="258" cy="258" r="84" fill="none" stroke="#8ce0ff" stroke-width="12" opacity="0.92" filter="url(#glow)"/>
-  <circle cx="258" cy="258" r="48" fill="#9edcff"/>
-  <line x1="312" y1="312" x2="380" y2="380" stroke="#7dcfff" stroke-width="24" stroke-linecap="round"/>
-  <circle cx="258" cy="258" r="132" fill="none" stroke="#4fb1ff" stroke-width="2" opacity="0.22"/>
-
-  <g opacity="0.3">
-    <path d="M1125 120v160M1195 120v160M1265 120v160M1335 120v160" stroke="#2d5d8a" stroke-width="2"/>
-    <path d="M1045 205h340M1045 245h340M1045 285h340" stroke="#2d5d8a" stroke-width="2"/>
-    <path d="M1215 80v-36M1215 440v-36M965 245h-36M1465 245h-36" stroke="#386e9e" stroke-width="3"/>
-  </g>
-
-  <circle cx="1215" cy="245" r="76" fill="#5b3fd6" opacity="0.95" filter="url(#glow)"/>
-  <circle cx="1215" cy="245" r="58" fill="#6548e4"/>
-  <text x="1215" y="258" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#efe8ff">MCP</text>
-
-  <g font-family="Arial, sans-serif" fill="#d8f3ff">
-    <circle cx="1085" cy="118" r="58" fill="#0d2139" stroke="#69bbff" stroke-width="3"/>
-    <text x="1085" y="128" text-anchor="middle" font-size="26" font-weight="600">Gemini</text>
-    <line x1="1124" y1="157" x2="1168" y2="201" stroke="#71d1ff" stroke-width="4"/>
-
-    <circle cx="1370" cy="118" r="58" fill="#0d2139" stroke="#69bbff" stroke-width="3"/>
-    <text x="1370" y="128" text-anchor="middle" font-size="26" font-weight="600">Codex</text>
-    <line x1="1331" y1="157" x2="1267" y2="221" stroke="#71d1ff" stroke-width="4"/>
-
-    <circle cx="1085" cy="372" r="58" fill="#0d2139" stroke="#69bbff" stroke-width="3"/>
-    <text x="1085" y="382" text-anchor="middle" font-size="24" font-weight="600">OpenClaw</text>
-    <line x1="1124" y1="333" x2="1168" y2="289" stroke="#71d1ff" stroke-width="4"/>
-
-    <circle cx="1370" cy="372" r="58" fill="#0d2139" stroke="#69bbff" stroke-width="3"/>
-    <text x="1370" y="382" text-anchor="middle" font-size="24" font-weight="600">SearXNG</text>
-    <line x1="1331" y1="333" x2="1267" y2="269" stroke="#71d1ff" stroke-width="4"/>
-  </g>
-
-  <text x="470" y="250" font-family="Arial, sans-serif" font-size="82" font-weight="800" fill="#ffffff">Cross-Validated Search</text>
-  <text x="470" y="330" font-family="Arial, sans-serif" font-size="42" font-weight="500" fill="#a9d9ff">Evidence-aware verification for AI agents</text>
-  <text x="470" y="384" font-family="Arial, sans-serif" font-size="30" font-weight="400" fill="#c9ebff">Live search, page reading, claim checks, and citation-ready evidence reports</text>
-
-  <g font-family="Arial, sans-serif" font-size="28" font-weight="600">
-    <rect x="470" y="474" rx="18" ry="18" width="250" height="78" fill="url(#chip)" stroke="#4e98d3" stroke-width="2"/>
-    <text x="595" y="523" text-anchor="middle" fill="#d7f3ff">Free Path</text>
-    <text x="595" y="560" text-anchor="middle" fill="#7fceff" font-size="24" font-weight="500">ddgs + SearXNG</text>
-
-    <rect x="748" y="474" rx="18" ry="18" width="250" height="78" fill="url(#chip)" stroke="#4e98d3" stroke-width="2"/>
-    <text x="873" y="523" text-anchor="middle" fill="#d7f3ff">CLI + MCP</text>
-    <text x="873" y="560" text-anchor="middle" fill="#7fceff" font-size="24" font-weight="500">One core, many runtimes</text>
-
-    <rect x="1026" y="474" rx="18" ry="18" width="250" height="78" fill="url(#chip)" stroke="#4e98d3" stroke-width="2"/>
-    <text x="1151" y="523" text-anchor="middle" fill="#d7f3ff">Evidence Report</text>
-    <text x="1151" y="560" text-anchor="middle" fill="#7fceff" font-size="24" font-weight="500">Support, conflict, coverage</text>
-  </g>
-
-  <text x="470" y="640" font-family="Arial, sans-serif" font-size="24" font-weight="500" fill="url(#accent)">cross-validated-search • cross_validated_search • cross-validated-search-mcp</text>
+<svg width="1280" height="400" viewBox="0 0 1280 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="400" rx="28" fill="#020617"/>
+  <rect x="50" y="56" width="324" height="288" rx="24" fill="#0F172A"/>
+  <rect x="90" y="96" width="244" height="48" rx="14" fill="#1D4ED8"/>
+  <text x="128" y="127" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="20" font-weight="700">Search sources</text>
+  <rect x="90" y="160" width="244" height="48" rx="14" fill="#0F766E"/>
+  <text x="125" y="191" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="20" font-weight="700">Verify claims</text>
+  <rect x="90" y="224" width="244" height="48" rx="14" fill="#7C3AED"/>
+  <text x="123" y="255" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="20" font-weight="700">Read pages</text>
+  <rect x="90" y="288" width="244" height="48" rx="14" fill="#EA580C"/>
+  <text x="117" y="319" fill="#FFEDD5" font-family="Arial, sans-serif" font-size="20" font-weight="700">Emit evidence</text>
+  <text x="430" y="128" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="58" font-weight="700">Cross-Validated Search</text>
+  <text x="430" y="180" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="28">A source-backed verification layer for agent answers.</text>
+  <text x="430" y="228" fill="#94A3B8" font-family="Arial, sans-serif" font-size="24">CLI, MCP, and skill surfaces for Gemini, Claude Code, OpenClaw, Manus, and evidence-driven research workflows.</text>
+  <rect x="430" y="282" width="210" height="46" rx="14" fill="#1D4ED8"/>
+  <text x="468" y="312" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="22" font-weight="700">60-second demo</text>
+  <rect x="662" y="282" width="220" height="46" rx="14" fill="#0F766E"/>
+  <text x="702" y="312" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="22" font-weight="700">Evidence report</text>
+  <rect x="904" y="282" width="266" height="46" rx="14" fill="#0F172A" stroke="#334155"/>
+  <text x="935" y="312" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="22" font-weight="700">Why not just search?</text>
 </svg>

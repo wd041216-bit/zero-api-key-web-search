@@ -1,0 +1,24 @@
+<svg width="1200" height="360" viewBox="0 0 1200 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="360" rx="28" fill="#F8FAFC"/>
+  <rect x="40" y="42" width="220" height="116" rx="20" fill="#0F172A"/>
+  <text x="72" y="92" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="18" font-weight="700">1. Search</text>
+  <text x="72" y="126" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="16">Gather ranked sources</text>
+  <text x="72" y="150" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="16">with citations and metadata</text>
+  <rect x="320" y="42" width="220" height="116" rx="20" fill="#1D4ED8"/>
+  <text x="352" y="92" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="18" font-weight="700">2. Verify</text>
+  <text x="352" y="126" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="16">Separate support, conflict,</text>
+  <text x="352" y="150" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="16">and neutral evidence</text>
+  <rect x="600" y="42" width="220" height="116" rx="20" fill="#0F766E"/>
+  <text x="632" y="92" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="18" font-weight="700">3. Read Pages</text>
+  <text x="632" y="126" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="16">Go deeper when snippets</text>
+  <text x="632" y="150" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="16">are too thin</text>
+  <rect x="880" y="42" width="280" height="116" rx="20" fill="#7C3AED"/>
+  <text x="912" y="92" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="18" font-weight="700">4. Evidence Report</text>
+  <text x="912" y="126" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="16">Return a verdict, rationale,</text>
+  <text x="912" y="150" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="16">coverage warnings, and next steps</text>
+  <path d="M261 101H319" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M541 101H599" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M821 101H879" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
+  <text x="40" y="238" fill="#0F172A" font-family="Arial, sans-serif" font-size="28" font-weight="700">From search wrapper to evidence layer</text>
+  <text x="40" y="278" fill="#334155" font-family="Arial, sans-serif" font-size="20">Cross-Validated Search is designed to make agent answers reviewable, not just plausible.</text>
+</svg>
