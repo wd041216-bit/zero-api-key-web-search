@@ -10,7 +10,7 @@ from typing import Callable, Dict, List, Optional
 from urllib.parse import urlparse
 
 from cross_validated_search.browse_page import browse
-from cross_validated_search.providers import DdgsProvider, SearchProvider, SearxngProvider
+from cross_validated_search.providers import DdgsProvider, SearchProvider, SearxngProvider, TavilyProvider
 
 
 @dataclass
@@ -183,25 +183,37 @@ class UltimateSearcher:
         searxng = SearxngProvider(timeout=self.timeout)
         if searxng.is_configured():
             providers.append(searxng)
+        tavily = TavilyProvider(timeout=self.timeout)
+        if tavily.is_configured():
+            providers.append(tavily)
         return providers
 
     def _provider_guidance(self) -> Dict:
         searxng = SearxngProvider(timeout=self.timeout)
         configured = searxng.is_configured()
+        tavily_configured = TavilyProvider.is_configured()
         return {
             "free_recommended_pair": ["ddgs", "searxng"],
+            "paid_option": "tavily",
             "searxng_configured": configured,
+            "tavily_configured": tavily_configured,
             "searxng_env_vars": list(SearxngProvider.ENV_VARS),
+            "tavily_env_vars": ["TAVILY_API_KEY"],
             "free_setup_hint": (
                 "Self-host a SearXNG instance and point "
                 f"{SearxngProvider.ENV_VARS[0]} to it for a free dual-provider path."
+            ),
+            "tavily_setup_hint": (
+                "Set TAVILY_API_KEY to enable Tavily as a paid provider option "
+                "(1,000 free API credits/month)."
             ),
             "recommended_next_step": (
                 "Free dual-provider path is active."
                 if configured
                 else (
                     "Configure a self-hosted SearXNG instance via "
-                    f"{SearxngProvider.ENV_VARS[0]} to unlock a free second provider."
+                    f"{SearxngProvider.ENV_VARS[0]} to unlock a free second provider, "
+                    "or set TAVILY_API_KEY for a paid option."
                 )
             ),
         }

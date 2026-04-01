@@ -53,6 +53,9 @@ dev = [
   "build>=1.2.2",
   "twine>=6.1.0",
 ]
+tavily = [
+  "tavily-python>=0.5.0",
+]
 
 [tool.setuptools.packages.find]
 include = ["cross_validated_search*", "free_web_search*"]
