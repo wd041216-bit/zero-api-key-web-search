@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import re
 import time
-from dataclasses import dataclass
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Callable, Dict, List, Optional
 from urllib.parse import urlparse
@@ -46,6 +47,19 @@ class Answer:
 
 
 @dataclass
+class SubClaimResult:
+    """Result of verifying a single sub-claim decomposed from a compound claim."""
+
+    sub_claim: str
+    verdict: str
+    confidence: str
+    support_score: float
+    conflict_score: float
+    supporting_count: int
+    conflicting_count: int
+
+
+@dataclass
 class VerificationResult:
     """Structured result returned by claim verification."""
 
@@ -59,6 +73,8 @@ class VerificationResult:
     analysis: Dict
     metadata: Dict
     elapsed_ms: int
+    sub_claims: List[SubClaimResult] = field(default_factory=list)
+    calibration_note: str = ""
 
 
 @dataclass
@@ -80,6 +96,7 @@ class EvidenceReportResult:
     analysis: Dict
     metadata: Dict
     elapsed_ms: int
+    calibration_note: str = ""
 
 
 STOPWORDS = {
@@ -111,6 +128,7 @@ STOPWORDS = {
 }
 
 CONFLICT_MARKERS = (
+    # English
     "not",
     "false",
     "incorrect",
@@ -123,10 +141,60 @@ CONFLICT_MARKERS = (
     "contrary",
     "no evidence",
     "fact check",
+    # Spanish
+    "falso",
+    "falsa",
+    "incorrecto",
+    "incorrecta",
+    "desmentido",
+    "desmentida",
+    "desmentidos",
+    "desmentidas",
+    "engañoso",
+    "engañosa",
+    "negado",
+    "negada",
+    "contradice",
+    "sin evidencia",
+    "comprobación",
+    # French
+    "faux",
+    "fausse",
+    "incorrect",
+    "incorrecte",
+    "démenti",
+    "démentie",
+    "trompeur",
+    "trompeuse",
+    "contesté",
+    "contestée",
+    "réfuté",
+    "réfutée",
+    "nié",
+    "niée",
+    "contradictoire",
+    "aucune preuve",
+    # German
+    "falsch",
+    "inkorrekt",
+    "widerlegt",
+    "irreführend",
+    "bestritten",
+    "dementi",
+    "widerspricht",
+    "kein beweis",
+    # Chinese
+    "错误",
+    "不实",
+    "误导",
+    "辟谣",
+    "否认",
+    "反驳",
+    "没有证据",
 )
 
 CONFLICT_PATTERNS = tuple(
-    re.compile(rf"\b{re.escape(marker)}\b", re.IGNORECASE)
+    re.compile(rf"(?<![a-zA-Z0-9]){re.escape(marker)}(?![a-zA-Z0-9])", re.IGNORECASE)
     for marker in CONFLICT_MARKERS
 )
 
@@ -162,6 +230,21 @@ DATE_FORMATS = (
     "%b %d, %Y",
     "%B %d, %Y",
 )
+
+CALIBRATION_NOTE = (
+    "Confidence thresholds (support >= 1.35 for 'supported', etc.) are heuristic "
+    "and have not been calibrated against a gold-standard dataset. Confidence levels "
+    "(HIGH/MEDIUM/LOW) reflect relative signal strength, not probabilistic accuracy."
+)
+
+CLAIM_SPLIT_PATTERN = re.compile(
+    r",\s*(?:and|but|yet|while|although)\s+"
+    r"|\s+(?:and|but|yet|while|although)\s+"
+    r"|(?:\.|;)\s+"
+    r"|\s+,\s+"
+)
+
+CLAIM_DECOMPOSE_MIN_LENGTH = 10
 
 class UltimateSearcher:
     """Search implementation backing the public package surface."""
@@ -259,6 +342,7 @@ class UltimateSearcher:
         timelimit: Optional[str],
         region: str,
         max_results: int,
+        max_retries: int = 3,
         **kwargs,
     ) -> List[Source]:
         registry = self._provider_registry()
@@ -272,29 +356,34 @@ class UltimateSearcher:
                 )
             ]
 
-        try:
-            provider_results = provider.search(
-                query=query,
-                search_type=search_type,
-                timelimit=timelimit,
-                region=region,
-                max_results=max_results,
-                **kwargs,
-            )
-        except Exception as exc:
-            return [
-                Source(
-                    url="error",
-                    title=f"Error: {provider_name}: {exc}",
-                    engine="error",
+        last_exc: Optional[Exception] = None
+        for attempt in range(max_retries):
+            try:
+                provider_results = provider.search(
+                    query=query,
+                    search_type=search_type,
+                    timelimit=timelimit,
+                    region=region,
+                    max_results=max_results,
+                    **kwargs,
                 )
-            ]
+                return self._provider_results_to_sources(
+                    provider_name=provider_name,
+                    search_type=search_type,
+                    provider_results=provider_results,
+                )
+            except Exception as exc:
+                last_exc = exc
+                if attempt < max_retries - 1:
+                    time.sleep(0.5 * (2 ** attempt))
 
-        return self._provider_results_to_sources(
-            provider_name=provider_name,
-            search_type=search_type,
-            provider_results=provider_results,
-        )
+        return [
+            Source(
+                url="error",
+                title=f"Error: {provider_name} (after {max_retries} retries): {last_exc}",
+                engine="error",
+            )
+        ]
 
     def _cross_validate(self, all_results: List[Source]) -> List[Source]:
         """Deduplicate results and rank corroborated URLs first."""
@@ -343,12 +432,12 @@ class UltimateSearcher:
         selected_providers = self._normalize_provider_names(providers)
 
         raw_results: List[Source] = []
-        attempted_providers: List[str] = []
+        attempted_providers: List[str] = list(selected_providers)
         successful_providers: List[str] = []
-        for provider in selected_providers:
-            attempted_providers.append(provider)
-            provider_results = self._search_provider(
-                provider_name=provider,
+
+        def _call_provider(provider_name: str) -> tuple[str, List[Source]]:
+            results = self._search_provider(
+                provider_name=provider_name,
                 query=query,
                 search_type=search_type,
                 timelimit=timelimit,
@@ -356,9 +445,33 @@ class UltimateSearcher:
                 max_results=max_results,
                 **kwargs,
             )
-            raw_results.extend(provider_results)
-            if any(result.url != "error" for result in provider_results):
-                successful_providers.append(provider)
+            return provider_name, results
+
+        if len(selected_providers) > 1:
+            with ThreadPoolExecutor(max_workers=len(selected_providers)) as executor:
+                futures = {
+                    executor.submit(_call_provider, name): name
+                    for name in selected_providers
+                }
+                for future in as_completed(futures):
+                    provider_name, provider_results = future.result()
+                    raw_results.extend(provider_results)
+                    if any(result.url != "error" for result in provider_results):
+                        successful_providers.append(provider_name)
+        else:
+            for provider in selected_providers:
+                provider_results = self._search_provider(
+                    provider_name=provider,
+                    query=query,
+                    search_type=search_type,
+                    timelimit=timelimit,
+                    region=region,
+                    max_results=max_results,
+                    **kwargs,
+                )
+                raw_results.extend(provider_results)
+                if any(result.url != "error" for result in provider_results):
+                    successful_providers.append(provider)
 
         all_results: List[Source] = []
         errors: List[str] = []
@@ -410,8 +523,22 @@ class UltimateSearcher:
         )
 
     def _extract_keywords(self, text: str) -> List[str]:
-        tokens = re.findall(r"[a-zA-Z0-9]{3,}", text.lower())
+        tokens = re.findall(r"[\w]{3,}", text.lower(), re.UNICODE)
         return [token for token in tokens if token not in STOPWORDS]
+
+    def decompose_claim(self, claim: str) -> List[str]:
+        """Decompose a compound claim into verifiable sub-claims.
+
+        Splits on connectors like 'and', 'but', 'yet', 'while', 'although',
+        semicolons, and periods. Returns the original claim as a single
+        sub-claim if decomposition yields nothing longer than the minimum
+        length threshold.
+        """
+        parts = [part.strip() for part in CLAIM_SPLIT_PATTERN.split(claim) if part.strip()]
+        sub_claims = [part for part in parts if len(part) >= CLAIM_DECOMPOSE_MIN_LENGTH]
+        if len(sub_claims) <= 1:
+            return [claim]
+        return sub_claims
 
     def _source_domain(self, url: str) -> str:
         netloc = urlparse(url).netloc.lower()
@@ -664,6 +791,43 @@ class UltimateSearcher:
             **kwargs,
         )
 
+        sub_claims = self.decompose_claim(claim)
+        sub_claim_results: List[SubClaimResult] = []
+        if len(sub_claims) > 1:
+            for sub in sub_claims:
+                sub_keywords = self._extract_keywords(sub)
+                sub_support = []
+                sub_conflict = []
+                for source in answer.sources:
+                    classification, evidence = self._classify_source_against_claim(
+                        sub_keywords, source, timelimit=timelimit,
+                    )
+                    if classification == "supporting":
+                        sub_support.append(source)
+                    elif classification == "conflicting":
+                        sub_conflict.append(source)
+                sub_claim_results.append(SubClaimResult(
+                    sub_claim=sub,
+                    verdict="supported" if len(sub_support) > len(sub_conflict) else (
+                        "conflicting" if len(sub_conflict) > len(sub_support) else "neutral"
+                    ),
+                    confidence="LOW",
+                    support_score=round(
+                        sum(
+                            s.extra.get("verification", {}).get("evidence_strength", 0)
+                            for s in sub_support
+                        ), 3,
+                    ),
+                    conflict_score=round(
+                        sum(
+                            s.extra.get("verification", {}).get("evidence_strength", 0)
+                            for s in sub_conflict
+                        ), 3,
+                    ),
+                    supporting_count=len(sub_support),
+                    conflicting_count=len(sub_conflict),
+                ))
+
         claim_keywords = self._extract_keywords(claim)
         supporting_sources: List[Source] = []
         conflicting_sources: List[Source] = []
@@ -853,6 +1017,8 @@ class UltimateSearcher:
             },
             metadata=answer.metadata,
             elapsed_ms=int((time.time() - start_time) * 1000),
+            sub_claims=sub_claim_results,
+            calibration_note=CALIBRATION_NOTE,
         )
 
     def _build_report_source_digest(self, source: Source, classification: str) -> Dict:
@@ -1126,6 +1292,7 @@ class UltimateSearcher:
             analysis=analysis,
             metadata=metadata,
             elapsed_ms=int((time.time() - start_time) * 1000),
+            calibration_note=CALIBRATION_NOTE,
         )
 
 
@@ -1138,6 +1305,7 @@ __all__ = [
     "EvidenceReportResult",
     "CrossValidatedSearcher",
     "Source",
+    "SubClaimResult",
     "UltimateSearcher",
     "VerificationResult",
 ]

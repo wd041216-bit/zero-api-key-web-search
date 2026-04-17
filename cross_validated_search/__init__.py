@@ -5,6 +5,7 @@ from cross_validated_search.core import (
     CrossValidatedSearcher,
     EvidenceReportResult,
     Source,
+    SubClaimResult,
     UltimateSearcher,
     VerificationResult,
 )
@@ -17,6 +18,7 @@ __all__ = [
     "EvidenceReportResult",
     "SearxngProvider",
     "Source",
+    "SubClaimResult",
     "UltimateSearcher",
     "VerificationResult",
 ]

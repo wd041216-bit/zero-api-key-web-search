@@ -1,0 +1,29 @@
+{
+  "domain": "cross-validated-search",
+  "current_phase": "rescore",
+  "iteration": 2,
+  "max_iterations": 10,
+  "last_score": {
+    "total": 69,
+    "breadth": 16,
+    "depth": 18,
+    "thickness": 18,
+    "effectiveness": 17
+  },
+  "status": "running",
+  "started_at": "2026-04-17T02:34:54Z",
+  "updated_at": "2026-04-17T03:15:00Z",
+  "target_repo": "/Users/dawei/playground/cross-validated-search",
+  "github_branch": "expert-distiller/cross-validated-search",
+  "active_council": "cross-validated-search-main-council",
+  "experts_added_mid_loop": [],
+  "history": [
+    {
+      "iteration": 1,
+      "scores": {"total": 69, "breadth": 16, "depth": 18, "thickness": 18, "effectiveness": 17},
+      "action": "Initial scoring with 5-expert council"
+    }
+  ],
+  "build_failures": 0,
+  "score_regressions": 0
+}

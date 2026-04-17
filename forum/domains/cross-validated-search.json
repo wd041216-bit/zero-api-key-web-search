@@ -1,0 +1,19 @@
+{
+  "id": "cross-validated-search",
+  "name": "Cross-Validated Search",
+  "topic": "Evidence-aware web search, browsing, and claim verification for AI agents",
+  "created_at": "2026-04-17T02:34:54Z",
+  "updated_at": "2026-04-17T02:34:54Z",
+  "coverage_axes": [
+    "web search and retrieval",
+    "evidence verification and fact-checking",
+    "source credibility and trust scoring",
+    "multi-provider search aggregation",
+    "claim classification and stance detection",
+    "MCP and agent runtime integration",
+    "information extraction from web pages",
+    "confidence calibration and uncertainty quantification"
+  ],
+  "active_experts": [],
+  "candidate_experts": []
+}

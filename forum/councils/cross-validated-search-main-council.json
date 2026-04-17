@@ -1,0 +1,298 @@
+{
+  "id": "cross-validated-search-main-council",
+  "name": "Cross-Validated Search Main Council",
+  "domain": "cross-validated-search",
+  "members": [
+    {
+      "expert_id": "andreas-hanselowski",
+      "role": "skeptic",
+      "weight": 0.2,
+      "joined_at": "2026-04-17T02:43:30Z",
+      "fast_tracked": false
+    },
+    {
+      "expert_id": "isabelle-augenstein",
+      "role": "advocate",
+      "weight": 0.2,
+      "joined_at": "2026-04-17T02:43:30Z",
+      "fast_tracked": false
+    },
+    {
+      "expert_id": "pepa-atanasova",
+      "role": "reviewer",
+      "weight": 0.24,
+      "joined_at": "2026-04-17T02:43:30Z",
+      "fast_tracked": false
+    },
+    {
+      "expert_id": "preslav-nakov",
+      "role": "reviewer",
+      "weight": 0.24,
+      "joined_at": "2026-04-17T02:43:30Z",
+      "fast_tracked": false
+    },
+    {
+      "expert_id": "reihaneh-rabbany",
+      "role": "chair",
+      "weight": 0.3,
+      "joined_at": "2026-04-17T02:43:30Z",
+      "fast_tracked": false
+    }
+  ],
+  "routing_rules": [
+    {
+      "keyword": "fact verification",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "evidence combination",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "weak supervision",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "neural search",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "retrieval-augmented generation",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "RAG",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "question answering",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "conversational AI",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "confidence calibration",
+      "expert_ids": [
+        "andreas-hanselowski",
+        "pepa-atanasova"
+      ]
+    },
+    {
+      "keyword": "multi-provider aggregation",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "information extraction",
+      "expert_ids": [
+        "andreas-hanselowski",
+        "isabelle-augenstein"
+      ]
+    },
+    {
+      "keyword": "agentic workflows",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "function-calling",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "search evaluation",
+      "expert_ids": [
+        "andreas-hanselowski"
+      ]
+    },
+    {
+      "keyword": "claim verification",
+      "expert_ids": [
+        "andreas-hanselowski",
+        "isabelle-augenstein",
+        "pepa-atanasova",
+        "preslav-nakov"
+      ]
+    },
+    {
+      "keyword": "fact-checking",
+      "expert_ids": [
+        "isabelle-augenstein",
+        "pepa-atanasova",
+        "preslav-nakov",
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "NLP",
+      "expert_ids": [
+        "isabelle-augenstein",
+        "preslav-nakov"
+      ]
+    },
+    {
+      "keyword": "low-resource learning",
+      "expert_ids": [
+        "isabelle-augenstein"
+      ]
+    },
+    {
+      "keyword": "explainability",
+      "expert_ids": [
+        "isabelle-augenstein",
+        "pepa-atanasova"
+      ]
+    },
+    {
+      "keyword": "stance detection",
+      "expert_ids": [
+        "isabelle-augenstein",
+        "pepa-atanasova"
+      ]
+    },
+    {
+      "keyword": "offensive language identification",
+      "expert_ids": [
+        "pepa-atanasova"
+      ]
+    },
+    {
+      "keyword": "evidence retrieval",
+      "expert_ids": [
+        "pepa-atanasova"
+      ]
+    },
+    {
+      "keyword": "diagnostic evaluation",
+      "expert_ids": [
+        "pepa-atanasova"
+      ]
+    },
+    {
+      "keyword": "multilingual NLP",
+      "expert_ids": [
+        "pepa-atanasova"
+      ]
+    },
+    {
+      "keyword": "rationale extraction",
+      "expert_ids": [
+        "pepa-atanasova"
+      ]
+    },
+    {
+      "keyword": "propaganda detection",
+      "expert_ids": [
+        "preslav-nakov"
+      ]
+    },
+    {
+      "keyword": "disinformation",
+      "expert_ids": [
+        "preslav-nakov"
+      ]
+    },
+    {
+      "keyword": "media bias",
+      "expert_ids": [
+        "preslav-nakov"
+      ]
+    },
+    {
+      "keyword": "semantic analysis",
+      "expert_ids": [
+        "preslav-nakov"
+      ]
+    },
+    {
+      "keyword": "misinformation detection",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "web retrieval agents",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "source credibility",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "network science",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "graph neural networks",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "community detection",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "temporal graphs",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "data mining",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "social good",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "open-source AI",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    },
+    {
+      "keyword": "credibility scoring",
+      "expert_ids": [
+        "reihaneh-rabbany"
+      ]
+    }
+  ],
+  "created_at": "2026-04-17T02:43:30Z",
+  "updated_at": "2026-04-17T02:43:30Z",
+  "scoring_history_refs": []
+}

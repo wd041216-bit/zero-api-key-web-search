@@ -1,0 +1,18 @@
+{
+  "expert_id": "reihaneh-rabbany",
+  "generated_at": "2026-04-17T02:37:40Z",
+  "promotion_status": "promotion_allowed",
+  "promotion_allowed": true,
+  "blockers": [],
+  "source_counts": {
+    "A": 1,
+    "B": 1,
+    "C": 0
+  },
+  "source_confidence": {
+    "level": "high",
+    "weighted_score": 0.75,
+    "rationale": "Computed from source-tier coverage; human review should still check claim-source alignment."
+  },
+  "tier_c_core_claim_allowed": false
+}

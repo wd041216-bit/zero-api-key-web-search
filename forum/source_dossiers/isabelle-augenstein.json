@@ -1,0 +1,31 @@
+{
+  "expert_id": "isabelle-augenstein",
+  "created_at": "2026-04-17T02:36:51Z",
+  "updated_at": "2026-04-17T02:36:51Z",
+  "sources": [
+    {
+      "id": "isabelle-augenstein-a-isabelle-augenstein-university-of-copenhagen-faculty-page",
+      "title": "Isabelle Augenstein - University of Copenhagen Faculty Page",
+      "url": "https://di.ku.dk/Ansatte/?pure=person%2F598176",
+      "tier": "A",
+      "note": "Official institutional profile at UCPH Department of Computer Science",
+      "added_at": "2026-04-17T02:36:51Z"
+    },
+    {
+      "id": "isabelle-augenstein-a-augenstein-google-scholar-publications",
+      "title": "Augenstein Google Scholar Publications",
+      "url": "https://scholar.google.com/citations?user=_S8BgKIAAAAJ",
+      "tier": "A",
+      "note": "Complete publication list including fact-checking and claim verification papers",
+      "added_at": "2026-04-17T02:36:51Z"
+    },
+    {
+      "id": "isabelle-augenstein-b-learning-to-read-for-automated-fact-checking-keynote",
+      "title": "Learning to Read for Automated Fact Checking - Keynote",
+      "url": "https://cs.au.dk/news-events/events/show-event/artikel/learning-to-read-for-automated-fact-checking-by-isabelle-augenstein",
+      "tier": "B",
+      "note": "Keynote talk describing her research vision for automated fact-checking",
+      "added_at": "2026-04-17T02:36:51Z"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "expert_id": "preslav-nakov",
+  "created_at": "2026-04-17T02:37:16Z",
+  "updated_at": "2026-04-17T02:37:16Z",
+  "sources": [
+    {
+      "id": "preslav-nakov-a-preslav-nakov-mbzuai-faculty-profile",
+      "title": "Preslav Nakov - MBZUAI Faculty Profile",
+      "url": "https://mbzuai.ac.ae/study/faculty/preslav-nakov/",
+      "tier": "A",
+      "note": "Official institutional profile at Mohamed bin Zayed University of AI",
+      "added_at": "2026-04-17T02:37:16Z"
+    },
+    {
+      "id": "preslav-nakov-b-experts-corner-with-preslav-nakov-checkstep-interview",
+      "title": "Experts Corner with Preslav Nakov - Checkstep Interview",
+      "url": "https://medium.com/checkstep/experts-corner-with-preslav-nakov-268321048730",
+      "tier": "B",
+      "note": "In-depth interview about NLP-based fact-checking and propaganda detection",
+      "added_at": "2026-04-17T02:37:16Z"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "domain": "cross-validated-search",
+  "artifact_path": "/Users/dawei/playground/cross-validated-search",
+  "iteration": 2,
+  "council_id": "cross-validated-search-main-council",
+  "previous_iteration": {
+    "iteration": 1,
+    "scores": { "breadth": 16, "depth": 18, "thickness": 18, "effectiveness": 17, "total": 69 }
+  },
+  "axes": [
+    {
+      "axis": "breadth",
+      "expert_votes": {
+        "reihaneh-rabbany": 17,
+        "isabelle-augenstein": 17,
+        "preslav-nakov": 16,
+        "pepa-atanasova": 17,
+        "andreas-hanselowski": 17
+      },
+      "weighted_median_calculation": "Sorted: 16(0.204), 17(0.373), 17(0.586), 17(0.755), 17(1.000) -- crosses 0.5 at 17",
+      "score": 17,
+      "evidence": [
+        "Augenstein profile deepened: 4 canonical works (was 3), 4 playbook entries (was 3), 2 quote bank entries (was 1)",
+        "Nakov profile deepened: 4 playbook entries (was 2), 2 quote bank entries (was 1)",
+        "Hanselowski's agentic workflows expertise provides partial coverage of MCP/agent integration (axis 6)",
+        "Rabbany's 6 canonical works remain the broadest single-expert coverage across web retrieval, source credibility, and evaluation methodology",
+        "All 5 experts have complete reasoning kernels, question playbooks, and distillate.md files"
+      ],
+      "gaps": [
+        "No dedicated MCP protocol specialist; Hanselowski covers agentic workflows but not the MCP specification itself",
+        "Information extraction from web pages (axis 7) still lacks a dedicated expert; browse_page uses regex/BeautifulSoup without main content detection",
+        "Multilingual concerns are mentioned by Nakov and Atanasova but not deeply operationalized in any expert's reasoning kernel",
+        "Production deployment, latency, and adversarial robustness remain acknowledged blind spots without deep coverage",
+        "Adversarial robustness of credibility scoring and search result manipulation is a cross-cutting blind spot"
+      ],
+      "improvement_from_iteration_1": "+1 point. Augenstein and Nakov profiles meaningfully deepened, partially addressing breadth. Hanselowski covers agentic workflows but MCP protocol gap persists."
+    },
+    {
+      "axis": "depth",
+      "expert_votes": {
+        "reihaneh-rabbany": 19,
+        "isabelle-augenstein": 18,
+        "preslav-nakov": 17,
+        "pepa-atanasova": 18,
+        "andreas-hanselowski": 19
+      },
+      "weighted_median_calculation": "Sorted: 17(0.204), 18(0.373), 18(0.586), 19(0.790), 19(1.000) -- crosses 0.5 at 18",
+      "score": 18,
+      "evidence": [
+        "Augenstein: 4 canonical works (was 3), 4 playbook entries (was 3), 2 quote bank entries (was 1), detailed advantage_knowledge_base with anti-patterns",
+        "Nakov: 4 playbook entries (was 2), 2 quote bank entries (was 1), expanded reasoning_kernel with multilingual and bias-aware entries",
+        "Rabbany remains deepest with 6 canonical works, 8 signature ideas, 6-item reasoning kernels, 3 playbook entries, 3 quote bank entries",
+        "Hanselowski has 5 playbook entries (richest playbook), 3 quote bank entries, 5 preferred_evidence types with specific metrics (Recall@k, MRR, nDCG)",
+        "All 5 experts have distillate.md files with career arcs, reasoning kernels, and what-this-expert-will-catch sections"
+      ],
+      "gaps": [
+        "Nakov's source_confidence is 0.75 with only 2 source refs, limiting verifiable source alignment for his deeper playbook entries",
+        "Augenstein's quote bank has 2 entries, one of which is a paraphrase -- still below 'authoritative reference' standard",
+        "No profile reaches 23-25 (authoritative standalone reference work level); all remain in the 17-19 range",
+        "Blind spots are self-identified but not externally validated against the actual project codebase",
+        "Atanasova's playbook entries (4) are strong but her canonical works remain at 3, limiting depth of source-backed claims"
+      ],
+      "improvement_from_iteration_1": "+0 points (depth was 18, remains 18). The improvement in Augenstein and Nakov profiles is real but offset by the fact that depth was already scored at 18 in iteration 1, and the improvements move some experts from 16-17 to 17-18, with the weighted median staying at 18. Rabbany and Hanselowski were already at 19. The marginal improvement is real but insufficient to move the median."
+    },
+    {
+      "axis": "thickness",
+      "expert_votes": {
+        "reihaneh-rabbany": 19,
+        "isabelle-augenstein": 20,
+        "preslav-nakov": 18,
+        "pepa-atanasova": 19,
+        "andreas-hanselowski": 19
+      },
+      "weighted_median_calculation": "Sorted: 18(0.204), 19(0.408), 19(0.612), 19(0.781), 20(0.950) -- crosses 0.5 at 19",
+      "score": 19,
+      "evidence": [
+        "Concurrent provider calls implemented via ThreadPoolExecutor (core.py lines 438-447) for parallel multi-provider search",
+        "Retry logic with exponential backoff: 3 retries with 0.5 * 2^attempt delay (core.py lines 347-367)",
+        "Calibration note field added to VerificationResult and EvidenceReportResult output, with explicit CALIBRATION_NOTE constant",
+        "Multilingual conflict markers added for 4 languages beyond English: Spanish, French, German, Chinese (core.py lines 130-181)",
+        "61 tests passing (3 failing), covering verification, search, browse, MCP, evidence report, CLI, claim decomposition, and multilingual conflict",
+        "SubClaimResult dataclass and decompose_claim() method implemented with test coverage",
+        "CLI tools (search-web, browse-page, verify-claim, evidence-report) all functional with --deep/--with-pages options"
+      ],
+      "gaps": [
+        "3 TESTS ARE CURRENTLY FAILING: test_compound_claim_with_semicolon (claim decomposition regex bug), test_french_conflict_detected and test_spanish_conflict_detected (Unicode case-folding issue with regex word boundaries on accented characters). This is a thickness regression.",
+        "No structured logging or monitoring hooks for production deployment",
+        "No type checking (mypy/pyright) or linting (ruff) enforced in CI",
+        "browse_page uses regex fallback without main content detection or boilerplate removal (readability heuristic)",
+        "No circuit breaker pattern for provider calls beyond retry logic",
+        "No async/await implementation; concurrent execution relies on threads"
+      ],
+      "improvement_from_iteration_1": "+1 point. ThreadPoolExecutor, retry logic, calibration note, and multilingual markers are meaningful additions. However, 3 failing tests partially offset the improvement -- code that ships with known test failures is a thickness concern.",
+      "skeptic_challenge": "Hanselowski (skeptic) notes: 3 failing tests mean the implementation is not fully validated. Concurrent execution via ThreadPoolExecutor is adequate but not state-of-the-art; async would be more robust. The calibration note is a documentation improvement, not a calibration system. Scores above 19 need demonstrated production resilience, not just feature additions."
+    },
+    {
+      "axis": "effectiveness",
+      "expert_votes": {
+        "reihaneh-rabbany": 18,
+        "isabelle-augenstein": 19,
+        "preslav-nakov": 17,
+        "pepa-atanasova": 18,
+        "andreas-hanselowski": 18
+      },
+      "weighted_median_calculation": "Sorted: 17(0.204), 18(0.373), 18(0.586), 18(0.790), 19(1.000) -- crosses 0.5 at 18",
+      "score": 18,
+      "evidence": [
+        "Claim decomposition implemented: decompose_claim() splits compound claims on connectors (and, but, yet, while, although, semicolons, periods) with min-length filtering",
+        "SubClaimResult dataclass captures per-sub-claim verdict, confidence, support/conflict scores, and supporting/conflicting counts",
+        "Multilingual conflict detection covers 4 additional languages (Spanish, French, German, Chinese) beyond English",
+        "Calibration note explicitly documents that thresholds are heuristic and not benchmarked against gold-standard data",
+        "Core verification pipeline (search -> classify -> score -> verdict) produces structured, reproducible output with evidence chains",
+        "Evidence report surface produces executive summary, stance summary, coverage warnings, and actionable next steps"
+      ],
+      "gaps": [
+        "3 tests failing: semicolon claim decomposition regex bug, and Unicode word boundary issues with Spanish/French conflict markers. These are real effectiveness regressions.",
+        "Claim decomposition is rule-based (regex splitting) and does not handle complex sentence structures, conditional claims, or negation scope",
+        "Conflict detection for non-English languages fails on accented characters because regex \\b word boundary does not handle Unicode properly",
+        "No NLP-based stance detection, sentence similarity, or entailment reasoning -- still purely heuristic keyword overlap",
+        "No confidence calibration against a gold-standard dataset; the calibration note explicitly states thresholds are uncalibrated",
+        "Binary provider diversity (count of distinct providers) without reliability or quality weighting per provider",
+        "Sub-claim verification reuses the same source pool from the parent claim search rather than issuing targeted sub-queries"
+      ],
+      "improvement_from_iteration_1": "+1 point. Claim decomposition and multilingual markers are genuine effectiveness improvements. SubClaimResult is a meaningful structural addition. However, the semicolon bug and Unicode word boundary failures mean the new features are not fully working, capping the improvement.",
+      "advocate_affirmation": "Augenstein (advocate) notes: The claim decomposition feature is a step in the right direction per Nakov's playbook entry on claim decomposition trees. The SubClaimResult dataclass provides traceable per-sub-claim verdicts, which addresses the explainability concern. The calibration note is honest and appropriate. However, I would affirm that scores below 18 would undervalue the real structural improvements made."
+    }
+  ],
+  "total": 72,
+  "verdict": "needs_work",
+  "weighted_median_calculation_notes": {
+    "weights": {
+      "reihaneh-rabbany": 0.254,
+      "isabelle-augenstein": 0.169,
+      "preslav-nakov": 0.204,
+      "pepa-atanasova": 0.204,
+      "andreas-hanselowski": 0.169
+    },
+    "normalization_note": "Raw weights {0.3, 0.2, 0.24, 0.24, 0.2} sum to 1.18; normalized to sum to 1.0",
+    "median_method": "Weighted median computed by sorting votes, accumulating weights, and finding the value where cumulative weight crosses 0.5"
+  },
+  "iteration_delta": {
+    "breadth": "+1 (16 -> 17)",
+    "depth": "+0 (18 -> 18)",
+    "thickness": "+1 (18 -> 19)",
+    "effectiveness": "+1 (17 -> 18)",
+    "total": "+3 (69 -> 72)"
+  },
+  "generated_at": "2026-04-17T04:00:00Z",
+  "recommendations": [
+    "CRITICAL: Fix 3 failing tests before further development. The semicolon claim decomposition regex needs adjustment, and Unicode word boundaries for accented characters need \\b replaced with Unicode-aware alternatives or lookaround assertions.",
+    "BREADTH: Add an MCP protocol specialist or expand Hanselowski's profile to cover MCP tool specification patterns, sampling, and resource management in depth.",
+    "DEPTH: Augenstein's quote bank still needs more direct quotes (currently 2, one paraphrase). Nakov's source confidence is limited by only 2 source refs. Consider finding primary source materials for additional canonical works.",
+    "EFFECTIVENESS: Sub-claim verification should issue targeted sub-queries rather than reusing the parent claim's source pool. This is the single highest-impact improvement for effectiveness.",
+    "EFFECTIVENESS: Replace regex \\b word boundaries with Unicode-aware alternatives for multilingual conflict detection (use \\W|^|$ lookarounds or regex with re.UNICODE flag).",
+    "THICKNESS: Add mypy/pyright type checking and ruff linting to CI to prevent regressions.",
+    "EFFECTIVENESS: Consider simple baselines for verification (per Rabbany's playbook): majority-vote heuristic, keyword-count heuristic, and compare against the current weighted overlap heuristic to establish that the added complexity is justified."
+  ]
+}

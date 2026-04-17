@@ -1,0 +1,115 @@
+{
+  "version": "expert_forum_index_v1",
+  "generated_at": "2026-04-17T02:43:23Z",
+  "domains": [
+    "cross-validated-search"
+  ],
+  "candidate_count": 5,
+  "expert_count": 5,
+  "experts": [
+    {
+      "id": "andreas-hanselowski",
+      "name": "Andreas Hanselowski",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "methodology_reviewer",
+        "systems_builder"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 0.75,
+        "rationale": "Computed from source-tier coverage; human review should still check claim-source alignment."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Profile filled from source dossier. Re-verify industry role accuracy annually."
+      }
+    },
+    {
+      "id": "isabelle-augenstein",
+      "name": "Isabelle Augenstein",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "methodology_reviewer",
+        "systems_builder"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 1.0,
+        "rationale": "Multiple Tier A sources (institutional profile, Google Scholar) plus Tier B keynote covering research vision. Core expertise well-documented."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Augenstein is currently active at UCPH; profile reflects ongoing research direction."
+      }
+    },
+    {
+      "id": "pepa-atanasova",
+      "name": "Pepa Atanasova",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "methodology_reviewer",
+        "systems_builder"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 0.75,
+        "rationale": "Computed from source-tier coverage; human review should still check claim-source alignment."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Profile filled from source dossier; career-stage and publication data current as of source retrieval date."
+      }
+    },
+    {
+      "id": "preslav-nakov",
+      "name": "Preslav Nakov",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "venue_strategist"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 0.75,
+        "rationale": "Strong Tier A institutional profile and detailed Tier B interview. Well-known public figure in NLP fact-checking."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Active researcher at MBZUAI; recent work continues to advance fact-checking and propaganda detection."
+      }
+    },
+    {
+      "id": "reihaneh-rabbany",
+      "name": "Reihaneh Rabbany",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "systems_builder",
+        "methodology_reviewer"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 0.75,
+        "rationale": "Strong Tier A institutional profile (Mila) and detailed Tier B paper (Veracity arXiv preprint). Research trajectory well-documented through publications, lab page, and Google Scholar. Core expertise in web retrieval for fact-checking and source credibility directly substantiated by source materials."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Active researcher at Mila/McGill; Veracity system published 2025, CrediBench and misinformation guide published 2025. Research direction continues to advance web-scale credibility and open-source fact-checking."
+      }
+    }
+  ]
+}

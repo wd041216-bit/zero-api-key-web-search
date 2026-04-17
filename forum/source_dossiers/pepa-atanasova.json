@@ -1,0 +1,23 @@
+{
+  "expert_id": "pepa-atanasova",
+  "created_at": "2026-04-17T02:37:17Z",
+  "updated_at": "2026-04-17T02:37:17Z",
+  "sources": [
+    {
+      "id": "pepa-atanasova-a-pepa-atanasova-google-scholar-profile",
+      "title": "Pepa Atanasova - Google Scholar Profile",
+      "url": "https://scholar.google.com/citations?user=CLOC3rEAAAAJ",
+      "tier": "A",
+      "note": "Complete publication list on fact-checking, stance detection, and explainability",
+      "added_at": "2026-04-17T02:37:17Z"
+    },
+    {
+      "id": "pepa-atanasova-b-generating-fact-checking-explanations-acl-anthology",
+      "title": "Generating Fact Checking Explanations - ACL Anthology",
+      "url": "https://aclanthology.org/2020.acl-main.191/",
+      "tier": "B",
+      "note": "ACL 2020 paper on generating fact-checking explanations, core contribution to explainable verification",
+      "added_at": "2026-04-17T02:37:17Z"
+    }
+  ]
+}
