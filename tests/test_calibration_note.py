@@ -5,10 +5,10 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from cross_validated_search.core import (
+from zero_api_key_web_search.core import (
+    CALIBRATION_NOTE,
     Source,
     UltimateSearcher,
-    CALIBRATION_NOTE,
 )
 
 
@@ -50,7 +50,7 @@ class TestCalibrationNote(unittest.TestCase):
         self.assertIn("heuristic", result.calibration_note.lower())
 
     def test_evidence_report_includes_calibration_note(self):
-        from cross_validated_search.core import Answer
+        from zero_api_key_web_search.core import Answer
 
         answer = Answer(
             query="Python 3.13 stable release",

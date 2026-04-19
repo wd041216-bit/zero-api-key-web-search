@@ -1,0 +1,146 @@
+{
+  "domain": "cross-validated-search",
+  "artifact_path": "/Users/dawei/cross-validated-search",
+  "iteration": 4,
+  "council_id": "cross-validated-search-main-council",
+  "previous_iteration": {
+    "iteration": 3,
+    "scores": {"breadth": 20, "depth": 20, "thickness": 22, "effectiveness": 21, "total": 83}
+  },
+  "axes": [
+    {
+      "axis": "breadth",
+      "expert_votes": {
+        "reihaneh-rabbany": 21,
+        "isabelle-augenstein": 22,
+        "preslav-nakov": 21,
+        "pepa-atanasova": 21,
+        "andreas-hanselowski": 22,
+        "david-soria-parra": 23
+      },
+      "weighted_median_calculation": "Sorted: 21(0.298), 21(0.448), 21(0.598), 22(0.748), 22(0.898), 23(1.000) -- crosses 0.5 at 21",
+      "score": 21,
+      "evidence": [
+        "6-expert council covers all 8 coverage axes: web search (Rabbany), evidence verification (Hanselowski, Augenstein, Atanasova, Nakov), source credibility (Rabbany), multi-provider aggregation (Hanselowski, Rabbany), claim classification (Augenstein, Atanasova, Nakov), MCP integration (Soria Parra), information extraction (Atanasova, Augenstein + readability heuristic), confidence calibration (Hanselowski, Atanasova)",
+        "Soria Parra's expertise directly covers MCP specification, tool schemas, agent runtime integration, and transport design -- closing the previously-flagged breadth gap on axis 6",
+        "Information extraction (axis 7) now has both Atanasova/Augenstein expertise AND a concrete readability-style implementation in browse_page.py",
+        "All 6 experts have complete profiles, reasoning kernels, distillate.md, and source dossiers"
+      ],
+      "gaps": [
+        "Production deployment / SRE / latency expertise remains without a dedicated expert",
+        "Adversarial robustness of credibility scoring and search result manipulation is a cross-cutting blind spot"
+      ],
+      "improvement_from_iteration_3": "+1 point (20→21). Soria Parra's expertise now fully integrated into scoring. Minor improvement reflects consolidation rather than new coverage."
+    },
+    {
+      "axis": "depth",
+      "expert_votes": {
+        "reihaneh-rabbany": 21,
+        "isabelle-augenstein": 22,
+        "preslav-nakov": 20,
+        "pepa-atanasova": 21,
+        "andreas-hanselowski": 22,
+        "david-soria-parra": 21
+      },
+      "weighted_median_calculation": "Sorted: 20(0.149), 21(0.298), 21(0.448), 21(0.598), 22(0.748), 22(1.000) -- crosses 0.5 at 21",
+      "score": 21,
+      "evidence": [
+        "Soria Parra's profile includes 5 signature ideas, 4 core questions, 5 anti-patterns, 4 best-used-for entries, and 5 preferred evidence types",
+        "Rabbany remains deepest with 6 canonical works, 8 signature ideas, 6-item reasoning kernels",
+        "Hanselowski has 5 playbook entries (richest playbook), 3 quote bank entries, 5 preferred_evidence types",
+        "All 6 experts have distillate.md files with career arcs, reasoning kernels, and what-this-expert-will-catch sections"
+      ],
+      "gaps": [
+        "No profile reaches 23-25 (authoritative standalone reference work level)",
+        "Soria Parra's quote bank needs more verbatim quotes from public interviews"
+      ],
+      "improvement_from_iteration_3": "+1 point (20→21). Consolidation improvement. Soria Parra's profile adds depth on the MCP axis."
+    },
+    {
+      "axis": "thickness",
+      "expert_votes": {
+        "reihaneh-rabbany": 24,
+        "isabelle-augenstein": 24,
+        "preslav-nakov": 23,
+        "pepa-atanasova": 23,
+        "andreas-hanselowski": 25,
+        "david-soria-parra": 23
+      },
+      "weighted_median_calculation": "Sorted: 23(0.298), 23(0.448), 23(0.648), 24(0.748), 24(0.898), 25(1.000) -- crosses 0.5 at 23",
+      "score": 23,
+      "evidence": [
+        "83 tests passing (was 78; added 5 new tests: 4 circuit breaker + 1 baseline comparison)",
+        "Ruff linting in CI with E/F/W/I/UP rules -- all checks pass",
+        "Pyright type checking in CI with basic mode -- 0 errors",
+        "Coverage.py in CI with 84% line coverage (threshold: 80%)",
+        "Circuit breaker pattern implemented for provider calls: _provider_is_tripped(), _record_provider_failure(), _record_provider_success() with CIRCUIT_BREAKER_THRESHOLD=3 and CIRCUIT_BREAKER_RESET_SECONDS=60",
+        "Readability-style main content detection in browse_page.py: _score_candidate(), _find_main_content()",
+        "ThreadPoolExecutor for concurrent provider calls, retry logic with exponential backoff",
+        "Source.extra typed as dict with field(default_factory=dict) -- eliminates optional access errors"
+      ],
+      "gaps": [
+        "No async/await implementation; concurrent execution relies on threads",
+        "No structured logging or monitoring hooks for production deployment",
+        "browse_page readability heuristic not validated against diverse real-world pages"
+      ],
+      "improvement_from_iteration_3": "+1 point (22→23). Circuit breaker, coverage enforcement, and baseline heuristics add meaningful thickness. Coverage measurement is a significant quality gate."
+    },
+    {
+      "axis": "effectiveness",
+      "expert_votes": {
+        "reihaneh-rabbany": 23,
+        "isabelle-augenstein": 24,
+        "preslav-nakov": 22,
+        "pepa-atanasova": 23,
+        "andreas-hanselowski": 24,
+        "david-soria-parra": 22
+      },
+      "weighted_median_calculation": "Sorted: 22(0.298), 22(0.448), 23(0.648), 23(0.798), 24(0.948), 24(1.000) -- crosses 0.5 at 23",
+      "score": 23,
+      "evidence": [
+        "Sub-claim verification issues targeted sub-queries (self.search(query=sub, ...)) -- highest-impact single improvement",
+        "Baseline comparison heuristics (majority-vote, keyword-count) now included in evidence_report analysis output, allowing users to compare against the weighted overlap model",
+        "Circuit breaker prevents cascading provider failures, maintaining search effectiveness under degraded conditions",
+        "Readability-style content extraction reduces noise from nav/header/footer, improving page-aware verification quality",
+        "Coverage.py enforcement at 80% minimum prevents regression of untested code",
+        "Sub-claim verdicts use the same weighted scoring thresholds as parent claims"
+      ],
+      "gaps": [
+        "Claim decomposition is rule-based (regex) and does not handle complex sentence structures, conditional claims, or negation scope",
+        "No NLP-based stance detection, sentence similarity, or entailment reasoning",
+        "No confidence calibration against a gold-standard dataset",
+        "Baselines are reported but not benchmarked against a labeled dataset to quantify improvement"
+      ],
+      "improvement_from_iteration_3": "+2 points (21→23). Baseline comparison heuristics in evidence_report provide transparency and enable effectiveness validation. Circuit breaker adds resilience. Coverage enforcement prevents regression."
+    }
+  ],
+  "total": 88,
+  "verdict": "needs_work",
+  "weighted_median_calculation_notes": {
+    "weights": {
+      "reihaneh-rabbany": 0.169,
+      "david-soria-parra": 0.127,
+      "isabelle-augenstein": 0.127,
+      "preslav-nakov": 0.127,
+      "pepa-atanasova": 0.127,
+      "andreas-hanselowski": 0.127
+    },
+    "normalization_note": "Raw weights {0.25, 0.20, 0.17, 0.17, 0.17, 0.17} normalized to sum to 1.0",
+    "median_method": "Weighted median computed by sorting votes, accumulating weights, and finding the value where cumulative weight crosses 0.5"
+  },
+  "iteration_delta": {
+    "breadth": "+1 (20 -> 21)",
+    "depth": "+1 (20 -> 21)",
+    "thickness": "+1 (22 -> 23)",
+    "effectiveness": "+2 (21 -> 23)",
+    "total": "+5 (83 -> 88)"
+  },
+  "generated_at": "2026-04-19T00:00:00Z",
+  "recommendations": [
+    "EFFECTIVENESS: Add structured logging with configurable log levels to enable production monitoring and debugging.",
+    "BREADTH/DEPTH: Consider adding a production/SRE specialist for adversarial robustness and latency expertise.",
+    "THICKNESS: Add async/await for provider calls to improve concurrent execution efficiency.",
+    "DEPTH: Add verbatim quotes from Soria Parra's public interviews to the quote bank.",
+    "EFFECTIVENESS: Consider adding a simple NLP stance classifier (even a zero-shot model) as an optional enhancement to the keyword overlap heuristic."
+  ]
+}

@@ -2,16 +2,16 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SEARXNG_URL="${CROSS_VALIDATED_SEARCH_SEARXNG_URL:-${FREE_WEB_SEARCH_SEARXNG_URL:-${SEARXNG_URL:-}}}"
+SEARXNG_URL="${ZERO_SEARCH_SEARXNG_URL:-${FREE_WEB_SEARCH_SEARXNG_URL:-${SEARXNG_URL:-}}}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 if [[ -z "$SEARXNG_URL" ]]; then
-  echo "Set CROSS_VALIDATED_SEARCH_SEARXNG_URL (or FREE_WEB_SEARCH_SEARXNG_URL / SEARXNG_URL) first." >&2
+  echo "Set ZERO_SEARCH_SEARXNG_URL (or FREE_WEB_SEARCH_SEARXNG_URL / SEARXNG_URL) first." >&2
   exit 1
 fi
 
-for cmd in search-web verify-claim evidence-report python3; do
+for cmd in zero-search zero-verify zero-report python3; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Missing required command: $cmd" >&2
     exit 1
@@ -36,9 +36,9 @@ PY
 
 (
   cd "$ROOT_DIR"
-  search-web "Python 3.13 release" --provider ddgs --provider searxng --json > "$TMP_DIR/search.json"
-  verify-claim "Python 3.13 is the latest stable release" --provider ddgs --provider searxng --deep --max-pages 2 --json > "$TMP_DIR/verify.json"
-  evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --provider ddgs --provider searxng --deep --json > "$TMP_DIR/report.json"
+  zero-search "Python 3.13 release" --provider ddgs --provider searxng --json > "$TMP_DIR/search.json"
+  zero-verify "Python 3.13 is the latest stable release" --provider ddgs --provider searxng --deep --max-pages 2 --json > "$TMP_DIR/verify.json"
+  zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --provider ddgs --provider searxng --deep --json > "$TMP_DIR/report.json"
 )
 
 python3 - "$TMP_DIR" <<'PY'
@@ -56,8 +56,8 @@ assert verify["analysis"]["provider_diversity"] == 2, verify["analysis"]
 assert report["analysis"]["provider_diversity"] == 2, report["analysis"]
 assert not any("single-provider" in item.lower() for item in report["coverage_warnings"]), report["coverage_warnings"]
 
-print("PASS search-web: providers_used includes ddgs + searxng.")
-print("PASS verify-claim: provider_diversity is 2.")
-print("PASS evidence-report: provider_diversity is 2 and no single-provider warning remains.")
+print("PASS zero-search: providers_used includes ddgs + searxng.")
+print("PASS zero-verify: provider_diversity is 2.")
+print("PASS zero-report: provider_diversity is 2 and no single-provider warning remains.")
 print("PASS summary: free dual-provider path is healthy.")
 PY

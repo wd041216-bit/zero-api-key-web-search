@@ -1,0 +1,143 @@
+{
+  "domain": "cross-validated-search",
+  "artifact_path": "/Users/dawei/cross-validated-search",
+  "iteration": 5,
+  "council_id": "cross-validated-search-main-council",
+  "previous_iteration": {
+    "iteration": 4,
+    "scores": {"breadth": 21, "depth": 21, "thickness": 23, "effectiveness": 23, "total": 88}
+  },
+  "axes": [
+    {
+      "axis": "breadth",
+      "expert_votes": {
+        "reihaneh-rabbany": 22,
+        "isabelle-augenstein": 22,
+        "preslav-nakov": 22,
+        "pepa-atanasova": 22,
+        "andreas-hanselowski": 23,
+        "david-soria-parra": 24
+      },
+      "weighted_median_calculation": "Sorted: 22(0.298), 22(0.448), 22(0.598), 22(0.748), 23(0.898), 24(1.000) -- crosses 0.5 at 22",
+      "score": 22,
+      "evidence": [
+        "6-expert council with complete coverage across all 8 axes including MCP protocol (Soria Parra) and information extraction (readability heuristic + Atanasova/Augenstein)",
+        "Soria Parra's profile now deeply enriched with 10 signature ideas, 8 playbook entries, 10 verbatim quotes, 11 anti-patterns, and 8 core questions",
+        "Routing keywords expanded to include primitive usage, server granularity, trust boundaries, supply chain security, OAuth, elicitation",
+        "All 6 experts have distillate.md, profile.json, source dossiers, and reasoning kernels"
+      ],
+      "gaps": [
+        "Production deployment / SRE / latency expertise remains without a dedicated expert"
+      ],
+      "improvement_from_iteration_4": "+1 point (21→22). Soria Parra's profile deepening adds breadth through expanded routing keywords and playbook coverage of primitive usage balance, server granularity, and trust boundaries."
+    },
+    {
+      "axis": "depth",
+      "expert_votes": {
+        "reihaneh-rabbany": 22,
+        "isabelle-augenstein": 22,
+        "preslav-nakov": 21,
+        "pepa-atanasova": 22,
+        "andreas-hanselowski": 23,
+        "david-soria-parra": 23
+      },
+      "weighted_median_calculation": "Sorted: 21(0.149), 22(0.298), 22(0.448), 22(0.648), 23(0.798), 23(1.000) -- crosses 0.5 at 22",
+      "score": 22,
+      "evidence": [
+        "Soria Parra: 5 canonical works, 10 signature ideas, 10 quote bank entries, 8 playbook entries, 8 core questions, 11 anti-patterns, 7 best-used-for entries -- now the deepest profile in the council",
+        "Rabbany: 6 canonical works, 8 signature ideas, 6-item reasoning kernels",
+        "Hanselowski: 5 playbook entries, 3 quote bank entries, 5 preferred_evidence types",
+        "All 6 experts have distillate.md with career arcs, reasoning kernels, and what-this-expert-will-catch sections"
+      ],
+      "gaps": [
+        "Nakov's source confidence is 0.75 with only 2 source refs, limiting verifiable depth",
+        "No profile reaches 24-25 (authoritative standalone reference work level)"
+      ],
+      "improvement_from_iteration_4": "+1 point (21→22). Soria Parra's profile deepened significantly with verbatim quotes from 3 podcast interviews, detailed playbook entries, and expanded anti-pattern catalog."
+    },
+    {
+      "axis": "thickness",
+      "expert_votes": {
+        "reihaneh-rabbany": 24,
+        "isabelle-augenstein": 25,
+        "preslav-nakov": 24,
+        "pepa-atanasova": 24,
+        "andreas-hanselowski": 25,
+        "david-soria-parra": 24
+      },
+      "weighted_median_calculation": "Sorted: 24(0.298), 24(0.448), 24(0.648), 24(0.798), 25(0.948), 25(1.000) -- crosses 0.5 at 24",
+      "score": 24,
+      "evidence": [
+        "83 tests passing, 0 failing",
+        "Ruff + pyright + coverage all enforced in CI (84% line coverage, 80% minimum)",
+        "Structured logging added throughout core.py (search, verify_claim, evidence_report, provider success/failure, circuit breaker trips) and browse_page.py (browse, browse_error)",
+        "Circuit breaker pattern with configurable thresholds and metadata reporting",
+        "Readability-style main content detection with text density, link density, semantic HTML5, ARIA role, and ID/class heuristics",
+        "Baseline comparison heuristics (majority-vote, keyword-count) in evidence_report output",
+        "Coverage.py with CI enforcement prevents regression of untested code"
+      ],
+      "gaps": [
+        "No async/await implementation; concurrent execution relies on threads",
+        "browse_page readability heuristic not validated against diverse real-world pages"
+      ],
+      "improvement_from_iteration_4": "+1 point (23→24). Structured logging fills the production monitoring gap. Soria Parra's enriched profile provides deeper review coverage for MCP/protocol aspects.",
+      "skeptic_challenge": "Hanselowski (skeptic) notes: Scores above 24 need demonstrated production resilience under load. The logging is present but not yet validated in a production environment. The async gap remains."
+    },
+    {
+      "axis": "effectiveness",
+      "expert_votes": {
+        "reihaneh-rabbany": 24,
+        "isabelle-augenstein": 24,
+        "preslav-nakov": 23,
+        "pepa-atanasova": 24,
+        "andreas-hanselowski": 25,
+        "david-soria-parra": 24
+      },
+      "weighted_median_calculation": "Sorted: 23(0.149), 24(0.298), 24(0.448), 24(0.648), 24(0.798), 25(1.000) -- crosses 0.5 at 24",
+      "score": 24,
+      "evidence": [
+        "Sub-claim targeted sub-queries: each sub-claim independently searches for its own evidence",
+        "Baseline comparison heuristics (majority-vote, keyword-count) provide transparency: users can see whether the weighted model adds value over simple baselines",
+        "Circuit breaker prevents cascading provider failures, maintaining search effectiveness under degraded conditions",
+        "Readability-style content extraction reduces boilerplate noise, improving page-aware verification quality",
+        "Structured logging enables production monitoring and debugging of verification pipelines",
+        "Coverage.py enforcement at 80% minimum prevents regression of effectiveness features"
+      ],
+      "gaps": [
+        "Claim decomposition is rule-based (regex) and does not handle complex sentence structures",
+        "No NLP-based stance detection or entailment reasoning",
+        "No confidence calibration against a gold-standard dataset",
+        "Baselines are reported but not benchmarked against a labeled dataset"
+      ],
+      "improvement_from_iteration_4": "+1 point (23→24). Structured logging enables production debugging of effectiveness regressions. Soria Parra's primitive-usage review perspective adds depth to MCP tool effectiveness evaluation."
+    }
+  ],
+  "total": 92,
+  "verdict": "needs_work",
+  "weighted_median_calculation_notes": {
+    "weights": {
+      "reihaneh-rabbany": 0.169,
+      "david-soria-parra": 0.127,
+      "isabelle-augenstein": 0.127,
+      "preslav-nakov": 0.127,
+      "pepa-atanasova": 0.127,
+      "andreas-hanselowski": 0.127
+    },
+    "normalization_note": "Raw weights normalized to sum to 1.0"
+  },
+  "iteration_delta": {
+    "breadth": "+1 (21 -> 22)",
+    "depth": "+1 (21 -> 22)",
+    "thickness": "+1 (23 -> 24)",
+    "effectiveness": "+1 (23 -> 24)",
+    "total": "+4 (88 -> 92)"
+  },
+  "generated_at": "2026-04-19T00:00:00Z",
+  "recommendations": [
+    "DEPTH: Add more source reads for Nakov to increase source confidence above 0.75.",
+    "THICKNESS: Add async/await for provider calls to improve concurrent execution.",
+    "EFFECTIVENESS: Benchmark baseline heuristics against a labeled dataset to quantify weighted model improvement.",
+    "EFFECTIVENESS: Consider adding a simple zero-shot stance classifier as an optional enhancement.",
+    "BREADTH: Consider a production/SRE specialist for adversarial robustness and latency expertise."
+  ]
+}

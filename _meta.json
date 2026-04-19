@@ -1,18 +1,16 @@
 {
-  "name": "cross-validated-search",
-  "version": "16.0.0",
-  "description": "Source-backed web search, page reading, and evidence-aware claim checking for AI agents. Privacy-first, keyless by default, and compatible with Gemini, OpenClaw, MCP, Codex, Claude Code, and more.",
+  "name": "zero-api-key-web-search",
+  "version": "1.0.0",
+  "description": "Free web search, browsing, and claim verification for AI agents. No API keys required. 100% free. Works with MCP, Claude Code, Gemini, Cursor, Copilot, and more.",
   "author": "wd041216-bit",
-  "homepage": "https://github.com/wd041216-bit/cross-validated-search",
+  "homepage": "https://github.com/wd041216-bit/zero-api-key-web-search",
   "tags": [
-    "llm",
-    "cross-validation",
+    "free",
+    "no-api-key",
     "web-search",
+    "claim-verification",
+    "evidence-report",
     "mcp",
-    "cli-anything",
-    "openclaw",
-    "verification",
-    "evidence-aware",
     "claude-code",
     "cursor",
     "copilot",
@@ -20,7 +18,9 @@
     "continue",
     "kiro",
     "opencode",
-    "codex"
+    "codex",
+    "openclaw",
+    "manus"
   ],
   "license": "MIT",
   "platforms": [
@@ -33,6 +33,7 @@
     "opencode",
     "codex",
     "openclaw",
+    "manus",
     "mcp",
     "cli"
   ]

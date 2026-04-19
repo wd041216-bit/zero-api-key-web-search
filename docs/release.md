@@ -34,7 +34,7 @@ Optional free-path checks:
 
 ```bash
 ./scripts/start-searxng.sh
-export CROSS_VALIDATED_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
 ./scripts/validate-free-path.sh
 ```
 
@@ -45,7 +45,7 @@ Check these files before release:
 - `README.md`
 - `GEMINI.md`
 - `SKILL.md`
-- `cross_validated_search/skills/SKILL.md`
+- `zero_api_key_web_search/skills/SKILL.md`
 - `.gemini/SKILL.md`
 - `.claude-plugin/SKILL.md`
 - `.codex/SKILL.md`
@@ -55,11 +55,11 @@ Check these files before release:
 
 Keep these names consistent:
 
-- repository: `cross-validated-search`
-- package: `cross-validated-search`
-- module: `cross_validated_search`
+- repository: `zero-api-key-web-search`
+- package: `zero-api-key-web-search`
+- module: `zero_api_key_web_search`
 - CLI: `search-web`, `browse-page`, `verify-claim`, `evidence-report`
-- MCP: `cross-validated-search-mcp`
+- MCP: `zero-api-key-web-search-mcp`
 
 ## Release policy
 

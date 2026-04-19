@@ -1,11 +1,11 @@
 # Manus Setup
 
-`cross-validated-search` is compatible with Manus-style Agent Skills and CLI-first workflows.
+`zero-api-key-web-search` is compatible with Manus-style Agent Skills and CLI-first workflows.
 
 ## Install
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 ## Skill surface
@@ -32,4 +32,4 @@ evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest 
 
 - `verify-claim` is heuristic and evidence-aware, not a proof engine.
 - The default provider path starts with `ddgs`.
-- For stronger free evidence diversity, configure self-hosted SearXNG via `CROSS_VALIDATED_SEARCH_SEARXNG_URL`.
+- For stronger free evidence diversity, configure self-hosted SearXNG via `ZERO_SEARCH_SEARXNG_URL`.

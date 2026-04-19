@@ -14,7 +14,6 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-
 FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "fake_ddgs"
 
 
@@ -45,7 +44,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_search_web_json_cli(self):
         result = subprocess.run(
-            [sys.executable, "-m", "cross_validated_search.search_web", "python release", "--json"],
+            [sys.executable, "-m", "zero_api_key_web_search.search_web", "python release", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -59,7 +58,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_verify_claim_json_cli(self):
         result = subprocess.run(
-            [sys.executable, "-m", "cross_validated_search.verify_claim", "python release status", "--json"],
+            [sys.executable, "-m", "zero_api_key_web_search.verify_claim", "python release status", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -77,7 +76,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_legacy_verify_claim_module_alias(self):
         result = subprocess.run(
-            [sys.executable, "-m", "free_web_search.verify_claim", "python release status", "--json"],
+            [sys.executable, "-m", "zero_api_key_web_search_compat.verify_claim", "python release status", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -92,7 +91,7 @@ class TestCliIntegration(unittest.TestCase):
             [
                 sys.executable,
                 "-m",
-                "cross_validated_search.evidence_report",
+                "zero_api_key_web_search.evidence_report",
                 "python release status",
                 "--json",
             ],
@@ -123,7 +122,7 @@ class TestCliIntegration(unittest.TestCase):
                     [
                         sys.executable,
                         "-m",
-                        "cross_validated_search.browse_page",
+                        "zero_api_key_web_search.browse_page",
                         f"http://127.0.0.1:{port}/index.html",
                         "--json",
                     ],
@@ -160,13 +159,13 @@ class TestCliIntegration(unittest.TestCase):
             )
             server, thread, port = self._serve_tempdir(tmpdir)
             env = os.environ.copy()
-            env["CROSS_VALIDATED_SEARCH_SEARXNG_URL"] = f"http://127.0.0.1:{port}"
+            env["ZERO_SEARCH_SEARXNG_URL"] = f"http://127.0.0.1:{port}"
             try:
                 result = subprocess.run(
                     [
                         sys.executable,
                         "-m",
-                        "cross_validated_search.search_web",
+                        "zero_api_key_web_search.search_web",
                         "release signal",
                         "--provider",
                         "searxng",
@@ -218,13 +217,13 @@ class TestCliIntegration(unittest.TestCase):
             Path(tmpdir, "search").write_text(json.dumps(search_payload), encoding="utf-8")
 
             env = os.environ.copy()
-            env["CROSS_VALIDATED_SEARCH_SEARXNG_URL"] = f"http://127.0.0.1:{port}"
+            env["ZERO_SEARCH_SEARXNG_URL"] = f"http://127.0.0.1:{port}"
             try:
                 result = subprocess.run(
                     [
                         sys.executable,
                         "-m",
-                        "cross_validated_search.verify_claim",
+                        "zero_api_key_web_search.verify_claim",
                         "Python 3.13 is the latest stable release",
                         "--provider",
                         "searxng",
@@ -283,13 +282,13 @@ class TestCliIntegration(unittest.TestCase):
             Path(tmpdir, "search").write_text(json.dumps(search_payload), encoding="utf-8")
 
             env = os.environ.copy()
-            env["CROSS_VALIDATED_SEARCH_SEARXNG_URL"] = f"http://127.0.0.1:{port}"
+            env["ZERO_SEARCH_SEARXNG_URL"] = f"http://127.0.0.1:{port}"
             try:
                 result = subprocess.run(
                     [
                         sys.executable,
                         "-m",
-                        "cross_validated_search.evidence_report",
+                        "zero_api_key_web_search.evidence_report",
                         "Python 3.13 stable release",
                         "--claim",
                         "Python 3.13 is the latest stable release",

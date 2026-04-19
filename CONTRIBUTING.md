@@ -1,6 +1,6 @@
-# Contributing to Cross-Validated Search
+# Contributing to Zero-API-Key Web Search
 
-Thank you for your interest in contributing to **Cross-Validated Search**. This document outlines the process for contributing to this project.
+Thank you for your interest in contributing to **Zero-API-Key Web Search**. This document outlines the process for contributing to this project.
 
 ## Table of Contents
 
@@ -21,15 +21,15 @@ By participating in this project, you agree to maintain a respectful and inclusi
 Before contributing, please:
 
 1. Read the [README.md](README.md) to understand the project's purpose and architecture.
-2. Check the [open issues](https://github.com/wd041216-bit/cross-validated-search/issues) to see if your idea or bug has already been reported.
+2. Check the [open issues](https://github.com/wd041216-bit/zero-api-key-web-search/issues) to see if your idea or bug has already been reported.
 3. For significant changes, open an issue first to discuss the proposed change before submitting a PR.
 
 ## Development Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/wd041216-bit/cross-validated-search.git
-cd cross-validated-search
+git clone https://github.com/wd041216-bit/zero-api-key-web-search.git
+cd zero-api-key-web-search
 
 # Create a virtual environment
 python3 -m venv .venv
@@ -131,4 +131,4 @@ If you discover a security vulnerability, please do **not** open a public issue.
 
 ---
 
-Thank you for helping make Cross-Validated Search better for everyone.
+Thank you for helping make Zero-API-Key Web Search better for everyone.

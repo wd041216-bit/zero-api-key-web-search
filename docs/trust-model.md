@@ -1,6 +1,6 @@
 # Trust Model
 
-Cross-Validated Search is an evidence-aware verification helper for agent workflows. It improves the odds that an answer is grounded in live sources, but it does not eliminate uncertainty.
+Zero-API-Key Web Search is an evidence-aware verification helper for agent workflows. It improves the odds that an answer is grounded in live sources, but it does not eliminate uncertainty.
 
 ## What the project does
 
@@ -44,7 +44,7 @@ Returned analysis includes:
 
 - TLS verification is enabled by default for `browse-page`.
 - Insecure TLS is only available through explicit opt-in:
-  - `CROSS_VALIDATED_SEARCH_INSECURE_SSL=1`
+  - `ZERO_SEARCH_INSECURE_SSL=1`
   - `FREE_WEB_SEARCH_INSECURE_SSL=1`
 
 ## Recommended usage
@@ -56,7 +56,7 @@ Returned analysis includes:
 
 ## Current extension points
 
-- add self-hosted `searxng` by setting `CROSS_VALIDATED_SEARCH_SEARXNG_URL`
+- add self-hosted `searxng` by setting `ZERO_SEARCH_SEARXNG_URL`
 - enable page-aware verification with `verify-claim --with-pages`
 
 ## Planned upgrades

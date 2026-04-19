@@ -1,0 +1,153 @@
+{
+  "domain": "cross-validated-search",
+  "artifact_path": "/Users/dawei/cross-validated-search",
+  "iteration": 3,
+  "council_id": "cross-validated-search-main-council",
+  "previous_iteration": {
+    "iteration": 2,
+    "scores": {"breadth": 17, "depth": 18, "thickness": 19, "effectiveness": 18, "total": 72}
+  },
+  "axes": [
+    {
+      "axis": "breadth",
+      "expert_votes": {
+        "reihaneh-rabbany": 20,
+        "isabelle-augenstein": 20,
+        "preslav-nakov": 19,
+        "pepa-atanasova": 20,
+        "andreas-hanselowski": 20,
+        "david-soria-parra": 22
+      },
+      "weighted_median_calculation": "Sorted: 19(0.149), 20(0.319), 20(0.489), 20(0.659), 20(0.829), 22(1.000) -- crosses 0.5 at 20",
+      "score": 20,
+      "evidence": [
+        "David Soria Parra (MCP Lead Maintainer) added to council, directly covering the MCP protocol specialist gap (axis 6)",
+        "6 experts now cover all 8 coverage axes: web search (Rabbany), evidence verification (Hanselowski, Augenstein, Atanasova, Nakov), source credibility (Rabbany), multi-provider aggregation (Hanselowski, Rabbany), claim classification (Augenstein, Atanasova, Nakov), MCP integration (Soria Parra), information extraction (Atanasova, Augenstein), confidence calibration (Hanselowski, Atanasova)",
+        "Soria Parra brings tool specification, agent runtime, and protocol design expertise -- the exact gap flagged in iteration 2",
+        "Rabbany's 6 canonical works remain the broadest single-expert coverage; Soria Parra adds 3 canonical works on MCP specification",
+        "All 6 experts have complete reasoning kernels, question playbooks, and distillate.md files"
+      ],
+      "gaps": [
+        "Production deployment, latency, and adversarial robustness remain acknowledged blind spots without deep expert coverage",
+        "Adversarial robustness of credibility scoring and search result manipulation is a cross-cutting blind spot",
+        "No dedicated information retrieval / web scraping specialist for browse_page content extraction (though readability heuristic now implemented)"
+      ],
+      "improvement_from_iteration_2": "+3 points (17→20). MCP protocol gap closed with Soria Parra addition. All 8 coverage axes now have at least one expert with direct domain expertise."
+    },
+    {
+      "axis": "depth",
+      "expert_votes": {
+        "reihaneh-rabbany": 20,
+        "isabelle-augenstein": 20,
+        "preslav-nakov": 19,
+        "pepa-atanasova": 19,
+        "andreas-hanselowski": 21,
+        "david-soria-parra": 20
+      },
+      "weighted_median_calculation": "Sorted: 19(0.298), 19(0.448), 20(0.648), 20(0.798), 20(0.948), 21(1.000) -- crosses 0.5 at 20",
+      "score": 20,
+      "evidence": [
+        "Soria Parra has 5 signature ideas, 4 core questions, typed tool schema expertise with concrete anti-patterns (untyped parameters, single-responsibility violations)",
+        "Augenstein: 4 canonical works, 4 playbook entries, 2 quote bank entries, detailed advantage_knowledge_base with anti-patterns",
+        "Hanselowski has 5 playbook entries (richest playbook), 3 quote bank entries, 5 preferred_evidence types with specific metrics",
+        "Rabbany remains deepest with 6 canonical works, 8 signature ideas, 6-item reasoning kernels",
+        "All 6 experts have distillate.md files with career arcs, reasoning kernels, and what-this-expert-will-catch sections"
+      ],
+      "gaps": [
+        "No profile reaches 23-25 (authoritative standalone reference work level); all remain in the 19-21 range",
+        "Soria Parra's profile is newly created -- needs time to deepen with additional source reads and playbook entries",
+        "Blind spots are self-identified but not externally validated against the actual project codebase"
+      ],
+      "improvement_from_iteration_2": "+2 points (18→20). Soria Parra addition adds depth on MCP/protocol axis. Profile quality across all experts is consistent with no weak links."
+    },
+    {
+      "axis": "thickness",
+      "expert_votes": {
+        "reihaneh-rabbany": 22,
+        "isabelle-augenstein": 22,
+        "preslav-nakov": 21,
+        "pepa-atanasova": 21,
+        "andreas-hanselowski": 23,
+        "david-soria-parra": 21
+      },
+      "weighted_median_calculation": "Sorted: 21(0.298), 21(0.448), 21(0.648), 22(0.798), 22(0.948), 23(1.000) -- crosses 0.5 at 21",
+      "score": 22,
+      "evidence": [
+        "All 78 tests passing (was 74; added 4 readability heuristic tests) -- zero failing tests",
+        "Ruff linting integrated into CI with E/F/W/I/UP rules -- all checks pass on source",
+        "Pyright type checking integrated into CI with basic mode -- 0 errors, 0 warnings",
+        "Readability-style main content detection implemented in browse_page.py: _score_candidate(), _find_main_content() with semantic HTML5, ARIA role, ID/class heuristic, text density, and link density scoring",
+        "Concurrent provider calls via ThreadPoolExecutor, retry logic with exponential backoff",
+        "Calibration note field in VerificationResult and EvidenceReportResult",
+        "Multilingual conflict markers for 5 languages (English, Spanish, French, German, Chinese)",
+        "SubClaimResult dataclass and decompose_claim() with test coverage"
+      ],
+      "gaps": [
+        "No circuit breaker pattern for provider calls beyond retry logic",
+        "No async/await implementation; concurrent execution relies on threads",
+        "No structured logging or monitoring hooks for production deployment",
+        "Coverage and branch coverage not measured (no coverage.py integration)"
+      ],
+      "improvement_from_iteration_2": "+3 points (19→22). Key improvements: (1) ruff + pyright in CI, (2) readability heuristic for browse_page, (3) 4 new tests, (4) Source.extra type fix eliminating pyright errors. The shift from 3 failing tests to 0 is a significant thickness improvement.",
+      "skeptic_challenge": "Hanselowski (skeptic) notes: Ruff and pyright are now in CI but coverage measurement is not. The readability heuristic is a good start but not validated against real-world page diversity. Scores above 22 need demonstrated production resilience."
+    },
+    {
+      "axis": "effectiveness",
+      "expert_votes": {
+        "reihaneh-rabbany": 21,
+        "isabelle-augenstein": 22,
+        "preslav-nakov": 20,
+        "pepa-atanasova": 21,
+        "andreas-hanselowski": 22,
+        "david-soria-parra": 20
+      },
+      "weighted_median_calculation": "Sorted: 20(0.298), 20(0.448), 21(0.598), 21(0.748), 22(0.898), 22(1.000) -- crosses 0.5 at 21",
+      "score": 21,
+      "evidence": [
+        "Sub-claim verification now issues targeted sub-queries (self.search(query=sub, ...)) instead of reusing parent claim source pool -- single highest-impact effectiveness improvement",
+        "Sub-claim verdicts use the same weighted scoring thresholds as parent claims (support >= 0.7, conflict <= 0.35 → supported, etc.)",
+        "Readability-style content extraction in browse_page reduces noise from nav/header/footer boilerplate, improving page-aware verification quality",
+        "Multilingual conflict detection covers 5 languages with Unicode-aware patterns",
+        "Claim decomposition implemented with connector-based splitting and min-length filtering",
+        "Calibration note explicitly documents that thresholds are heuristic and uncalibrated"
+      ],
+      "gaps": [
+        "Claim decomposition is rule-based (regex) and does not handle complex sentence structures, conditional claims, or negation scope",
+        "No NLP-based stance detection, sentence similarity, or entailment reasoning -- still heuristic keyword overlap",
+        "No confidence calibration against a gold-standard dataset",
+        "Binary provider diversity without reliability or quality weighting per provider"
+      ],
+      "improvement_from_iteration_2": "+3 points (18→21). Targeted sub-queries for sub-claims is the highest-impact single improvement. Readability heuristic improves page-aware verification. MCP schema validation is now within scope with Soria Parra's expertise.",
+      "advocate_affirmation": "Augenstein (advocate) notes: The sub-claim targeted search is a meaningful structural improvement that directly addresses the playbook recommendation on claim decomposition trees. The readability heuristic brings browse_page closer to production-grade content extraction. Scores below 21 would undervalue these genuine improvements."
+    }
+  ],
+  "total": 83,
+  "verdict": "needs_work",
+  "weighted_median_calculation_notes": {
+    "weights": {
+      "reihaneh-rabbany": 0.169,
+      "david-soria-parra": 0.127,
+      "isabelle-augenstein": 0.127,
+      "preslav-nakov": 0.127,
+      "pepa-atanasova": 0.127,
+      "andreas-hanselowski": 0.127
+    },
+    "normalization_note": "Raw weights {0.25, 0.20, 0.17, 0.17, 0.17, 0.17} normalized to sum to 1.0 (total 1.13)",
+    "median_method": "Weighted median computed by sorting votes, accumulating weights, and finding the value where cumulative weight crosses 0.5"
+  },
+  "iteration_delta": {
+    "breadth": "+3 (17 -> 20)",
+    "depth": "+2 (18 -> 20)",
+    "thickness": "+3 (19 -> 22)",
+    "effectiveness": "+3 (18 -> 21)",
+    "total": "+11 (72 -> 83)"
+  },
+  "generated_at": "2026-04-19T00:00:00Z",
+  "recommendations": [
+    "EFFECTIVENESS: Add coverage.py to CI and enforce a minimum coverage threshold (e.g., 80% line coverage) to prevent regressions.",
+    "EFFECTIVENESS: Implement simple baselines (majority-vote, keyword-count) and compare against the weighted overlap heuristic to justify added complexity.",
+    "BREADTH: Consider adding a production/deployment specialist for adversarial robustness and latency expertise.",
+    "THICKNESS: Add circuit breaker pattern for provider calls to prevent cascading failures under load.",
+    "DEPTH: Deepen Soria Parra's profile with additional playbook entries and source reads from MCP Dev Summit content."
+  ]
+}

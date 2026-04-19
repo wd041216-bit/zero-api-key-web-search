@@ -1,19 +1,19 @@
 ---
-name: cross-validated-search
+name: zero-api-key-web-search
 description: >
   Codex-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it to verify factual answers with live results and explicit source handling.
 version: "16.0.0"
 ---
 
-# Cross-Validated Search for Codex
+# Zero-API-Key Web Search for Codex
 
 Use this skill when a response depends on current facts, recent releases, or source-backed verification.
 
 ## Install
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 ## Commands

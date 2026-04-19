@@ -28,7 +28,7 @@ class DDGS:
                 {
                     "href": "https://example.net/conflict-1",
                     "title": f"Fact check: {query}",
-                    "body": f"Some observers say the claim is false or disputed despite similar keywords.",
+                    "body": "Some observers say the claim is false or disputed despite similar keywords.",
                 },
             ]
         return [

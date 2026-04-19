@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 ## Search the web
@@ -34,6 +34,6 @@ evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest 
 
 ```bash
 ./scripts/start-searxng.sh
-export CROSS_VALIDATED_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
 ./scripts/validate-free-path.sh
 ```

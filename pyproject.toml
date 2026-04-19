@@ -3,9 +3,9 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cross-validated-search"
-version = "16.0.0"
-description = "Evidence-aware web search, browsing, and claim verification for AI agents."
+name = "zero-api-key-web-search"
+version = "1.0.0"
+description = "Zero-API-key free web search, browsing, and claim verification for AI agents. No API keys required. 100% free."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -34,29 +34,67 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/wd041216-bit/cross-validated-search"
-Repository = "https://github.com/wd041216-bit/cross-validated-search"
-Issues = "https://github.com/wd041216-bit/cross-validated-search/issues"
-Changelog = "https://github.com/wd041216-bit/cross-validated-search/blob/main/CHANGELOG.md"
-Documentation = "https://github.com/wd041216-bit/cross-validated-search/tree/main/docs"
+Homepage = "https://github.com/wd041216-bit/zero-api-key-web-search"
+Repository = "https://github.com/wd041216-bit/zero-api-key-web-search"
+Issues = "https://github.com/wd041216-bit/zero-api-key-web-search/issues"
+Changelog = "https://github.com/wd041216-bit/zero-api-key-web-search/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/wd041216-bit/zero-api-key-web-search/tree/main/docs"
 
 [project.scripts]
-search-web = "cross_validated_search.search_web:main"
-browse-page = "cross_validated_search.browse_page:main"
-cross-validated-search-mcp = "cross_validated_search.mcp_server:run"
-free-web-search-mcp = "free_web_search.mcp_server:run"
-verify-claim = "cross_validated_search.verify_claim:main"
-evidence-report = "cross_validated_search.evidence_report:main"
+zero-search = "zero_api_key_web_search.search_web:main"
+zero-browse = "zero_api_key_web_search.browse_page:main"
+zero-verify = "zero_api_key_web_search.verify_claim:main"
+zero-report = "zero_api_key_web_search.evidence_report:main"
+zero-mcp = "zero_api_key_web_search.mcp_server:run"
+search-web = "zero_api_key_web_search.search_web:main"
+browse-page = "zero_api_key_web_search.browse_page:main"
+verify-claim = "zero_api_key_web_search.verify_claim:main"
+evidence-report = "zero_api_key_web_search.evidence_report:main"
+cross-validated-search-mcp = "zero_api_key_web_search.mcp_server:run"
+free-web-search-mcp = "zero_api_key_web_search_compat.mcp_server:run"
 
 [project.optional-dependencies]
 dev = [
   "build>=1.2.2",
   "twine>=6.1.0",
+  "ruff>=0.4.0",
+  "pyright>=1.1.350",
+  "coverage>=7.0",
 ]
 
 [tool.setuptools.packages.find]
-include = ["cross_validated_search*", "free_web_search*"]
+include = ["zero_api_key_web_search*", "zero_api_key_web_search_compat*"]
 
 [tool.setuptools.package-data]
-cross_validated_search = ["skills/*.md"]
-free_web_search = ["skills/*.md"]
+zero_api_key_web_search = ["skills/*.md"]
+zero_api_key_web_search_compat = ["skills/*.md"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["E501"]
+
+[tool.pyright]
+pythonVersion = "3.10"
+typeCheckingMode = "basic"
+reportMissingImports = "none"
+reportAttributeAccessIssue = "none"
+
+[tool.coverage.run]
+source = ["zero_api_key_web_search"]
+omit = [
+    "zero_api_key_web_search/providers/ddgs.py",
+    "zero_api_key_web_search/providers/searxng.py",
+    "zero_api_key_web_search/search_web.py",
+    "zero_api_key_web_search/verify_claim.py",
+    "zero_api_key_web_search/evidence_report.py",
+    "zero_api_key_web_search/search.py",
+]
+
+[tool.coverage.report]
+fail_under = 80

@@ -1,5 +1,5 @@
 ---
-name: cross-validated-search
+name: zero-api-key-web-search
 description: >
   Claude Code skill for source-backed web search, page reading, and evidence-aware claim checking.
   Designed to reduce hallucination risk by surfacing corroborating and conflicting sources.
@@ -12,18 +12,18 @@ hooks:
         - type: command
           command: |
             if echo "$CLAUDE_USER_PROMPT" | grep -qiE 'search|find|lookup|what is|who is|when did|where is|how many|latest|recent|最新|搜索|查询|查找'; then
-              echo '[cross-validated-search] Factual query detected. Consider using search-web, browse-page, or verify-claim.'
+              echo '[zero-api-key-web-search] Factual query detected. Consider using search-web, browse-page, or verify-claim.'
             fi
 ---
 
-# Cross-Validated Search for Claude Code
+# Zero-API-Key Web Search for Claude Code
 
 Use this skill when Claude Code needs current facts, supporting sources, or a quick support/conflict read on a claim.
 
 ## Install
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 ## Core Commands

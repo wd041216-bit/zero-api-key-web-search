@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from cross_validated_search.core import Answer, UltimateSearcher, Source
+from zero_api_key_web_search.core import Answer, Source, UltimateSearcher
 
 
 class TestEvidenceReport(unittest.TestCase):
@@ -50,3 +50,33 @@ class TestEvidenceReport(unittest.TestCase):
         self.assertIn("free_provider_path", report.analysis)
         self.assertIn("provider", report.executive_summary)
         self.assertTrue(any("searxng" in step.lower() for step in report.next_steps))
+
+    def test_evidence_report_includes_baselines(self):
+        answer = Answer(
+            query="Python 3.13 stable release",
+            search_type="text",
+            answer="Top Sources:\n1. [Test](https://example.com)",
+            confidence="MEDIUM",
+            sources=[
+                Source(
+                    url="https://docs.python.org/3/whatsnew/3.13.html",
+                    title="Official Python 3.13 release",
+                    snippet="Official release notes confirm Python 3.13 is the stable release line.",
+                    engine="DDGS-Text",
+                    date="2026-03-20",
+                )
+            ],
+            validation={"total_results": 1, "unique_results": 1, "cross_validated": 0},
+            metadata={"providers_used": ["ddgs"], "providers_requested": ["ddgs"], "errors": []},
+            elapsed_ms=5,
+        )
+        searcher = UltimateSearcher(timeout=5)
+        with patch.object(searcher, "search", return_value=answer):
+            report = searcher.evidence_report(
+                query="Python 3.13 stable release",
+                claim="Python 3.13 is the latest stable release",
+            )
+        self.assertIn("baselines", report.analysis)
+        self.assertIn("majority_vote", report.analysis["baselines"])
+        self.assertIn("keyword_count", report.analysis["baselines"])
+        self.assertIn("comparison_note", report.analysis["baselines"])

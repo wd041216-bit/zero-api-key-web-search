@@ -19,7 +19,7 @@ The lowest-friction path in this repo is:
 ```bash
 cp .env.searxng.example .env
 ./scripts/start-searxng.sh
-export CROSS_VALIDATED_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
 ./scripts/validate-free-path.sh
 ```
 
@@ -43,15 +43,15 @@ docker run --rm -d \
   searxng/searxng:latest
 ```
 
-Point Cross-Validated Search at it:
+Point Zero-API-Key Web Search at it:
 
 ```bash
-export CROSS_VALIDATED_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
 ```
 
 Supported aliases:
 
-- `CROSS_VALIDATED_SEARCH_SEARXNG_URL`
+- `ZERO_SEARCH_SEARXNG_URL`
 - `FREE_WEB_SEARCH_SEARXNG_URL`
 - `SEARXNG_URL`
 
@@ -80,7 +80,7 @@ Healthy output should show:
 ## Troubleshooting
 
 - If bootstrap stalls, run `docker compose -f docker-compose.searxng.yml logs searxng`.
-- If port `8080` is busy, change `SEARXNG_PORT` in `.env` and export a matching `CROSS_VALIDATED_SEARCH_SEARXNG_URL`.
+- If port `8080` is busy, change `SEARXNG_PORT` in `.env` and export a matching `ZERO_SEARCH_SEARXNG_URL`.
 - If validation fails on the preflight step, verify `http://127.0.0.1:8080/search?q=python&format=json` returns JSON from your instance.
 
 ## Notes

@@ -1,11 +1,11 @@
-# Cross-Validated Search for OpenCode
+# Zero-API-Key Web Search for OpenCode
 
 Use cross-validated search when you need verified facts.
 
 ## Installation
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 ## Commands

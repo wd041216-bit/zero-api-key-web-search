@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from cross_validated_search.core import Source, UltimateSearcher
+from zero_api_key_web_search.core import Source, UltimateSearcher
 
 
 BENCHMARK_ROOT = Path(__file__).resolve().parent

@@ -1,14 +1,14 @@
 # Claude Code Setup
 
-`cross-validated-search` can be used from Claude Code in two complementary ways:
+`zero-api-key-web-search` can be used from Claude Code in two complementary ways:
 
 1. install the Python package so the CLI and MCP surfaces are available
-2. place or symlink the bundled skill from `.claude/skills/cross-validated-search/SKILL.md`
+2. place or symlink the bundled skill from `.claude/skills/zero-api-key-web-search/SKILL.md`
 
 ## Install the package
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 ## Use the bundled Claude skill
@@ -17,10 +17,10 @@ From the repository root, copy or symlink:
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s "$(pwd)/.claude/skills/cross-validated-search" ~/.claude/skills/cross-validated-search
+ln -s "$(pwd)/.claude/skills/zero-api-key-web-search" ~/.claude/skills/zero-api-key-web-search
 ```
 
-If you prefer not to symlink, copy the `cross-validated-search` folder into your Claude skill directory.
+If you prefer not to symlink, copy the `zero-api-key-web-search` folder into your Claude skill directory.
 
 ## Recommended workflow
 
@@ -45,7 +45,7 @@ For the strongest free path, pair `ddgs` with self-hosted SearXNG:
 
 ```bash
 ./scripts/start-searxng.sh
-export CROSS_VALIDATED_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
 ```
 
 Then rerun `verify-claim` or `evidence-report` with `--deep`.

@@ -10,14 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [16.0.0] - 2026-03-24
 
 ### Changed
-- Renamed the canonical PyPI package to `cross-validated-search` and the canonical Python module to `cross_validated_search`.
+- Renamed the canonical PyPI package to `zero-api-key-web-search` and the canonical Python module to `zero_api_key_web_search`.
 - Kept `free_web_search` imports and `free-web-search-mcp` available as compatibility aliases for existing integrations.
 - Switched packaging, Docker, CI, and platform docs to point at the canonical v16 names.
 
 ### Fixed
 - Aligned README, contributing docs, and bundled skill docs with the current published package and CLI surface.
 - Corrected the repository license wording to match the actual `LICENSE` file.
-- Updated the test suite to validate the active `cross_validated_search.search_web` and `browse_page` implementations.
+- Updated the test suite to validate the active `zero_api_key_web_search.search_web` and `browse_page` implementations.
 - Updated CI to fail on real test regressions instead of continuing after errors.
 - Consolidated search logic into a shared core to reduce drift between `search_web.py` and `search.py`.
 - Switched TLS handling to secure-by-default with explicit opt-in insecure mode for constrained environments.
@@ -48,11 +48,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Universal IDE Support**: Now works with 10+ platforms out of the box
   - Claude Code: `.claude-plugin/SKILL.md` with UserPromptSubmit hooks
-  - Cursor: `.cursor/rules/cross-validated-search.md`
+  - Cursor: `.cursor/rules/zero-api-key-web-search.md`
   - GitHub Copilot: `.github/copilot/instructions.md`
   - Gemini CLI: `.gemini/SKILL.md`
-  - Continue: `.continue/skills/cross-validated-search/SKILL.md`
-  - Kiro: `.kiro/steering/cross-validated-search.md`
+  - Continue: `.continue/skills/zero-api-key-web-search/SKILL.md`
+  - Kiro: `.kiro/steering/zero-api-key-web-search.md`
   - OpenCode: `.opencode/instructions.md`
   - Codex: `.codex/SKILL.md`
   - OpenClaw: `free_web_search/skills/SKILL.md` (existing)
@@ -81,7 +81,7 @@ To enable IDE-specific features:
 ## [14.0.0] - 2026-03-19
 
 ### Changed
-- Repository branding shifted toward **Cross-Validated Search** and the GitHub repository moved to `wd041216-bit/cross-validated-search`.
+- Repository branding shifted toward **Zero-API-Key Web Search** and the GitHub repository moved to `wd041216-bit/zero-api-key-web-search`.
 - The published compatibility surface remained stable:
   - package: `free-web-search-ultimate`
   - CLI: `search-web`, `browse-page`

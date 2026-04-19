@@ -1,6 +1,6 @@
 {
-  "name": "cross-validated-search",
-  "version": "16.0.0",
-  "description": "Evidence-aware verification for Gemini CLI with live search, claim checks, and citation-ready evidence reports.",
+  "name": "zero-api-key-web-search",
+  "version": "1.0.0",
+  "description": "Free web search, page reading, and claim verification for AI agents. No API keys. 100% free.",
   "contextFileName": "GEMINI.md"
 }

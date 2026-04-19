@@ -5,7 +5,6 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -15,7 +14,7 @@ class TestSelfHostedAssets(unittest.TestCase):
         self.assertTrue(env_example.exists())
         content = env_example.read_text(encoding="utf-8")
         self.assertIn("SEARXNG_IMAGE=", content)
-        self.assertIn("CROSS_VALIDATED_SEARCH_SEARXNG_URL=", content)
+        self.assertIn("ZERO_SEARCH_SEARXNG_URL=", content)
 
     def test_compose_includes_healthcheck(self):
         compose_file = ROOT / "docker-compose.searxng.yml"

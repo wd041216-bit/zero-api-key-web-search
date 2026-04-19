@@ -24,9 +24,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -e ".[dev]"
 
-    - name: Run unit tests
+    - name: Lint with ruff
       run: |
-        python -m unittest discover -s tests -v
+        pip install ruff
+        ruff check zero_api_key_web_search/ tests/
+
+    - name: Type check with pyright
+      run: |
+        pip install pyright
+        pyright zero_api_key_web_search/
+
+    - name: Run unit tests with coverage
+      run: |
+        pip install coverage
+        coverage run -m unittest discover -s tests -v
+        coverage report --fail-under=80 --include="zero_api_key_web_search/*"
 
     - name: Run benchmark regression
       run: |
@@ -43,9 +55,10 @@ jobs:
         python -m venv /tmp/cvs-wheel
         /tmp/cvs-wheel/bin/pip install --upgrade pip
         /tmp/cvs-wheel/bin/pip install dist/*.whl
-        /tmp/cvs-wheel/bin/search-web --help
-        /tmp/cvs-wheel/bin/browse-page --help
-        /tmp/cvs-wheel/bin/verify-claim --help
-        /tmp/cvs-wheel/bin/evidence-report --help
+        /tmp/cvs-wheel/bin/zero-search --help
+        /tmp/cvs-wheel/bin/zero-browse --help
+        /tmp/cvs-wheel/bin/zero-verify --help
+        /tmp/cvs-wheel/bin/zero-report --help
+        test -x /tmp/cvs-wheel/bin/zero-mcp
         test -x /tmp/cvs-wheel/bin/cross-validated-search-mcp
         test -x /tmp/cvs-wheel/bin/free-web-search-mcp

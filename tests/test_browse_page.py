@@ -1,18 +1,18 @@
-"""Unit tests for cross_validated_search.browse_page module."""
-from pathlib import Path
+"""Unit tests for zero_api_key_web_search.browse_page module."""
 import sys
 import unittest
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from cross_validated_search.browse_page import browse
+from zero_api_key_web_search.browse_page import browse, extract_text
 
 
 class TestBrowsePage(unittest.TestCase):
     """Tests for the browse() function."""
 
-    @patch("cross_validated_search.browse_page.urllib.request.urlopen")
+    @patch("zero_api_key_web_search.browse_page.urllib.request.urlopen")
     def test_browse_returns_success_payload(self, mock_urlopen):
         """browse() should return a success payload for a valid URL."""
         mock_response = MagicMock()
@@ -36,7 +36,7 @@ class TestBrowsePage(unittest.TestCase):
         self.assertIn("Hello, this is a test page", result["content"])
         self.assertIn("insecure_ssl", result)
 
-    @patch("cross_validated_search.browse_page.urllib.request.urlopen")
+    @patch("zero_api_key_web_search.browse_page.urllib.request.urlopen")
     def test_browse_handles_network_error(self, mock_urlopen):
         """browse() should return an error payload on network failures."""
         mock_urlopen.side_effect = Exception("Connection refused")
@@ -52,7 +52,7 @@ class TestBrowsePage(unittest.TestCase):
         self.assertIsInstance(result, dict)
         self.assertEqual(result["status"], "error")
 
-    @patch("cross_validated_search.browse_page.urllib.request.urlopen")
+    @patch("zero_api_key_web_search.browse_page.urllib.request.urlopen")
     def test_browse_truncates_content(self, mock_urlopen):
         """browse() should truncate long content while reporting the full length."""
         mock_response = MagicMock()
@@ -72,6 +72,67 @@ class TestBrowsePage(unittest.TestCase):
         self.assertTrue(result["truncated"])
         self.assertEqual(len(result["content"]), 40)
         self.assertGreater(result["total_length"], len(result["content"]))
+
+
+class TestReadabilityHeuristic(unittest.TestCase):
+    """Tests for the readability-style main content detection."""
+
+    def test_extracts_article_tag(self):
+        """Main content in <article> should be preferred."""
+        html = """
+        <html><head><title>Test</title></head><body>
+          <nav><a href="/">Home</a><a href="/about">About</a></nav>
+          <article>
+            <p>This is the main article content that should be extracted.</p>
+            <p>It has multiple paragraphs of meaningful text.</p>
+          </article>
+          <footer>Copyright 2026</footer>
+        </body></html>
+        """
+        title, text = extract_text(html)
+        self.assertIn("main article content", text)
+        self.assertNotIn("Home", text)
+
+    def test_extracts_main_tag(self):
+        """Main content in <main> should be extracted."""
+        html = """
+        <html><head><title>Test</title></head><body>
+          <div class="sidebar"><a>Link 1</a><a>Link 2</a></div>
+          <main role="main">
+            <p>The main content area with substantial text.</p>
+          </main>
+        </body></html>
+        """
+        title, text = extract_text(html)
+        self.assertIn("main content area", text)
+
+    def test_falls_back_to_full_text(self):
+        """When no main content candidate scores well, fall back to full text."""
+        html = """
+        <html><head><title>Test</title></head><body>
+          <p>Some content without semantic structure.</p>
+        </body></html>
+        """
+        title, text = extract_text(html)
+        self.assertIn("Some content", text)
+
+    def test_avoids_boilerplate(self):
+        """Boilerplate elements should be deprioritized."""
+        html = """
+        <html><head><title>Test</title></head><body>
+          <footer class="contentinfo">
+            <a>Link 1</a><a>Link 2</a><a>Link 3</a><a>Link 4</a>
+            <p>Footer content</p>
+          </footer>
+          <div class="article-content">
+            <p>This is the real article with enough text to score well.</p>
+            <p>More paragraphs add to the text density score significantly.</p>
+            <p>A third paragraph further increases the content signal.</p>
+          </div>
+        </body></html>
+        """
+        title, text = extract_text(html)
+        self.assertIn("real article", text)
 
 
 if __name__ == "__main__":

@@ -1,11 +1,11 @@
-# Cross-Validated Search for GitHub Copilot
+# Zero-API-Key Web Search for GitHub Copilot
 
-Use Cross-Validated Search when Copilot needs live search results, source-backed verification, or page-level reading.
+Use Zero-API-Key Web Search when Copilot needs live search results, source-backed verification, or page-level reading.
 
 ## Install
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 ## Commands

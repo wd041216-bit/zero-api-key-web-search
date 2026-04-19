@@ -1,287 +1,202 @@
 <div align="center">
-  <img src="assets/banner.svg" alt="Cross-Validated Search" width="100%"/>
-  <h1>Cross-Validated Search</h1>
-  <p><strong>Evidence-aware web search, browsing, and claim verification for AI agents.</strong></p>
-  <p><em>CLI + MCP + skill surfaces for Gemini, Claude Code, OpenClaw, Manus, and other agent runtimes.</em></p>
+  <h1>Zero-API-Key Web Search</h1>
+  <p><strong>Free web search, browsing & claim verification for AI agents.</strong></p>
+  <p><em>No API keys. No accounts. No limits. 100% free.</em></p>
 
-  [![PyPI package](https://img.shields.io/pypi/v/cross-validated-search?label=pypi%20package)](https://pypi.org/project/cross-validated-search/)
-  [![Python Version](https://img.shields.io/pypi/pyversions/cross-validated-search)](https://python.org)
-  [![MCP Ready](https://img.shields.io/badge/MCP-Ready-0f766e.svg)](https://modelcontextprotocol.io/)
-  [![Evidence Reports](https://img.shields.io/badge/Evidence%20Reports-Yes-1d4ed8.svg)](./docs/evidence-report.md)
+  [![PyPI](https://img.shields.io/pypi/v/zero-api-key-web-search?label=pypi)](https://pypi.org/project/zero-api-key-web-search/)
+  [![Python](https://img.shields.io/pypi/pyversions/zero-api-key-web-search)](https://python.org)
+  [![MCP](https://img.shields.io/badge/MCP-Ready-0f766e.svg)](https://modelcontextprotocol.io/)
+  [![Tests](https://img.shields.io/badge/tests-86%20passing-22c55e.svg)](./tests)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 </div>
 
-Cross-Validated Search is the flagship repo for source-backed agent answers. It combines live web search, page reading, and claim checking so an agent can surface supporting evidence, conflicting evidence, and source-backed confidence before presenting factual answers.
+---
 
-> Canonical names in v16: package `cross-validated-search`, module `cross_validated_search`, and MCP command `cross-validated-search-mcp`. Legacy `free_web_search` imports and `free-web-search-mcp` remain available as compatibility aliases.
+## What is this?
 
-> Recommended free path: `ddgs + self-hosted SearXNG`. Configure `CROSS_VALIDATED_SEARCH_SEARXNG_URL` to unlock a free second provider and stronger evidence reports.
+A single `pip install` gives your AI agent live web search, full-page reading, and evidence-aware claim verification — all without any API key, account, or paid service.
 
-## At a glance
+- **Search**: Live results from DuckDuckGo (free) + optional SearXNG (self-hosted, free)
+- **Browse**: Extract clean text from any URL, stripping boilerplate automatically
+- **Verify**: Classify claims as supported / contested / likely false with evidence scores
+- **Report**: Generate citation-ready evidence reports with rationale and next steps
 
-- one install gives you `search-web`, `browse-page`, `verify-claim`, and `evidence-report`
-- one repo covers CLI, MCP, Gemini, Claude Code, OpenClaw, Manus, and Copilot-adjacent workflows
-- one flagship workflow turns raw search results into an evidence artifact with rationale, conflicts, and next steps
-
-## Workflow at a glance
-
-![Cross-Validated Search workflow](assets/workflow.svg)
-
-## Indexer Quick Review
-
-If you are reviewing this repo for collection or ecosystem inclusion, the fastest path is:
-
-1. verify the flagship workflow:
-   `evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json`
-2. review the ecosystem contract:
-   [docs/ecosystem-readiness.md](docs/ecosystem-readiness.md)
-3. review the free dual-provider bootstrap:
-   [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md)
-4. review Gemini gallery readiness:
-   [docs/gemini-submission-checklist.md](docs/gemini-submission-checklist.md)
-5. review Claude Code and Manus setup notes:
-   [docs/claude-code.md](docs/claude-code.md), [docs/manus.md](docs/manus.md)
-
-## 60-second verification
-
-Install and verify the public surface:
+## Quick start
 
 ```bash
-pip install cross-validated-search
-search-web "Python 3.13 release" --json
-verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
-evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+pip install zero-api-key-web-search
+
+# Search the web
+zero-search "Python 3.13 release" --json
+
+# Read a page
+zero-browse "https://docs.python.org/3/whatsnew/" --json
+
+# Verify a claim
+zero-verify "Python 3.13 is the latest stable release" --deep --json
+
+# Full evidence report
+zero-report "Python 3.13 stable release" \
+  --claim "Python 3.13 is the latest stable release" --deep --json
 ```
 
-Typical `evidence-report` JSON shape:
+Legacy CLI aliases (`search-web`, `browse-page`, `verify-claim`, `evidence-report`) also work.
+
+## Why this over a plain search wrapper?
+
+| Feature | Plain search | Zero-API-Key Web Search |
+| --- | --- | --- |
+| Live search results | ✅ | ✅ |
+| News / images / videos / books | ❌ | ✅ |
+| Region & time filtering | ❌ | ✅ |
+| Full-page text extraction | ❌ | ✅ |
+| Claim verification with evidence scores | ❌ | ✅ |
+| Supporting vs. conflicting evidence | ❌ | ✅ |
+| Citation-ready evidence reports | ❌ | ✅ |
+| Dual-provider cross-validation | ❌ | ✅ |
+| API key required | Often | **Never** |
+| Cost | Sometimes | **Free** |
+
+## MCP server
+
+Works with Claude Code, Cursor, Copilot, and any MCP-compatible agent:
 
 ```json
 {
-  "verdict": "contested",
-  "confidence": "MEDIUM",
-  "coverage_warnings": [
-    "Single-provider evidence path. Add another provider when possible."
-  ],
-  "analysis": {
-    "report_model": "evidence-report-v2",
-    "provider_diversity": 1,
-    "page_aware": true,
-    "support_score": 1.42,
-    "conflict_score": 0.61,
-    "coverage_warning_count": 1
+  "mcpServers": {
+    "zero-api-key-web-search": {
+      "command": "zero-mcp"
+    }
   }
 }
 ```
 
-If you are evaluating the repo for ecosystem collection, start with [docs/ecosystem-readiness.md](docs/ecosystem-readiness.md).
+Four tools exposed: `search_web`, `browse_page`, `verify_claim`, `evidence_report`.
 
-## Ecosystem surfaces
+## Platform support
 
-| Surface | Entry | Why it matters |
+| Platform | Status | Entry point |
 | --- | --- | --- |
-| CLI | `search-web`, `browse-page`, `verify-claim`, `evidence-report` | fastest way to verify the repo in under a minute |
-| MCP | `cross-validated-search-mcp` | works with MCP-native agent runtimes |
-| Gemini | [GEMINI.md](GEMINI.md), [`.gemini/SKILL.md`](.gemini/SKILL.md) | gallery / extension readiness |
-| Claude Code | [`.claude/skills/cross-validated-search/SKILL.md`](.claude/skills/cross-validated-search/SKILL.md) | local skill install path |
-| OpenClaw | [`cross_validated_search/skills/SKILL.md`](cross_validated_search/skills/SKILL.md) | bundled skill surface |
-| Manus | [SKILL.md](SKILL.md), [docs/manus.md](docs/manus.md) | GitHub-import-friendly skill |
+| **CLI** | Ready | `zero-search`, `zero-browse`, `zero-verify`, `zero-report` |
+| **MCP** | Ready | `zero-mcp` |
+| **Claude Code** | Ready | `.claude/skills/zero-api-key-web-search/SKILL.md` |
+| **Gemini** | Ready | `GEMINI.md` + `.gemini/SKILL.md` |
+| **Cursor** | Ready | `.cursor/rules/zero-api-key-web-search.md` |
+| **Copilot** | Ready | `.github/copilot/instructions.md` |
+| **Codex** | Ready | `.codex/SKILL.md` |
+| **Continue** | Ready | `.continue/skills/zero-api-key-web-search/SKILL.md` |
+| **Manus** | Ready | Root `SKILL.md` + `docs/manus.md` |
+| **Kiro** | Ready | `.kiro/steering/zero-api-key-web-search.md` |
+| **OpenClaw** | Ready | `zero_api_key_web_search/skills/SKILL.md` |
 
-## Demo transcript
+## How verification works
 
-```bash
-$ search-web "Python 3.13 release" --json
-... ranked sources with citations ...
+`zero-verify` uses the **evidence-aware heuristic v3** model:
 
-$ verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
-{"verdict":"likely_supported","confidence":"MEDIUM", ...}
+1. Search for the claim across available providers
+2. Score each source on keyword overlap, source quality, freshness
+3. Classify as supporting, conflicting, or neutral
+4. Optionally fetch top pages for deeper page-aware analysis
+5. Render a verdict with confidence and evidence breakdown
 
-$ evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
-{"verdict":"contested","confidence":"MEDIUM","analysis":{"provider_diversity":1,"page_aware":true}}
-```
+| Verdict | Meaning |
+| --- | --- |
+| `supported` | Strong evidence, low conflict |
+| `likely_supported` | Leans positive, not decisive |
+| `contested` | Support and conflict both meaningful |
+| `likely_false` | Conflict strong, support weak |
+| `insufficient_evidence` | Too weak for any firmer verdict |
 
-## Why this exists
-
-Most search wrappers stop at “here are some results.” This repository goes one step further:
-
-- returns structured search results with citations
-- reads full pages when snippets are not enough
-- classifies evidence as supporting, conflicting, or neutral
-- generates a higher-level evidence report with citation-ready sources and next steps
-- exposes explainable confidence signals instead of a black-box claim
-- works across CLI, MCP, Gemini, OpenClaw, and other agent workflows
-
-## Current capabilities
-
-### `search-web`
-
-Use live search for factual or time-sensitive queries.
-
-```bash
-search-web "Python 3.13 release"
-search-web "OpenAI release news" --type news --timelimit w
-search-web "人工智能最新进展" --region zh-cn --json
-```
-
-### `browse-page`
-
-Read the full text of a URL when snippets are not enough.
-
-```bash
-browse-page "https://example.com/article"
-browse-page "https://example.com/article" --json
-```
-
-### `verify-claim`
-
-Check whether a claim looks supported, contested, likely false, or still under-evidenced.
-
-```bash
-verify-claim "Python 3.13 is the latest stable release"
-verify-claim "OpenAI released GPT-5 this week" --timelimit w --json
-verify-claim "Python 3.13 is the latest stable release" --with-pages --max-pages 2
-```
-
-### `evidence-report`
-
-Generate a compact report that combines search, verification, citations, and follow-up guidance.
-
-```bash
-evidence-report "Python 3.13 stable release"
-evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
-```
-
-The report now includes:
-
-- verdict rationale that explains why the score landed where it did
-- stance summary buckets for supporting, conflicting, and neutral evidence
-- coverage warnings when provider diversity, domain diversity, or page-aware depth look weak
-- citation-ready source digests and recommended next steps
+This is a heuristic evidence classifier, not a proof engine. See [docs/trust-model.md](docs/trust-model.md) for details and limitations.
 
 ## Free dual-provider setup
 
-If you want the strongest free setup, self-host SearXNG and pair it with `ddgs`:
+Default install uses DuckDuckGo. For stronger cross-validated evidence, add a free self-hosted SearXNG:
 
 ```bash
 ./scripts/start-searxng.sh
-export CROSS_VALIDATED_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
 ./scripts/validate-free-path.sh
 ```
 
-Or use the compose file directly:
+Or with Docker Compose:
 
 ```bash
 cp .env.searxng.example .env
 docker compose -f docker-compose.searxng.yml up -d
 ```
 
-Full setup and validation guide: [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md).
+Full guide: [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md).
 
-The current verification model is `evidence-aware-heuristic-v3`, and the flagship report surface is `evidence-report-v2`. Together they use:
+## Evidence report example
 
-- keyword overlap between the claim and returned evidence
-- contradiction markers in titles and snippets
-- source-quality heuristics
-- source freshness when a parseable date exists
-- domain diversity across the evidence set
-- optional page text from top fetched sources
-- optional provider diversity when a second provider is configured
+```json
+{
+  "verdict": "contested",
+  "confidence": "MEDIUM",
+  "executive_summary": "Evidence is split...",
+  "verdict_rationale": ["Source A supports...", "Source B contradicts..."],
+  "coverage_warnings": ["Single-provider evidence path."],
+  "source_digest": [
+    {"title": "...", "url": "...", "classification": "supporting", "evidence_strength": 3}
+  ],
+  "next_steps": ["Add a second provider for cross-validation."]
+}
+```
 
-Details and limitations are documented in [docs/trust-model.md](docs/trust-model.md).
-For a quick product-level comparison with plain search wrappers, see [docs/why-not-just-search.md](docs/why-not-just-search.md).
-The next calibration step is outlined in [docs/benchmark-plan.md](docs/benchmark-plan.md).
-Quick repository-level context lives in [docs/use-cases.md](docs/use-cases.md), [docs/benchmarks.md](docs/benchmarks.md), and [docs/external-threads.md](docs/external-threads.md).
+## Architecture
 
-![Benchmark snapshot](assets/benchmark-card.svg)
+```
+zero_api_key_web_search/
+  core.py              # UltimateSearcher — search, verify, report engine
+  browse_page.py       # Readability-style page text extraction
+  mcp_server.py        # MCP server (4 tools)
+  transport.py         # SSL/TLS helpers
+  search_web.py        # CLI: zero-search
+  browse_page.py       # CLI: zero-browse
+  verify_claim.py      # CLI: zero-verify
+  evidence_report.py   # CLI: zero-report
+  providers/
+    base.py            # SearchProvider protocol (sync + async)
+    ddgs.py            # DuckDuckGo provider
+    searxng.py         # SearXNG provider
+  skills/
+    SKILL.md           # Bundled OpenClaw skill
+```
+
+Key engineering features:
+
+- **Circuit breaker**: Trips after 3 consecutive provider failures, auto-resets after 60s
+- **Async support**: `asearch()` for concurrent provider calls via `asyncio.gather`
+- **Structured logging**: Configurable logging at search/verify/report entry points
+- **Readability heuristic**: Semantic HTML5 + ARIA roles + text density scoring
+- **Baseline comparison**: Majority-vote and keyword-count baselines in reports
+- **Sub-claim decomposition**: Targeted sub-queries for independent evidence gathering
 
 ## Installation
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
-Or install from source:
-
-```bash
-git clone https://github.com/wd041216-bit/cross-validated-search.git
-cd cross-validated-search
-pip install -e .
-```
-
-Python 3.10+ is required.
-
-## Platform support
-
-| Surface | Status | Notes |
-| --- | --- | --- |
-| CLI | Yes | `search-web`, `browse-page`, `verify-claim`, `evidence-report` |
-| MCP | Yes | `cross-validated-search-mcp` |
-| Gemini CLI | Yes | `gemini-extension.json`, root `skills/`, and `.gemini/SKILL.md` |
-| OpenClaw | Yes | `cross_validated_search/skills/SKILL.md` |
-| Claude Code | Yes | `.claude/skills/cross-validated-search/SKILL.md` |
-| Cursor / Continue / Copilot | Yes | Bundled instruction and skill files |
-| Manus | Yes | Root `SKILL.md` plus [docs/manus.md](docs/manus.md) |
-
-## Verification model
-
-`verify-claim` returns one of five verdicts:
-
-| Verdict | Meaning |
-| --- | --- |
-| `supported` | Strong support, low conflict, and enough domain diversity |
-| `likely_supported` | Evidence leans positive but is not decisive |
-| `contested` | Support and conflict both carry meaningful weight |
-| `likely_false` | Conflict is strong and support is weak |
-| `insufficient_evidence` | Evidence exists but is too weak for a firmer claim |
-
-This is an evidence-aware heuristic system, not a fact-level proof engine. Today it still has three important limits:
-
-- default install still starts with `ddgs`; the recommended collection-grade free path is `ddgs + self-hosted searxng`
-- page-aware verification is optional and still heuristic rather than full-document entailment
-- no benchmark-driven confidence calibration yet
-
-## MCP example
-
-Add the server to your MCP client:
-
-```json
-{
-  "mcpServers": {
-    "cross-validated-search": {
-      "command": "cross-validated-search-mcp",
-      "args": []
-    }
-  }
-}
-```
+Python 3.10+ required. No API keys, no accounts, no configuration needed.
 
 ## Development
 
-Run the test suite:
-
 ```bash
-python -m unittest discover -s tests -v
+pip install -e ".[dev]"
+python -m pytest tests/ -x           # 86 tests
+ruff check zero_api_key_web_search/ tests/
+pyright zero_api_key_web_search/     # 0 errors
+coverage report --fail-under=80       # 85% coverage
 ```
 
-Build distributables:
+## Verification for ecosystem reviewers
 
-```bash
-python -m build
-```
-
-Run deterministic benchmark regressions:
-
-```bash
-python benchmarks/run_benchmark.py
-```
-
-## Roadmap
-
-The next upgrades needed for ecosystem-grade collection are:
-
-1. calibrate provider weighting and add stronger provider-specific tests
-2. improve page-aware verification beyond snippet and keyword heuristics
-3. add benchmark fixtures and regression scoring
-4. improve the flagship `evidence-report` workflow with richer source summarization and calibration
+1. `zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json`
+2. [docs/ecosystem-readiness.md](docs/ecosystem-readiness.md)
+3. [docs/gemini-submission-checklist.md](docs/gemini-submission-checklist.md)
+4. [docs/trust-model.md](docs/trust-model.md)
 
 ## License
 

@@ -1,0 +1,1 @@
+../zero_api_key_web_search/mcp_server.py

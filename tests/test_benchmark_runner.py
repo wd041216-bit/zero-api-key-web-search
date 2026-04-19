@@ -8,7 +8,6 @@ import sys
 import unittest
 from pathlib import Path
 
-
 BENCHMARK_RUNNER = Path(__file__).resolve().parents[1] / "benchmarks" / "run_benchmark.py"
 
 

@@ -1,11 +1,11 @@
 {
   "version": "expert_forum_index_v1",
-  "generated_at": "2026-04-17T02:43:23Z",
+  "generated_at": "2026-04-19T00:00:00Z",
   "domains": [
     "cross-validated-search"
   ],
-  "candidate_count": 5,
-  "expert_count": 5,
+  "candidate_count": 6,
+  "expert_count": 6,
   "experts": [
     {
       "id": "andreas-hanselowski",
@@ -26,6 +26,27 @@
         "status": "fresh",
         "last_checked": "2026-04-17",
         "notes": "Profile filled from source dossier. Re-verify industry role accuracy annually."
+      }
+    },
+    {
+      "id": "david-soria-parra",
+      "name": "David Soria Parra",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "protocol_specialist",
+        "systems_builder"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 1.0,
+        "rationale": "Multiple Tier A sources (MCP MAINTAINERS.md, Anthropic official announcement, Linux Foundation summit) plus Tier B podcast interviews with direct technical content. Core expertise in MCP specification directly substantiated."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-19",
+        "notes": "Active as Lead Maintainer at Anthropic; MCP Dev Summit keynote April 2026 confirms ongoing role."
       }
     },
     {
@@ -81,13 +102,13 @@
       ],
       "source_confidence": {
         "level": "high",
-        "weighted_score": 0.75,
-        "rationale": "Strong Tier A institutional profile and detailed Tier B interview. Well-known public figure in NLP fact-checking."
+        "weighted_score": 1.0,
+        "rationale": "Multiple Tier A sources (MBZUAI, Google Scholar, ACL Anthology) plus Tier B interviews with verbatim quotes. 8 canonical works with 250+ citations each."
       },
       "freshness": {
         "status": "fresh",
-        "last_checked": "2026-04-17",
-        "notes": "Active researcher at MBZUAI; recent work continues to advance fact-checking and propaganda detection."
+        "last_checked": "2026-04-19",
+        "notes": "Active at MBZUAI; Nature Machine Intelligence 2024 and CoNLL 2023 keynote confirm ongoing leadership."
       }
     },
     {

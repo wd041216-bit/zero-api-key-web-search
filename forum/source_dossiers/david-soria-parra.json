@@ -1,0 +1,36 @@
+{
+  "expert_id": "david-soria-parra",
+  "sources": [
+    {
+      "tier": "A",
+      "title": "MCP Maintainers Document (Lead Maintainer)",
+      "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/MAINTAINERS.md",
+      "note": "Official listing as Lead Maintainer of the MCP specification"
+    },
+    {
+      "tier": "A",
+      "title": "MCP Dev Summit NA 2026 Speaker Page",
+      "url": "https://mcpdevsummitna26.sched.com/speaker/david_soria_parra.298cmgcn",
+      "note": "Keynote speaker at Linux Foundation's MCP Dev Summit North America"
+    },
+    {
+      "tier": "A",
+      "title": "Anthropic MCP Announcement",
+      "url": "https://www.anthropic.com/research/model-context-protocol",
+      "note": "Anthropic's official announcement of the Model Context Protocol"
+    },
+    {
+      "tier": "B",
+      "title": "a16z Podcast: MCP Co-Creator on the Next Wave of LLM Innovation",
+      "url": "https://a16z.com/podcast/mcp-co-creator-on-the-next-wave-of-llm-innovation",
+      "note": "In-depth interview on MCP design decisions, tool specification patterns, and future roadmap"
+    },
+    {
+      "tier": "B",
+      "title": "Software Engineering Daily: Anthropic and MCP with David Soria Parra",
+      "url": "https://softwareengineeringdaily.com/2025/05/13/anthropic-and-the-model-context-protocol-with-david-soria-parra/",
+      "note": "Technical interview on protocol design, sampling, resource management, and agent runtime integration"
+    }
+  ],
+  "created_at": "2026-04-19T00:00:00Z"
+}

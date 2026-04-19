@@ -3,7 +3,7 @@
 Install the package:
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 Use it for factual or recent queries:
@@ -37,5 +37,5 @@ How to interpret it:
 - search before answering time-sensitive questions
 - browse the top source when snippets are too thin
 - use `evidence-report` when Gemini needs a citation-ready summary instead of raw signals
-- self-host `SearXNG` and set `CROSS_VALIDATED_SEARCH_SEARXNG_URL` if you want a stronger free provider mix
+- self-host `SearXNG` and set `ZERO_SEARCH_SEARXNG_URL` if you want a stronger free provider mix
 - present uncertainty when support and conflict both appear

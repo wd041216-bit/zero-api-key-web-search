@@ -6,7 +6,6 @@ import json
 import unittest
 from pathlib import Path
 
-
 BENCHMARK_FILE = Path(__file__).resolve().parents[1] / "benchmarks" / "claims.jsonl"
 FIXTURE_DIR = BENCHMARK_FILE.parent / "fixtures"
 VALID_VERDICTS = {

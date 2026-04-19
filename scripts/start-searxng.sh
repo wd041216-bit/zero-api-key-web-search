@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_FILE="$ROOT_DIR/docker-compose.searxng.yml"
 DEFAULT_URL="http://127.0.0.1:8080"
-SEARXNG_URL="${CROSS_VALIDATED_SEARCH_SEARXNG_URL:-$DEFAULT_URL}"
+SEARXNG_URL="${ZERO_SEARCH_SEARXNG_URL:-$DEFAULT_URL}"
 WAIT_SECONDS="${SEARXNG_WAIT_SECONDS:-90}"
 
 if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
@@ -52,10 +52,10 @@ cat <<EOF
 SearXNG bootstrap complete.
 
 Recommended environment variable:
-  export CROSS_VALIDATED_SEARCH_SEARXNG_URL="$SEARXNG_URL"
+  export ZERO_SEARCH_SEARXNG_URL="$SEARXNG_URL"
 
 Next steps:
-  1. export CROSS_VALIDATED_SEARCH_SEARXNG_URL="$SEARXNG_URL"
+  1. export ZERO_SEARCH_SEARXNG_URL="$SEARXNG_URL"
   2. "$ROOT_DIR/scripts/validate-free-path.sh"
   3. optionally copy values from "$ROOT_DIR/.env.searxng.example"
 

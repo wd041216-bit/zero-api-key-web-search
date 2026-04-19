@@ -23,7 +23,7 @@ Describe the bug clearly.
 - Python version:
 - package version:
 - provider path: `ddgs`, `searxng`, or both
-- `CROSS_VALIDATED_SEARCH_SEARXNG_URL` configured: yes/no
+- `ZERO_SEARCH_SEARXNG_URL` configured: yes/no
 
 ## Evidence
 

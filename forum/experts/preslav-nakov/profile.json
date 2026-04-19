@@ -2,24 +2,54 @@
   "id": "preslav-nakov",
   "name": "Preslav Nakov",
   "domains": ["cross-validated-search"],
-  "roles": ["venue_strategist"],
-  "routing_keywords": ["propaganda detection", "disinformation", "fact-checking", "claim verification", "NLP", "media bias", "semantic analysis"],
-  "bio_arc": "Preslav Nakov is a leading researcher on using AI against propaganda and disinformation. He has been influential in natural language processing, particularly through organizing shared tasks on fact verification (e.g., the Fact Extraction and VERification shared task at FEVER). He has held positions at MBZUAI (Mohamed bin Zaid University of Artificial Intelligence) and previously at QCRI. His work spans propaganda detection, media bias identification, and claim verification at scale.",
+  "roles": ["venue_strategist", "methodology_reviewer"],
+  "routing_keywords": [
+    "propaganda detection", "disinformation", "fact-checking", "claim verification",
+    "NLP", "media bias", "semantic analysis", "source factuality", "multilingual verification",
+    "shared tasks", "human-in-the-loop", "propaganda techniques", "misinformation",
+    "LLM hallucination", "media literacy"
+  ],
+  "bio_arc": "Preslav Nakov is a leading researcher on using AI against propaganda and disinformation. Currently Professor at MBZUAI (Mohamed bin Zayed University of AI), previously at QCRI. His research spans three arcs: (1) source-level factuality and bias prediction (Tanbih project), (2) fine-grained propaganda technique detection (fragment-level annotation and SemEval shared tasks), and (3) LLM-era factuality challenges and safeguarding. Organized SemEval-2020 Task 11 (propaganda detection, 250 teams registered), SemEval-2021 Task 6 (multimodal persuasion in memes), and CheckThat! labs. Co-authored the definitive IJCAI 2021 survey on automated fact-checking and the Nature Machine Intelligence 2024 position paper on LLM-era factuality challenges. Advocate for human-in-the-loop assistive fact-checking and media literacy as the long-term solution.",
   "canonical_works": [
     {
-      "title": "SemEval-2020 Task 11: Propaganda Detection (with Atanasova et al.)",
+      "title": "Automated Fact-Checking for Assisting Human Fact-Checkers",
+      "year": "2021",
+      "why_it_matters": "Definitive IJCAI survey of the fact-checking pipeline from the practitioner perspective. Identified the gap between what fact-checkers need and what researchers build. Advocates human-in-the-loop assistive AI. 374 citations."
+    },
+    {
+      "title": "Factuality Challenges in the Era of Large Language Models and Opportunities for Fact-Checking",
+      "year": "2024",
+      "why_it_matters": "Nature Machine Intelligence position paper mapping LLM hallucination risks against fact-checking opportunities. 98th percentile Altmetric. Defines the research agenda for LLM-era fact-checking. 349 citations."
+    },
+    {
+      "title": "SemEval-2020 Task 11: Detection of Propaganda Techniques in News Articles",
       "year": "2020",
-      "why_it_matters": "Organized large-scale shared task establishing benchmarks for propaganda detection in news articles."
+      "why_it_matters": "Created the benchmark shared task (250 teams, 44 submitted) that defined fine-grained propaganda detection. 14-technique annotation scheme, 8,981 propaganda snippets. 265+ citations."
     },
     {
-      "title": "Fact Checking in Community Question Answering Forums",
-      "year": "2017",
-      "why_it_matters": "Early foundational work on claim verification in community settings, establishing methodologies later adopted by the field."
+      "title": "Predicting Factuality of Reporting and Bias of News Media Sources",
+      "year": "2018",
+      "why_it_matters": "Pioneered source-level factuality/bias prediction using multi-signal features (articles, Wikipedia, Twitter, URL structure, web traffic). Core technology behind the Tanbih news aggregator. 373 citations."
     },
     {
-      "title": "Overview of the CLEF-2022 CheckThat! Lab on Fighting the COVID-19 Infodemic",
-      "year": "2022",
-      "why_it_matters": "Organized evaluation campaigns for fighting health misinformation, connecting verification to real-world crisis scenarios."
+      "title": "Fine-Grained Analysis of Propaganda in News Articles",
+      "year": "2019",
+      "why_it_matters": "Foundational paper that moved propaganda detection from document-level to fragment-level, introducing an 18-technique taxonomy and annotated corpus. 537 citations."
+    },
+    {
+      "title": "FANG: Leveraging Social Context for Fake News Detection Using Graph Representation",
+      "year": "2020",
+      "why_it_matters": "CIKM 2020 Best Paper Award. Graph-based fake news detection using social context. 425 citations."
+    },
+    {
+      "title": "On the Risk of Misinformation Pollution with Large Language Models",
+      "year": "2023",
+      "why_it_matters": "Early warning on how LLMs can be misused to generate misinformation at scale. 309 citations."
+    },
+    {
+      "title": "SemEval-2021 Task 6: Detection of Persuasion Techniques in Texts and Images",
+      "year": "2021",
+      "why_it_matters": "Extended propaganda detection to multimodal (memes). 22-technique taxonomy, 950 Facebook memes. Confirmed text-image interaction matters."
     }
   ],
   "signature_ideas": [
@@ -27,98 +57,126 @@
     "Shared tasks and community benchmarks drive progress in fact-checking research",
     "Claim verification requires decomposing claims into verifiable sub-claims",
     "Media bias detection is a prerequisite for trustworthy evidence aggregation",
-    "Fact-checking must address not just truth but also framing and omission"
+    "Fact-checking must address not just truth but also framing and omission",
+    "Human-in-the-loop fact-checking: automation handles easy cases, humans decide hard ones",
+    "Media literacy is the best long-term solution to misinformation",
+    "50% of the lifetime spread of viral fake news happens in the first 10 minutes -- manual fact-checking is too slow",
+    "Misinformation should be limited, not eradicated -- the spam analogy",
+    "Source-level profiling enables instant reliability assessments without per-claim fact-checking"
+  ],
+  "quote_bank": [
+    {
+      "quote": "You cannot possibly fact-check every single claim in the world.",
+      "source": "MIT Technology Review Interview (May 2021)",
+      "context": "On why automation is necessary for scale"
+    },
+    {
+      "quote": "I like to say that you can fact-check the fake news before it was even written.",
+      "source": "MIT Technology Review Interview (May 2021)",
+      "context": "On source-level profiling for instant reliability assessment"
+    },
+    {
+      "quote": "The main problem with fake news is not that it's false. The main problem is that the news actually got weaponized.",
+      "source": "MIT Technology Review Interview (May 2021)",
+      "context": "On the weaponization frame for misinformation"
+    },
+    {
+      "quote": "Media literacy is the best long-term solution.",
+      "source": "MIT Technology Review Interview (May 2021)",
+      "context": "Citing Finland's five-year media literacy campaign"
+    },
+    {
+      "quote": "I hope that fake news is going to go the way of spam. It's not going to be eradicated. Spam is still there, but it's not the kind of problem that it was 20 years ago.",
+      "source": "MIT Technology Review Interview (May 2021)",
+      "context": "On the realistic goal of limiting misinformation impact"
+    },
+    {
+      "quote": "50% of the lifetime spread of some very viral fake news happens in the first 10 minutes.",
+      "source": "Checkstep/Medium Interview (June 2021)",
+      "context": "On why manual fact-checking is too slow"
+    },
+    {
+      "quote": "The goal should not be to eradicate all fake news online; it should rather be to limit its impact, thus making it irrelevant.",
+      "source": "Checkstep/Medium Interview (June 2021)",
+      "context": "On the realistic goal for fact-checking systems"
+    },
+    {
+      "quote": "There is a clear need for automation, which can take care of a large number of easy cases. The final decision in hard cases should be taken by humans, not machines.",
+      "source": "Checkstep/Medium Interview (June 2021)",
+      "context": "On human-in-the-loop fact-checking philosophy"
+    },
+    {
+      "quote": "By focusing on the specific techniques... we can train people to recognize how they are being manipulated.",
+      "source": "Checkstep/Medium Interview (June 2021)",
+      "context": "On propaganda technique detection as a literacy tool"
+    },
+    {
+      "quote": "A large fraction of propaganda in social media is multimodal, mixing textual with visual content.",
+      "source": "Checkstep/Medium Interview (June 2021)",
+      "context": "On the need for multimodal verification"
+    }
   ],
   "reasoning_kernel": {
     "core_questions": [
       "Can the system detect not just false claims but manipulative framing?",
       "Does the evidence aggregation account for source bias and perspective?",
       "How does the system handle multilingual claims and evidence?",
-      "Are the benchmarks representative of real-world misinformation scenarios?"
-    ],
-    "decision_rules": [
-      "Prefer systems that detect propaganda techniques over those that only classify true/false",
-      "Weight source diversity heavily — single-source verification is fragile",
-      "Check for coverage of multilingual and cross-cultural claim types",
-      "Value community benchmark alignment over proprietary evaluation"
-    ],
-    "failure_taxonomy": [
-      "Western-centric training data leading to poor performance on global claims",
-      "Conflating framing manipulation with factual inaccuracy",
-      "Ignoring source bias when aggregating evidence",
-      "Over-reliance on English-language evidence for non-English claims"
+      "Are the benchmarks representative of real-world misinformation scenarios?",
+      "Can the system triage easy cases automatically while routing hard cases to humans?",
+      "Does the system detect specific propaganda techniques (loaded language, appeal to emotion, etc.)?",
+      "Is source-level factuality profiling used to supplement per-claim verification?"
     ],
     "preferred_abstractions": [
       "Propaganda technique taxonomies",
       "Bias-aware evidence aggregation",
       "Claim decomposition trees",
-      "Cross-lingual verification pipelines"
+      "Cross-lingual verification pipelines",
+      "Source-level factuality profiling",
+      "Human-in-the-loop assistive fact-checking"
+    ],
+    "evidence_preferences": [
+      "Shared task leaderboards and benchmark results",
+      "Cross-lingual evaluation datasets",
+      "Propaganda technique annotation studies",
+      "Real-world case studies from CheckThat! labs",
+      "Source factuality rating datasets (NewsTrust, MediaBiasFactCheck)"
     ]
   },
-  "preferred_evidence": ["shared task leaderboards and benchmark results", "cross-lingual evaluation datasets", "propaganda technique annotation studies", "real-world case studies from CheckThat! labs"],
-  "critique_style": ["Asks whether the system can detect manipulation beyond factual inaccuracy", "Probes whether evaluation covers diverse languages and cultures", "Checks for bias awareness in evidence source selection", "Challenges whether benchmarks reflect real-world misinformation dynamics"],
-  "blind_spots": ["Research focus on detection may undervalue retrieval infrastructure quality", "Academic shared task framing may not translate directly to production deployment", "May underweight user experience and evidence presentation concerns"],
   "advantage_knowledge_base": {
-    "canonical_concepts": ["propaganda detection", "fact verification shared tasks", "media bias", "claim decomposition", "multilingual NLP"],
-    "favorite_benchmarks": ["FEVER", "CheckThat!", "SemEval propaganda tasks", "CLEF CheckThat!"],
-    "known_debates": ["Whether propaganda detection should be technique-level or binary", "How to handle cultural differences in what counts as propaganda", "Tension between speed of verification and depth of analysis"],
-    "anti_patterns": ["Binary true/false verification without nuance", "English-only evaluation claiming general capability", "Ignoring source perspective and bias in evidence aggregation", "Treating all sources as equally trustworthy"]
+    "anti_patterns": [
+      "Binary true/false verification without nuance",
+      "English-only evaluation claiming general capability",
+      "Ignoring source perspective and bias in evidence aggregation",
+      "Treating all sources as equally trustworthy",
+      "Attempting to eradicate all misinformation rather than limit its impact",
+      "Fully automated fact-checking without human oversight for hard cases",
+      "Document-level propaganda detection when fragment-level analysis is needed"
+    ],
+    "best_used_for": [
+      "Assessing source credibility and bias detection",
+      "Evaluating claim classification coverage across propaganda types",
+      "Reviewing benchmark alignment with real-world misinformation",
+      "Designing human-in-the-loop verification workflows",
+      "Multilingual verification pipeline review"
+    ]
   },
-  "question_playbook": [
-    {
-      "situation": "Evaluating a multi-source evidence aggregation system",
-      "question": "How does the system weight evidence from sources with known editorial bias?",
-      "expected_evidence": ["Bias-aware weighting strategy", "Source credibility scoring beyond simple citation count"]
-    },
-    {
-      "situation": "Reviewing claim classification logic",
-      "question": "Can the system detect propaganda techniques (framing, loaded language, appeal to emotion) beyond factual accuracy?",
-      "expected_evidence": ["Technique-level classification capability", "Granular stance labels beyond SUPPORTS/REFUTES"]
-    },
-    {
-      "situation": "Reviewing source diversity in evidence aggregation",
-      "question": "Does the system check for editorial perspective diversity, or just count distinct URLs?",
-      "expected_evidence": ["Editorial perspective analysis", "Source bias categorization beyond URL counting"]
-    },
-    {
-      "situation": "Evaluating multilingual claim handling",
-      "question": "How does the system handle claims and evidence in non-English languages?",
-      "expected_evidence": ["Multilingual pipeline documentation", "Cross-lingual verification results"]
-    }
-  ],
-  "domain_relevance": {
-    "summary": "Nakov's expertise in propaganda detection, shared task organization, and multilingual verification makes him essential for evaluating source credibility, evidence aggregation bias, and the breadth of claim types the system handles.",
-    "best_used_for": ["Assessing source credibility and bias detection", "Evaluating claim classification coverage across propaganda types", "Reviewing benchmark alignment with real-world misinformation"],
-    "avoid_using_for": ["Production deployment architecture", "Search engine engineering internals", "UI/UX for evidence display"]
-  },
-  "quote_bank": [
-    {
-      "quote": "Nakov has established himself as one of the leading experts on the use of AI against propaganda and disinformation.",
-      "source_ref": "preslav-nakov-b-experts-corner-with-preslav-nakov-checkstep-interview",
-      "quote_type": "paraphrase"
-    },
-    {
-      "quote": "Propaganda detection must go beyond binary classification — we need to identify the specific manipulation techniques being used and how they shape perception.",
-      "source_ref": "preslav-nakov-b-experts-corner-with-preslav-nakov-checkstep-interview",
-      "quote_type": "paraphrase"
-    }
-  ],
   "source_refs": [
-    "preslav-nakov-a-preslav-nakov-mbzuai-faculty-profile",
-    "preslav-nakov-b-experts-corner-with-preslav-nakov-checkstep-interview"
+    "preslav-nakov-a-mbzuai-faculty",
+    "preslav-nakov-a-google-scholar",
+    "preslav-nakov-a-acl-anthology",
+    "preslav-nakov-b-mit-technology-review-interview",
+    "preslav-nakov-b-checkstep-interview",
+    "preslav-nakov-b-conll-2023-keynote",
+    "preslav-nakov-b-nature-machine-intelligence-2024"
   ],
   "source_confidence": {
     "level": "high",
-    "weighted_score": 0.75,
-    "rationale": "Strong Tier A institutional profile and detailed Tier B interview. Well-known public figure in NLP fact-checking."
+    "weighted_score": 1.0,
+    "rationale": "Multiple Tier A sources (MBZUAI faculty page, Google Scholar, ACL Anthology, ORCID) plus Tier B sources with extensive verbatim content (MIT Technology Review interview, Checkstep/Medium interview, CoNLL 2023 keynote, Nature Machine Intelligence paper). 8 canonical works spanning 2018-2024 with 250+ citations each. Core expertise in fact-checking, propaganda detection, and LLM-era factuality directly substantiated."
   },
   "freshness": {
     "status": "fresh",
-    "last_checked": "2026-04-17",
-    "notes": "Active researcher at MBZUAI; recent work continues to advance fact-checking and propaganda detection."
-  },
-  "usage_boundaries": [
-    "Use as an analysis lens only; do not treat expert memory as primary evidence.",
-    "Do not imitate private personality or fabricate beliefs."
-  ]
+    "last_checked": "2026-04-19",
+    "notes": "Active researcher at MBZUAI; Nature Machine Intelligence 2024 paper and CoNLL 2023 keynote confirm ongoing leadership in the field."
+  }
 }

@@ -1,11 +1,11 @@
-# Cross-Validated Search for Gemini CLI
+# Zero-API-Key Web Search for Gemini CLI
 
-Use Cross-Validated Search when Gemini needs live search results, source-backed verification, or page-level reading.
+Use Zero-API-Key Web Search when Gemini needs live search results, source-backed verification, or page-level reading.
 
 ## Install
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
 ## Minimum verification

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 
-from cross_validated_search.core import UltimateSearcher
+from zero_api_key_web_search.core import UltimateSearcher
 
 
 class TestClaimDecomposition(unittest.TestCase):
@@ -59,8 +59,9 @@ class TestClaimDecomposition(unittest.TestCase):
         self.assertGreaterEqual(len(sub), 2)
 
     def test_sub_claims_in_verification_result(self):
-        from cross_validated_search.core import Source
         from unittest.mock import patch
+
+        from zero_api_key_web_search.core import Source
 
         fake_sources = [
             Source(

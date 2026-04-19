@@ -1,28 +1,28 @@
 {
   "domain": "cross-validated-search",
   "current_phase": "rescore",
-  "iteration": 2,
+  "iteration": 6,
   "max_iterations": 10,
   "last_score": {
-    "total": 69,
-    "breadth": 16,
-    "depth": 18,
-    "thickness": 18,
-    "effectiveness": 17
+    "total": 92,
+    "breadth": 22,
+    "depth": 22,
+    "thickness": 24,
+    "effectiveness": 24
   },
   "status": "running",
   "started_at": "2026-04-17T02:34:54Z",
-  "updated_at": "2026-04-17T03:15:00Z",
-  "target_repo": "/Users/dawei/playground/cross-validated-search",
-  "github_branch": "expert-distiller/cross-validated-search",
+  "updated_at": "2026-04-19T00:00:00Z",
+  "target_repo": "/Users/dawei/cross-validated-search",
+  "github_branch": "council-pilot/cross-validated-search",
   "active_council": "cross-validated-search-main-council",
-  "experts_added_mid_loop": [],
+  "experts_added_mid_loop": ["david-soria-parra"],
   "history": [
-    {
-      "iteration": 1,
-      "scores": {"total": 69, "breadth": 16, "depth": 18, "thickness": 18, "effectiveness": 17},
-      "action": "Initial scoring with 5-expert council"
-    }
+    {"iteration": 1, "scores": {"total": 69, "breadth": 16, "depth": 18, "thickness": 18, "effectiveness": 17}, "action": "Initial scoring with 5-expert council"},
+    {"iteration": 2, "scores": {"total": 72, "breadth": 17, "depth": 18, "thickness": 19, "effectiveness": 18}, "action": "Profile deepening for Augenstein and Nakov"},
+    {"iteration": 3, "scores": {"total": 83, "breadth": 20, "depth": 20, "thickness": 22, "effectiveness": 21}, "action": "Added Soria Parra, sub-claim queries, readability heuristic, CI linting"},
+    {"iteration": 4, "scores": {"total": 88, "breadth": 21, "depth": 21, "thickness": 23, "effectiveness": 23}, "action": "Coverage enforcement, circuit breaker, baseline heuristics"},
+    {"iteration": 5, "scores": {"total": 92, "breadth": 22, "depth": 22, "thickness": 24, "effectiveness": 24}, "action": "Structured logging, Soria Parra deepening"}
   ],
   "build_failures": 0,
   "score_regressions": 0

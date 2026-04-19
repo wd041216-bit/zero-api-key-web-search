@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import unittest
-from unittest.mock import patch, MagicMock
-from concurrent.futures import ThreadPoolExecutor
 
-from cross_validated_search.core import UltimateSearcher, Source
-from cross_validated_search.providers.base import ProviderResult
+from zero_api_key_web_search.core import UltimateSearcher
+from zero_api_key_web_search.providers.base import ProviderResult
 
 
 class FakeProvider:
@@ -138,6 +137,123 @@ class TestRetryLogic(unittest.TestCase):
         self.assertEqual(len(result.sources), 1)
         self.assertEqual(result.metadata["providers_used"], ["one_retry"])
         self.assertEqual(call_count, 2)
+
+
+class TestCircuitBreaker(unittest.TestCase):
+    def test_circuit_breaker_trips_after_threshold(self):
+        class AlwaysFailProvider:
+            name = "failing"
+
+            def search(self, query, search_type, **kwargs):
+                raise RuntimeError("Always fails")
+
+        searcher = UltimateSearcher(timeout=5, providers=[AlwaysFailProvider()])
+        for _ in range(3):
+            searcher.search("test", providers=["failing"])
+        self.assertTrue(searcher._provider_is_tripped("failing"))
+
+    def test_circuit_breaker_returns_error_when_tripped(self):
+        class AlwaysFailProvider:
+            name = "failing"
+
+            def search(self, query, search_type, **kwargs):
+                raise RuntimeError("Always fails")
+
+        searcher = UltimateSearcher(timeout=5, providers=[AlwaysFailProvider()])
+        for _ in range(3):
+            searcher.search("test", providers=["failing"])
+        result = searcher.search("test", providers=["failing"])
+        self.assertTrue(any("Circuit breaker" in e for e in result.metadata["errors"]))
+
+    def test_circuit_breaker_resets_after_success(self):
+        call_count = 0
+
+        class EventualSuccessProvider:
+            name = "eventual"
+
+            def search(self, query, search_type, **kwargs):
+                nonlocal call_count
+                call_count += 1
+                if call_count <= 4:
+                    raise RuntimeError("Fails initially")
+                return [ProviderResult(url="https://example.com", title="OK", snippet="works")]
+
+        searcher = UltimateSearcher(timeout=5, providers=[EventualSuccessProvider()])
+        searcher.search("test", providers=["eventual"])
+        searcher._circuit_breaker.setdefault("eventual", {"consecutive_failures": 2, "last_failure_time": 0})
+        searcher._record_provider_success("eventual")
+        self.assertFalse(searcher._provider_is_tripped("eventual"))
+
+    def test_circuit_breaker_state_in_metadata(self):
+        class AlwaysFailProvider:
+            name = "failing"
+
+            def search(self, query, search_type, **kwargs):
+                raise RuntimeError("Always fails")
+
+        searcher = UltimateSearcher(timeout=5, providers=[AlwaysFailProvider()])
+        for _ in range(3):
+            searcher.search("test", providers=["failing"])
+        result = searcher.search("test", providers=["failing"])
+        self.assertIn("circuit_breaker_state", result.metadata)
+
+
+class TestAsyncSearch(unittest.TestCase):
+    def test_async_search_with_single_provider(self):
+        class AsyncProvider:
+            name = "ddgs"
+
+            def search(self, query, search_type, **kwargs):
+                return [ProviderResult(url="https://example.com", title="Test", snippet="test")]
+
+            async def asearch(self, query, search_type, **kwargs):
+                return self.search(query, search_type, **kwargs)
+
+        searcher = UltimateSearcher(timeout=5, providers=[AsyncProvider()])
+        result = asyncio.run(searcher.asearch("test", providers=["ddgs"]))
+        self.assertEqual(len(result.sources), 1)
+        self.assertTrue(result.metadata.get("async"))
+
+    def test_async_search_with_multiple_providers(self):
+        class AsyncP1:
+            name = "p1"
+
+            def search(self, query, search_type, **kwargs):
+                return [ProviderResult(url="https://p1.example.com", title="P1", snippet="p1")]
+
+            async def asearch(self, query, search_type, **kwargs):
+                return self.search(query, search_type, **kwargs)
+
+        class AsyncP2:
+            name = "p2"
+
+            def search(self, query, search_type, **kwargs):
+                return [ProviderResult(url="https://p2.example.com", title="P2", snippet="p2")]
+
+            async def asearch(self, query, search_type, **kwargs):
+                return self.search(query, search_type, **kwargs)
+
+        searcher = UltimateSearcher(timeout=5, providers=[AsyncP1(), AsyncP2()])
+        result = asyncio.run(searcher.asearch("test", providers=["p1", "p2"]))
+        self.assertEqual(len(result.sources), 2)
+        self.assertIn("p1", result.metadata["providers_used"])
+        self.assertIn("p2", result.metadata["providers_used"])
+
+    def test_async_search_circuit_breaker(self):
+        class AsyncFailProvider:
+            name = "fail"
+
+            def search(self, query, search_type, **kwargs):
+                raise RuntimeError("Always fails")
+
+            async def asearch(self, query, search_type, **kwargs):
+                raise RuntimeError("Always fails")
+
+        searcher = UltimateSearcher(timeout=5, providers=[AsyncFailProvider()])
+        for _ in range(3):
+            asyncio.run(searcher.asearch("test", providers=["fail"]))
+        result = asyncio.run(searcher.asearch("test", providers=["fail"]))
+        self.assertTrue(any("Circuit breaker" in e for e in result.metadata["errors"]))
 
 
 if __name__ == "__main__":

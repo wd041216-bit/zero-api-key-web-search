@@ -1,6 +1,6 @@
-# Maturity Report: Cross-Validated Search
+# Maturity Report: Zero-API-Key Web Search
 
-**Domain**: cross-validated-search
+**Domain**: zero-api-key-web-search
 **Iteration**: 2 / 10
 **Status**: running
 

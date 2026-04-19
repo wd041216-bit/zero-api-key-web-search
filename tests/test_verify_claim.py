@@ -6,7 +6,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-from cross_validated_search.core import Source, UltimateSearcher
+from zero_api_key_web_search.core import Source, UltimateSearcher
 
 
 class TestVerifyClaim(unittest.TestCase):

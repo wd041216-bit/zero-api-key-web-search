@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 
-from cross_validated_search.core import Source, UltimateSearcher, CONFLICT_MARKERS
+from zero_api_key_web_search.core import CONFLICT_MARKERS, Source, UltimateSearcher
 
 
 class TestMultilingualConflictMarkers(unittest.TestCase):

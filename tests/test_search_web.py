@@ -1,15 +1,15 @@
-"""Unit tests for cross_validated_search.search_web module."""
-from pathlib import Path
+"""Unit tests for zero_api_key_web_search.search_web module."""
 import json
 import os
 import sys
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from cross_validated_search.search_web import Answer, Source, UltimateSearcher
-from cross_validated_search.providers.base import ProviderResult
+from zero_api_key_web_search.providers.base import ProviderResult
+from zero_api_key_web_search.search_web import Answer, Source, UltimateSearcher
 
 
 class FakeProvider:
@@ -138,7 +138,7 @@ class TestUltimateSearcher(unittest.TestCase):
         self.assertGreaterEqual(len(result.sources), 2)
 
     def test_default_providers_detects_searxng_env(self):
-        with patch.dict(os.environ, {"CROSS_VALIDATED_SEARCH_SEARXNG_URL": "https://searx.example"}, clear=False):
+        with patch.dict(os.environ, {"ZERO_SEARCH_SEARXNG_URL": "https://searx.example"}, clear=False):
             providers = [provider.name for provider in self.searcher._default_providers()]
         self.assertEqual(providers, ["ddgs", "searxng"])
 
@@ -166,7 +166,7 @@ class TestUltimateSearcher(unittest.TestCase):
         result = searcher.search("python release", search_type="text")
         guidance = result.metadata["provider_guidance"]
         self.assertEqual(guidance["free_recommended_pair"], ["ddgs", "searxng"])
-        self.assertIn("CROSS_VALIDATED_SEARCH_SEARXNG_URL", guidance["free_setup_hint"])
+        self.assertIn("ZERO_SEARCH_SEARXNG_URL", guidance["free_setup_hint"])
         self.assertFalse(guidance["searxng_configured"])
 
     def test_search_metadata_marks_free_dual_provider_active(self):
@@ -185,7 +185,7 @@ class TestUltimateSearcher(unittest.TestCase):
                 )
             ],
         )
-        with patch.dict(os.environ, {"CROSS_VALIDATED_SEARCH_SEARXNG_URL": "https://searx.example"}, clear=False):
+        with patch.dict(os.environ, {"ZERO_SEARCH_SEARXNG_URL": "https://searx.example"}, clear=False):
             result = searcher.search("python release", search_type="text")
         guidance = result.metadata["provider_guidance"]
         self.assertTrue(guidance["searxng_configured"])

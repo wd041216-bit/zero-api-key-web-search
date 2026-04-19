@@ -3,10 +3,10 @@
 Install the package:
 
 ```bash
-pip install cross-validated-search
+pip install zero-api-key-web-search
 ```
 
-The OpenClaw entry point is bundled at `cross_validated_search/skills/SKILL.md`.
+The OpenClaw entry point is bundled at `zero_api_key_web_search/skills/SKILL.md`.
 
 Minimal flow:
 
@@ -36,6 +36,6 @@ Recommended behavior:
 - search first for factual or recent questions
 - use `verify-claim` for explicit claim checks
 - use `evidence-report` when OpenClaw needs a compact evidence package with citations and next steps
-- self-host `SearXNG` and set `CROSS_VALIDATED_SEARCH_SEARXNG_URL` for the recommended free dual-provider path
+- self-host `SearXNG` and set `ZERO_SEARCH_SEARXNG_URL` for the recommended free dual-provider path
 - use `--deep` when the claim is important enough to inspect source pages
 - cite URLs instead of collapsing uncertainty
