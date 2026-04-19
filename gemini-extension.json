@@ -1,6 +1,6 @@
 {
   "name": "zero-api-key-web-search",
-  "version": "1.0.0",
+  "version": "17.0.0",
   "description": "Free web search, page reading, and claim verification for AI agents. No API keys. 100% free.",
   "contextFileName": "GEMINI.md"
 }
