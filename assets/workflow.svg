@@ -20,5 +20,5 @@
   <path d="M541 101H599" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
   <path d="M821 101H879" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
   <text x="40" y="238" fill="#0F172A" font-family="Arial, sans-serif" font-size="28" font-weight="700">From search wrapper to evidence layer</text>
-  <text x="40" y="278" fill="#334155" font-family="Arial, sans-serif" font-size="20">Cross-Validated Search is designed to make agent answers reviewable, not just plausible.</text>
+  <text x="40" y="278" fill="#334155" font-family="Arial, sans-serif" font-size="20">Zero-API-Key Web Search makes agent answers reviewable, not just plausible.</text>
 </svg>

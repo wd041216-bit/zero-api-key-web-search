@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [18.0.0] - 2026-04-19
+
+### Changed
+- Renamed the public GitHub repository target to `zero-api-key-web-search`.
+- Unified skill and package metadata at version `18.0.0` for the Clawhub release.
+- Updated Docker, Gemini, and platform skill references to the canonical `zero-*` commands and package name.
+
+### Fixed
+- Replaced remaining visible `Cross-Validated Search` branding in docs, source text, and SVG assets with `Zero-API-Key Web Search`.
+- Fixed the Docker image to copy the active `zero_api_key_web_search` packages and start `zero-mcp`.
+
 ## [16.0.0] - 2026-03-24
 
 ### Changed

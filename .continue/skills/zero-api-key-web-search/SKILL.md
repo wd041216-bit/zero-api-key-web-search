@@ -1,9 +1,9 @@
 ---
 name: zero-api-key-web-search
 description: >
-  Cross-Validated Web Search for AI agents.
+  Zero-API-Key Web Search for AI agents.
   Use multi-source search, confidence scoring, and citations for factual queries.
-version: "16.0.0"
+version: "18.0.0"
 ---
 
 # Zero-API-Key Web Search for Continue
@@ -19,11 +19,11 @@ pip install zero-api-key-web-search
 ## Commands
 
 ```bash
-search-web "What is the population of Tokyo?"
-search-web "OpenAI GPT-5 release date" --type news --timelimit w
-search-web "neural network architecture diagram" --type images
-search-web "人工智能最新进展" --region zh-cn
-browse-page "https://arxiv.org/abs/2303.08774"
+zero-search "What is the population of Tokyo?"
+zero-search "OpenAI GPT-5 release date" --type news --timelimit w
+zero-search "neural network architecture diagram" --type images
+zero-search "人工智能最新进展" --region zh-cn
+zero-browse "https://arxiv.org/abs/2303.08774"
 ```
 
 ## When to Use

@@ -38,7 +38,7 @@ Run a local SearXNG instance:
 
 ```bash
 docker run --rm -d \
-  --name cross-validated-searxng \
+  --name zero-api-key-web-search-searxng \
   -p 8080:8080 \
   searxng/searxng:latest
 ```

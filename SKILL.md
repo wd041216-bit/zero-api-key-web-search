@@ -1,6 +1,6 @@
 ---
 name: zero-api-key-web-search
-version: "1.0.0"
+version: "18.0.0"
 description: >
   Zero-API-key free web search, browsing, and claim verification for AI agents.
   No API keys required. 100% free. Designed to reduce hallucination risk by
@@ -43,7 +43,7 @@ zero-verify "Python 3.13 is the latest stable release" --json
 zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
 ```
 
-Legacy aliases: `search-web`, `browse-page`, `verify-claim`, `evidence-report`.
+Legacy aliases: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`.
 
 ## When to Use
 

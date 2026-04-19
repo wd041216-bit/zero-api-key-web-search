@@ -11,18 +11,18 @@ pip install zero-api-key-web-search
 ## Minimum verification
 
 ```bash
-search-web "latest Python release" --type news --timelimit w
-verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
-browse-page "https://docs.python.org/3/whatsnew/"
-evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+zero-search "latest Python release" --type news --timelimit w
+zero-verify "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
+zero-browse "https://docs.python.org/3/whatsnew/"
+zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
 ```
 
 ## When to trigger
 
-- Use `search-web` before answering time-sensitive or factual questions.
-- Use `browse-page` when snippets are too thin to support an answer.
-- Use `verify-claim` for explicit support/conflict analysis.
-- Use `evidence-report` when Gemini needs a concise, citation-ready evidence package.
+- Use `zero-search` before answering time-sensitive or factual questions.
+- Use `zero-browse` when snippets are too thin to support an answer.
+- Use `zero-verify` for explicit support/conflict analysis.
+- Use `zero-report` when Gemini needs a concise, citation-ready evidence package.
 - Prefer the free `ddgs + self-hosted searxng` path when you want stronger provider diversity.
 - Use `--deep` when the claim matters enough to justify page-aware verification.
 
@@ -43,5 +43,5 @@ Look for:
 ## Limits
 
 - The default provider path is `ddgs`.
-- `verify-claim` is heuristic and can misread ambiguous snippets.
+- `zero-verify` is heuristic and can misread ambiguous snippets.
 - Conflicting sources should be surfaced to the user rather than flattened into certainty.

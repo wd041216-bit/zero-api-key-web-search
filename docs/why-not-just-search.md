@@ -2,12 +2,12 @@
 
 Plain search wrappers usually stop at returning links or snippets.
 
-Cross-Validated Search goes further in four ways:
+Zero-API-Key Web Search goes further in four ways:
 
 ## 1. It treats search as evidence input, not final output
 
-- `search-web` returns ranked, deduplicated sources
-- `verify-claim` turns those sources into a verdict-oriented evidence summary
+- `zero-search` returns ranked, deduplicated sources
+- `zero-verify` turns those sources into a verdict-oriented evidence summary
 
 ## 2. It exposes conflict instead of hiding it
 

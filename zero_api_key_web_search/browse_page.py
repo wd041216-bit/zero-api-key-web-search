@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-Validated Search - Web Page Browser and Text Extractor.
+"""Zero-API-Key Web Search - Web Page Browser and Text Extractor.
 
 Fetches a URL, handles gzip/deflate decompression, and extracts readable
 text content using BeautifulSoup (with a regex fallback).

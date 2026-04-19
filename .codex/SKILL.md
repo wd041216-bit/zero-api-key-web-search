@@ -3,7 +3,7 @@ name: zero-api-key-web-search
 description: >
   Codex-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it to verify factual answers with live results and explicit source handling.
-version: "16.0.0"
+version: "18.0.0"
 ---
 
 # Zero-API-Key Web Search for Codex
@@ -19,16 +19,16 @@ pip install zero-api-key-web-search
 ## Commands
 
 ```bash
-search-web "latest Python release" --type news --timelimit w
-verify-claim "Python 3.13 is the latest stable release" --json
-browse-page "https://docs.python.org/3/whatsnew/"
+zero-search "latest Python release" --type news --timelimit w
+zero-verify "Python 3.13 is the latest stable release" --json
+zero-browse "https://docs.python.org/3/whatsnew/"
 ```
 
 ## Guidance
 
 - Search before answering factual or time-sensitive questions.
 - Browse the page when snippets are too thin.
-- Treat `verify-claim` as an evidence summary, not a proof certificate.
+- Treat `zero-verify` as an evidence summary, not a proof certificate.
 - Surface conflicts when they appear.
 
 ## License

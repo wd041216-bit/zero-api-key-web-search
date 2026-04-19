@@ -1,6 +1,6 @@
 # External Threads
 
-This page tracks the active ecosystem threads that matter for `cross-validated-search`.
+This page tracks the active ecosystem threads that matter for `zero-api-key-web-search`.
 
 | Priority | Thread | Current state | Latest meaningful human feedback | Next action |
 | --- | --- | --- | --- | --- |

@@ -1,12 +1,12 @@
 # Use Cases
 
-Cross-Validated Search is strongest when an agent needs evidence, not just links.
+Zero-API-Key Web Search is strongest when an agent needs evidence, not just links.
 
 ## Best-fit workflows
 
 ### 1. Claim checking before answering
 
-Use `verify-claim` or `evidence-report` when the model is about to answer a factual question that might be stale, contested, or expensive to get wrong.
+Use `zero-verify` or `zero-report` when the model is about to answer a factual question that might be stale, contested, or expensive to get wrong.
 
 Good examples:
 
@@ -17,7 +17,7 @@ Good examples:
 
 ### 2. Research workflows that need citations
 
-Use `search-web` to collect sources, then `evidence-report` to compress them into a reviewable artifact with supporting and conflicting evidence.
+Use `zero-search` to collect sources, then `zero-report` to compress them into a reviewable artifact with supporting and conflicting evidence.
 
 Good examples:
 

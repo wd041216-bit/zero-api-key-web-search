@@ -9,7 +9,7 @@
   <text x="123" y="255" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="20" font-weight="700">Read pages</text>
   <rect x="90" y="288" width="244" height="48" rx="14" fill="#EA580C"/>
   <text x="117" y="319" fill="#FFEDD5" font-family="Arial, sans-serif" font-size="20" font-weight="700">Emit evidence</text>
-  <text x="430" y="128" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="58" font-weight="700">Cross-Validated Search</text>
+  <text x="430" y="128" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="58" font-weight="700">Zero-API-Key Web Search</text>
   <text x="430" y="180" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="28">A source-backed verification layer for agent answers.</text>
   <text x="430" y="228" fill="#94A3B8" font-family="Arial, sans-serif" font-size="24">CLI, MCP, and skill surfaces for Gemini, Claude Code, OpenClaw, Manus, and evidence-driven research workflows.</text>
   <rect x="430" y="282" width="210" height="46" rx="14" fill="#1D4ED8"/>

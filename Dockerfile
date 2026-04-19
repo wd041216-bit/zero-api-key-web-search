@@ -11,11 +11,11 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 COPY setup.py .
 COPY README.md .
-COPY cross_validated_search/ ./cross_validated_search/
-COPY free_web_search/ ./free_web_search/
+COPY zero_api_key_web_search/ ./zero_api_key_web_search/
+COPY zero_api_key_web_search_compat/ ./zero_api_key_web_search_compat/
 
 # Install the package
 RUN pip install --no-cache-dir -e .
 
 # Expose the MCP server
-ENTRYPOINT ["cross-validated-search-mcp"]
+ENTRYPOINT ["zero-mcp"]

@@ -11,7 +11,7 @@ It is not just a search wrapper because it combines:
 - live search
 - page reading
 - claim checking
-- a flagship evidence-report workflow
+- a flagship zero-report workflow
 - provider-aware metadata
 - optional page-aware verification
 
@@ -22,8 +22,8 @@ It is not just a search wrapper because it combines:
 | Repository | `zero-api-key-web-search` |
 | PyPI package | `zero-api-key-web-search` |
 | Python module | `zero_api_key_web_search` |
-| CLI | `search-web`, `browse-page`, `verify-claim`, `evidence-report` |
-| MCP server | `zero-api-key-web-search-mcp` |
+| CLI | `zero-search`, `zero-browse`, `zero-verify`, `zero-report` |
+| MCP server | `zero-mcp` |
 
 ## Current maturity
 
@@ -37,10 +37,10 @@ It is not just a search wrapper because it combines:
 
 ```bash
 pip install zero-api-key-web-search
-search-web "Python 3.13 release" --json
-verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
-evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
-zero-api-key-web-search-mcp
+zero-search "Python 3.13 release" --json
+zero-verify "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
+zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+zero-mcp
 ```
 
 ## Platform entry points
@@ -57,8 +57,8 @@ zero-api-key-web-search-mcp
 
 - The default provider path is `ddgs`.
 - The recommended free upgrade path is self-hosted `searxng` via `ZERO_SEARCH_SEARXNG_URL`.
-- `verify-claim` is heuristic and evidence-aware, not a fact-level proof engine.
-- `evidence-report` is the recommended reviewer-facing entry point when a platform wants a compact evidence artifact.
+- `zero-verify` is heuristic and evidence-aware, not a fact-level proof engine.
+- `zero-report` is the recommended reviewer-facing entry point when a platform wants a compact evidence artifact.
 - `--deep` enables page-aware verification by reading top evidence sources.
 - TLS verification is enabled by default.
 

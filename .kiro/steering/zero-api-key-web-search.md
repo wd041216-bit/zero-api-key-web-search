@@ -1,6 +1,6 @@
 # Zero-API-Key Web Search
 
-Use cross-validated web search when you need accurate, verified information.
+Use Zero-API-Key Web Search when you need accurate, verified information.
 
 ## Installation
 
@@ -12,16 +12,16 @@ pip install zero-api-key-web-search
 
 ```bash
 # Cross-validated search
-search-web "What is the population of Tokyo?"
+zero-search "What is the population of Tokyo?"
 
 # News search
-search-web "OpenAI GPT-5 release date" --type news --timelimit w
+zero-search "OpenAI GPT-5 release date" --type news --timelimit w
 
 # Academic sources
-search-web "transformer attention mechanism" --type books
+zero-search "transformer attention mechanism" --type books
 
 # Chinese content
-search-web "人工智能最新进展" --region zh-cn
+zero-search "人工智能最新进展" --region zh-cn
 ```
 
 ## Confidence Levels

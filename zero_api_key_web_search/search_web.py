@@ -91,7 +91,7 @@ def main():
         skill_msg = f"\n📖 SKILL.md: {skill_path}" if os.path.exists(skill_path) else ""
 
         print(f"\n{'='*60}")
-        print("🔍 Cross-Validated Search REPL")
+        print("Zero-API-Key Web Search REPL")
         print("Type your query and press Enter. Type 'exit' or 'quit' to quit.")
         print("Advanced options can be appended after the query, e.g.:")
         print("  apple --type news")

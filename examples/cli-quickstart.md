@@ -9,25 +9,25 @@ pip install zero-api-key-web-search
 ## Search the web
 
 ```bash
-search-web "latest Python release" --type news --timelimit w
+zero-search "latest Python release" --type news --timelimit w
 ```
 
 ## Read a page
 
 ```bash
-browse-page "https://docs.python.org/3/whatsnew/"
+zero-browse "https://docs.python.org/3/whatsnew/"
 ```
 
 ## Check a claim
 
 ```bash
-verify-claim "Python 3.13 is the latest stable release" --json
+zero-verify "Python 3.13 is the latest stable release" --json
 ```
 
 ## Generate an evidence report
 
 ```bash
-evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
 ```
 
 ## Unlock the free dual-provider path

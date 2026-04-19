@@ -8,7 +8,7 @@ This document packages the current work into a reviewer-friendly PR plan for the
 
 ## Recommended PR summary
 
-This PR turns Cross-Validated Search into a stronger ecosystem-ready repository by:
+This PR turns Zero-API-Key Web Search into a stronger ecosystem-ready repository by:
 
 - promoting `evidence-report` into a true reviewer-facing flagship workflow
 - improving report explainability with rationale, stance summaries, and coverage warnings

@@ -24,10 +24,10 @@ twine check dist/*
 Optional smoke checks:
 
 ```bash
-search-web "python release" --json
-verify-claim "Python 3.13 is the latest stable release" --json
-browse-page "https://docs.python.org/3/whatsnew/" --json
-evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --json
+zero-search "python release" --json
+zero-verify "Python 3.13 is the latest stable release" --json
+zero-browse "https://docs.python.org/3/whatsnew/" --json
+zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --json
 ```
 
 Optional free-path checks:
@@ -58,8 +58,8 @@ Keep these names consistent:
 - repository: `zero-api-key-web-search`
 - package: `zero-api-key-web-search`
 - module: `zero_api_key_web_search`
-- CLI: `search-web`, `browse-page`, `verify-claim`, `evidence-report`
-- MCP: `zero-api-key-web-search-mcp`
+- CLI: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`
+- MCP: `zero-mcp`
 
 ## Release policy
 

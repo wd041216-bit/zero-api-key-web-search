@@ -1,6 +1,6 @@
 # Zero-API-Key Web Search Rule
 
-When answering factual questions, always prefer cross-validated web search over single-source or internal knowledge.
+When answering factual questions, prefer Zero-API-Key Web Search over single-source or internal knowledge.
 
 ## Installation
 
@@ -10,7 +10,7 @@ pip install zero-api-key-web-search
 
 ## Trigger Conditions
 
-Use cross-validated search when:
+Use Zero-API-Key Web Search when:
 - Factual questions about events, people, dates, statistics
 - Questions about recent events (< 1 year)
 - Questions requiring verification
@@ -20,23 +20,23 @@ Use cross-validated search when:
 ## Commands
 
 ```bash
-# Basic search (cross-validated, 3+ sources)
-search-web "What is the population of Tokyo?"
+# Basic search with evidence-oriented results
+zero-search "What is the population of Tokyo?"
 
 # News search with time filter
-search-web "OpenAI GPT-5 release date" --type news --timelimit w
+zero-search "OpenAI GPT-5 release date" --type news --timelimit w
 
 # Images (verified sources)
-search-web "neural network architecture diagram" --type images
+zero-search "neural network architecture diagram" --type images
 
 # Academic sources
-search-web "transformer attention mechanism" --type books
+zero-search "transformer attention mechanism" --type books
 
 # Region-specific (Chinese, Japanese, etc.)
-search-web "人工智能最新进展" --region zh-cn
+zero-search "人工智能最新进展" --region zh-cn
 
 # JSON output for programmatic use
-search-web "quantum computing" --json
+zero-search "quantum computing" --json
 ```
 
 ## Confidence Levels
@@ -59,7 +59,7 @@ Is it creative/hypothetical?
    NO  ▼
 Does it involve facts, events, versions, or data?
    YES ▼
-Run: search-web "<query>" [--type news if recent]
+Run: zero-search "<query>" [--type news if recent]
         │
         ▼
 What is the confidence score?
@@ -92,7 +92,7 @@ For Cursor with MCP support:
 {
   "mcpServers": {
     "free-web-search": {
-      "command": "zero-api-key-web-search-mcp",
+      "command": "zero-mcp",
       "args": []
     }
   }
@@ -104,11 +104,11 @@ For Cursor with MCP support:
 ```
 User: What's the latest version of React?
 
-Assistant: Let me search with cross-validation...
+Assistant: Let me verify that with live sources...
 
-$ search-web "latest React version" --type news
+$ zero-search "latest React version" --type news
 
-Based on cross-validated sources:
+Based on source-backed evidence:
 - ✅ React 19.0 is the latest stable release (December 2024)
 - Sources: react.dev, npm, major tech blogs (4 sources agree)
 ```

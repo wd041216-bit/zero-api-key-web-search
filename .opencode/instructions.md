@@ -1,6 +1,6 @@
 # Zero-API-Key Web Search for OpenCode
 
-Use cross-validated search when you need verified facts.
+Use Zero-API-Key Web Search when you need verified facts.
 
 ## Installation
 
@@ -12,25 +12,25 @@ pip install zero-api-key-web-search
 
 ```bash
 # Cross-validated search
-search-web "query"
+zero-search "query"
 
 # Search types
-search-web "query" --type text      # General knowledge
-search-web "query" --type news      # Current events
-search-web "query" --type images    # Visual references
-search-web "query" --type books     # Academic sources
+zero-search "query" --type text      # General knowledge
+zero-search "query" --type news      # Current events
+zero-search "query" --type images    # Visual references
+zero-search "query" --type books     # Academic sources
 
 # Time filters
-search-web "query" --type news --timelimit w
+zero-search "query" --type news --timelimit w
 
 # Region-specific
-search-web "query" --region zh-cn
+zero-search "query" --region zh-cn
 
 # JSON output
-search-web "query" --json
+zero-search "query" --json
 
 # Read page
-browse-page "https://example.com"
+zero-browse "https://example.com"
 ```
 
 ## Confidence Levels

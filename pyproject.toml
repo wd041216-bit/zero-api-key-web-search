@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "zero-api-key-web-search"
-version = "17.0.0"
+version = "18.0.0"
 description = "Zero-API-key free web search, browsing, and claim verification for AI agents. No API keys required. 100% free."
 readme = "README.md"
 requires-python = ">=3.10"

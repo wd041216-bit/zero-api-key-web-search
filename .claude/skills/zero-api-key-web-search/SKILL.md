@@ -3,7 +3,7 @@ name: zero-api-key-web-search
 description: >
   Claude Code-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it when an answer depends on current facts, live sources, or explicit support/conflict handling.
-version: "16.0.0"
+version: "18.0.0"
 ---
 
 # Zero-API-Key Web Search for Claude Code
@@ -19,10 +19,10 @@ pip install zero-api-key-web-search
 ## Core Commands
 
 ```bash
-search-web "latest Python release" --type news --timelimit w
-browse-page "https://docs.python.org/3/whatsnew/"
-verify-claim "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
-evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+zero-search "latest Python release" --type news --timelimit w
+zero-browse "https://docs.python.org/3/whatsnew/"
+zero-verify "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
+zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
 ```
 
 ## When to Use
@@ -34,15 +34,15 @@ evidence-report "Python 3.13 stable release" --claim "Python 3.13 is the latest 
 
 ## Guidance
 
-- Start with `search-web` for live facts and recent changes.
-- Use `browse-page` when snippets are too thin to justify an answer.
-- Use `verify-claim` for support/conflict classification.
-- Use `evidence-report` when you want one compact output with verdict, citations, and next steps.
+- Start with `zero-search` for live facts and recent changes.
+- Use `zero-browse` when snippets are too thin to justify an answer.
+- Use `zero-verify` for support/conflict classification.
+- Use `zero-report` when you want one compact output with verdict, citations, and next steps.
 - Prefer the free `ddgs + self-hosted searxng` path for stronger provider diversity.
 
 ## Limits
 
-- `verify-claim` is heuristic and evidence-aware, not a proof engine.
+- `zero-verify` is heuristic and evidence-aware, not a proof engine.
 - The default path still starts with `ddgs`.
 - Deep verification is stronger than snippets alone, but still not full-document reasoning.
 

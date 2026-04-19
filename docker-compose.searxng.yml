@@ -1,7 +1,7 @@
 services:
   searxng:
     image: ${SEARXNG_IMAGE:-searxng/searxng:latest}
-    container_name: cross-validated-searxng
+    container_name: zero-api-key-web-search-searxng
     ports:
       - "${SEARXNG_PORT:-8080}:8080"
     restart: unless-stopped
