@@ -3,7 +3,7 @@ name: zero-api-key-web-search
 description: >
   Claude Code-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it when an answer depends on current facts, live sources, or explicit support/conflict handling.
-version: "19.0.0"
+version: "20.0.0"
 ---
 
 # Zero-API-Key Web Search for Claude Code

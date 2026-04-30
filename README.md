@@ -6,7 +6,7 @@
   [![PyPI](https://img.shields.io/pypi/v/zero-api-key-web-search?label=pypi)](https://pypi.org/project/zero-api-key-web-search/)
   [![Python](https://img.shields.io/pypi/pyversions/zero-api-key-web-search)](https://python.org)
   [![MCP](https://img.shields.io/badge/MCP-Ready-0f766e.svg)](https://modelcontextprotocol.io/)
-  [![Tests](https://img.shields.io/badge/tests-91%20passing-22c55e.svg)](./tests)
+  [![Tests](https://img.shields.io/badge/tests-98%20passing-22c55e.svg)](./tests)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 </div>
 
@@ -18,6 +18,8 @@ A single `pip install` gives your AI agent live web search, full-page reading, a
 
 - **Search**: Live results from DuckDuckGo (free) + optional SearXNG (self-hosted, free)
 - **Providers**: Discover free and production providers with `zero-search providers`
+- **Context**: Generate LLM-ready context packs with `zero-context`
+- **Goggles-lite**: Rerank or filter sources with local presets like `docs-first`
 - **Browse**: Extract clean text from any URL, stripping boilerplate automatically
 - **Verify**: Classify claims as supported / contested / likely false with evidence scores
 - **Report**: Generate citation-ready evidence reports with rationale and next steps
@@ -32,6 +34,9 @@ zero-search "Python 3.13 release" --json
 
 # Inspect provider options
 zero-search providers
+
+# Build citation-ready LLM context
+zero-context "Python 3.13 stable release" --goggles docs-first
 
 # Read a page
 zero-browse "https://docs.python.org/3/whatsnew/" --json
@@ -75,13 +80,13 @@ Works with Claude Code, Cursor, Copilot, and any MCP-compatible agent:
 }
 ```
 
-Five tools exposed: `list_providers`, `search_web`, `browse_page`, `verify_claim`, `evidence_report`.
+Six tools exposed: `list_providers`, `search_web`, `llm_context`, `browse_page`, `verify_claim`, `evidence_report`.
 
 ## Platform support
 
 | Platform | Status | Entry point |
 | --- | --- | --- |
-| **CLI** | Ready | `zero-search`, `zero-browse`, `zero-verify`, `zero-report` |
+| **CLI** | Ready | `zero-search`, `zero-context`, `zero-browse`, `zero-verify`, `zero-report` |
 | **MCP** | Ready | `zero-mcp` |
 | **Claude Code** | Ready | `.claude/skills/zero-api-key-web-search/SKILL.md` |
 | **Gemini** | Ready | `GEMINI.md` + `.gemini/SKILL.md` |
@@ -132,6 +137,35 @@ docker compose -f docker-compose.searxng.yml up -d
 
 Full guide: [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md).
 
+## Agent search controls
+
+Provider profiles make backend choice explicit:
+
+| Profile | Providers | Best for |
+| --- | --- | --- |
+| `free` | `ddgs` | zero-setup local use |
+| `free-verified` | `ddgs`, `searxng` | free cross-validation |
+| `production` | `brightdata` | production reliability and geo-targeting |
+| `max-evidence` | `ddgs`, `searxng`, `brightdata` | maximum provider diversity |
+
+```bash
+zero-search "FastAPI lifespan docs" --profile free-verified --goggles docs-first
+zero-context "FastAPI lifespan docs" --profile free --goggles docs-first
+zero-report "AI regulation news" --profile production --json
+```
+
+Built-in Goggles-lite presets:
+
+| Goggles | Effect |
+| --- | --- |
+| `docs-first` | boosts docs, API, support, release-note, and official-looking sources |
+| `research` | boosts academic, institutional, paper, and study-oriented sources |
+| `news-balanced` | boosts reporting/analysis signals and demotes low-context aggregators |
+
+You can also pass a JSON file to `--goggles` with `boost_domains`, `block_domains`, `demote_domains`, and `boost_title_terms`.
+
+Full guide: [docs/agent-search-controls.md](docs/agent-search-controls.md).
+
 ## Optional Bright Data provider
 
 The default path stays free and zero-key. For production agents that need higher reliability, structured SERP data, geo-targeted results, or stronger cross-provider verification, enable the optional Bright Data provider.
@@ -178,9 +212,10 @@ New Bright Data users can sign up here: <https://get.brightdata.com/h21j9xz4uxgd
 zero_api_key_web_search/
   core.py              # UltimateSearcher — search, verify, report engine
   browse_page.py       # Readability-style page text extraction
-  mcp_server.py        # MCP server (4 tools)
+  mcp_server.py        # MCP server (6 tools)
   transport.py         # SSL/TLS helpers
   search_web.py        # CLI: zero-search
+  context.py           # CLI: zero-context
   browse_page.py       # CLI: zero-browse
   verify_claim.py      # CLI: zero-verify
   evidence_report.py   # CLI: zero-report
@@ -214,7 +249,7 @@ Python 3.10+ required. No API keys, no accounts, no configuration needed.
 
 ```bash
 pip install -e ".[dev]"
-python -m pytest tests/ -q           # 91 tests
+python -m pytest tests/ -q           # 98 tests
 ruff check zero_api_key_web_search/ tests/
 pyright zero_api_key_web_search/     # 0 errors
 coverage report --fail-under=80       # 85% coverage

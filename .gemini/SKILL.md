@@ -3,7 +3,7 @@ name: zero-api-key-web-search
 description: >
   Gemini-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Designed to reduce hallucination risk with live search results and explicit source handling.
-version: "19.0.0"
+version: "20.0.0"
 user-invocable: true
 ---
 

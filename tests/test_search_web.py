@@ -153,6 +153,103 @@ class TestUltimateSearcher(unittest.TestCase):
         self.assertEqual(result.validation["providers_requested"], ["ddgs", "searxng"])
         self.assertGreaterEqual(len(result.sources), 2)
 
+    def test_search_provider_profile_selects_profile_providers(self):
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[FakeProvider("ddgs", [])],
+        )
+        result = searcher.search("python release", profile="production")
+        self.assertEqual(result.validation["provider_profile"], "production")
+        self.assertEqual(result.validation["providers_requested"], ["brightdata"])
+        self.assertTrue(any("ZERO_SEARCH_BRIGHTDATA_API_KEY" in error for error in result.metadata["errors"]))
+
+    def test_explicit_provider_overrides_profile(self):
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [ProviderResult(url="https://example.com", title="Example", snippet="snippet")],
+                )
+            ],
+        )
+        result = searcher.search("python release", providers=["ddgs"], profile="production")
+        self.assertEqual(result.validation["providers_requested"], ["ddgs"])
+        self.assertEqual(result.metadata["providers_used"], ["ddgs"])
+
+    def test_goggles_docs_first_reranks_sources(self):
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [
+                        ProviderResult(
+                            url="https://blog.example.com/post",
+                            title="A blog result",
+                            snippet="General commentary.",
+                        ),
+                        ProviderResult(
+                            url="https://docs.example.com/release",
+                            title="Official documentation",
+                            snippet="Release notes and docs.",
+                        ),
+                    ],
+                )
+            ],
+        )
+        result = searcher.search("release docs", goggles="docs-first")
+        self.assertEqual(result.sources[0].url, "https://docs.example.com/release")
+        self.assertTrue(result.metadata["goggles"]["applied"])
+        self.assertGreater(result.sources[0].extra["goggles"]["score"], 1.0)
+
+    def test_goggles_file_can_block_domains(self):
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [
+                        ProviderResult(url="https://blocked.example.com/a", title="Blocked", snippet="snippet"),
+                        ProviderResult(url="https://kept.example.com/b", title="Kept", snippet="snippet"),
+                    ],
+                )
+            ],
+        )
+        import tempfile
+
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as handle:
+            json.dump({"block_domains": ["blocked.example.com"]}, handle)
+            path = handle.name
+        try:
+            result = searcher.search("filter test", goggles=path)
+        finally:
+            os.unlink(path)
+        self.assertEqual([source.url for source in result.sources], ["https://kept.example.com/b"])
+        self.assertEqual(result.metadata["goggles"]["blocked"], 1)
+
+    def test_llm_context_returns_markdown_with_citations(self):
+        searcher = UltimateSearcher(
+            timeout=5,
+            providers=[
+                FakeProvider(
+                    "ddgs",
+                    [
+                        ProviderResult(
+                            url="https://docs.example.com/release",
+                            title="Official release docs",
+                            snippet="Python release documentation.",
+                        )
+                    ],
+                )
+            ],
+        )
+        result = searcher.llm_context("Python release documentation", goggles="docs-first")
+        self.assertIn("# Search context: Python release documentation", result.context_markdown)
+        self.assertIn("Official release docs", result.context_markdown)
+        self.assertEqual(result.metadata["context_model"], "llm-context-v1")
+        self.assertEqual(result.citations, ["[Official release docs](https://docs.example.com/release)"])
+
     def test_default_providers_detects_searxng_env(self):
         with patch.dict(os.environ, {"ZERO_SEARCH_SEARXNG_URL": "https://searx.example"}, clear=False):
             providers = [provider.name for provider in self.searcher._default_providers()]

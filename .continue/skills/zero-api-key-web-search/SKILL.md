@@ -3,7 +3,7 @@ name: zero-api-key-web-search
 description: >
   Zero-API-Key Web Search for AI agents.
   Use multi-source search, confidence scoring, and citations for factual queries.
-version: "19.0.0"
+version: "20.0.0"
 ---
 
 # Zero-API-Key Web Search for Continue

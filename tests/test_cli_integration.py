@@ -69,6 +69,29 @@ class TestCliIntegration(unittest.TestCase):
         self.assertIn("ddgs", names)
         self.assertIn("searxng", names)
         self.assertIn("brightdata", names)
+        self.assertIn("free-verified", payload["profiles"])
+        self.assertIn("docs-first", payload["goggles"])
+
+    def test_context_json_cli(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "zero_api_key_web_search.context",
+                "python release",
+                "--goggles",
+                "docs-first",
+                "--json",
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+            env=self._env_with_fake_ddgs(),
+        )
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload["query"], "python release")
+        self.assertEqual(payload["metadata"]["context_model"], "llm-context-v1")
+        self.assertIn("# Search context: python release", payload["context_markdown"])
 
     def test_verify_claim_json_cli(self):
         result = subprocess.run(

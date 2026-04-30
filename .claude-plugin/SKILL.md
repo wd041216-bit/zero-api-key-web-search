@@ -3,7 +3,7 @@ name: zero-api-key-web-search
 description: >
   Claude Code skill for source-backed web search, page reading, and evidence-aware claim checking.
   Designed to reduce hallucination risk by surfacing corroborating and conflicting sources.
-version: "19.0.0"
+version: "20.0.0"
 user-invocable: true
 allowed-tools: "Bash"
 hooks:

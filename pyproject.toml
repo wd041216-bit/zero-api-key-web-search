@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "zero-api-key-web-search"
-version = "19.0.0"
+version = "20.0.0"
 description = "Zero-API-key web search, browsing, and claim verification for AI agents. Free by default, with optional production providers."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -45,11 +45,13 @@ zero-search = "zero_api_key_web_search.search_web:main"
 zero-browse = "zero_api_key_web_search.browse_page:main"
 zero-verify = "zero_api_key_web_search.verify_claim:main"
 zero-report = "zero_api_key_web_search.evidence_report:main"
+zero-context = "zero_api_key_web_search.context:main"
 zero-mcp = "zero_api_key_web_search.mcp_server:run"
 search-web = "zero_api_key_web_search.search_web:main"
 browse-page = "zero_api_key_web_search.browse_page:main"
 verify-claim = "zero_api_key_web_search.verify_claim:main"
 evidence-report = "zero_api_key_web_search.evidence_report:main"
+llm-context = "zero_api_key_web_search.context:main"
 cross-validated-search-mcp = "zero_api_key_web_search.mcp_server:run"
 free-web-search-mcp = "zero_api_key_web_search_compat.mcp_server:run"
 
@@ -91,6 +93,7 @@ omit = [
     "zero_api_key_web_search/providers/ddgs.py",
     "zero_api_key_web_search/providers/searxng.py",
     "zero_api_key_web_search/search_web.py",
+    "zero_api_key_web_search/context.py",
     "zero_api_key_web_search/verify_claim.py",
     "zero_api_key_web_search/evidence_report.py",
     "zero_api_key_web_search/search.py",

@@ -43,6 +43,15 @@ def main() -> None:
         help="Search provider to use. Repeat to enable multiple providers.",
     )
     parser.add_argument(
+        "--profile",
+        choices=["free", "default", "free-verified", "production", "max-evidence"],
+        help="Provider profile. Ignored when --provider is supplied.",
+    )
+    parser.add_argument(
+        "--goggles",
+        help="Built-in goggles preset or path to a JSON goggles file for reranking/filtering.",
+    )
+    parser.add_argument(
         "--with-pages",
         action="store_true",
         help="Fetch the top source pages and use page content to refine classification.",
@@ -72,6 +81,8 @@ def main() -> None:
         region=args.region,
         timelimit=args.timelimit,
         providers=args.providers,
+        profile=args.profile,
+        goggles=args.goggles,
         include_pages=args.with_pages or args.deep,
         deep=args.deep,
         max_pages=args.max_pages,

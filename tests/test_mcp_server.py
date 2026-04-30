@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from zero_api_key_web_search.core import Answer, Source
+from zero_api_key_web_search.core import Answer, LlmContextResult, Source
 from zero_api_key_web_search.mcp_server import call_tool, list_tools
 
 
@@ -15,7 +15,7 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
         names = {tool.name for tool in tools}
         self.assertEqual(
             names,
-            {"list_providers", "search_web", "browse_page", "verify_claim", "evidence_report"},
+            {"list_providers", "search_web", "llm_context", "browse_page", "verify_claim", "evidence_report"},
         )
 
     async def test_call_tool_search_web(self):
@@ -44,6 +44,37 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(result), 1)
         self.assertIn("Search Query: python", result[0].text)
         self.assertIn("Detailed Sources:", result[0].text)
+
+    async def test_call_tool_llm_context(self):
+        fake_context = LlmContextResult(
+            query="python",
+            search_type="text",
+            context_markdown="# Search context: python\n\n## Sources",
+            citations=[],
+            source_digest=[],
+            metadata={"context_model": "llm-context-v1"},
+            elapsed_ms=5,
+        )
+
+        with patch("zero_api_key_web_search.mcp_server.searcher.llm_context", return_value=fake_context) as mock_context:
+            result = await call_tool(
+                "llm_context",
+                {"query": "python", "profile": "free-verified", "goggles": "docs-first", "max_sources": 4},
+            )
+
+        self.assertEqual(len(result), 1)
+        self.assertIn("# Search context: python", result[0].text)
+        mock_context.assert_called_once_with(
+            query="python",
+            search_type="text",
+            region="wt-wt",
+            timelimit=None,
+            providers=None,
+            profile="free-verified",
+            goggles="docs-first",
+            max_sources=4,
+            include_verification=True,
+        )
 
     async def test_call_tool_browse_page(self):
         with patch(
@@ -136,6 +167,8 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
             region="wt-wt",
             timelimit=None,
             providers=["searxng"],
+            profile=None,
+            goggles=None,
             include_pages=True,
             deep=True,
             max_pages=1,
@@ -237,6 +270,8 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
             region="wt-wt",
             timelimit=None,
             providers=["searxng"],
+            profile=None,
+            goggles=None,
             include_pages=True,
             deep=True,
             max_pages=1,

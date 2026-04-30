@@ -3,7 +3,7 @@ name: zero-api-key-web-search
 description: >
   Gemini-ready skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it to verify factual answers with live search results and explicit source handling.
-version: "19.0.0"
+version: "20.0.0"
 ---
 
 # Zero-API-Key Web Search

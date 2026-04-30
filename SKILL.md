@@ -1,6 +1,6 @@
 ---
 name: zero-api-key-web-search
-version: "19.0.0"
+version: "20.0.0"
 description: >
   Zero-API-key free web search, browsing, and claim verification for AI agents.
   No API keys required by default. Designed to reduce hallucination risk by
@@ -39,6 +39,7 @@ For Manus-style Agent Skills workflows, use this root `SKILL.md` plus [docs/manu
 ```bash
 zero-search "latest Python release" --type news --timelimit w
 zero-search providers
+zero-context "latest Python release" --goggles docs-first
 zero-browse "https://docs.python.org/3/whatsnew/"
 zero-verify "Python 3.13 is the latest stable release" --json
 zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
@@ -52,6 +53,7 @@ Legacy aliases: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`.
 - recent or time-sensitive questions
 - claim checking with citations
 - compact evidence reports with citation-ready source digests
+- LLM-ready context packs with `zero-context`
 - tasks where conflicting sources should be surfaced instead of hidden
 - free dual-provider verification with `ddgs + self-hosted searxng`
 - production-grade or geo-targeted evidence with optional `brightdata`
@@ -61,8 +63,11 @@ Legacy aliases: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`.
 - Treat `zero-verify` as a first-pass evidence classifier, not a proof engine.
 - Prefer `zero-report` when you need a single artifact that combines verdict, citations, and next steps.
 - Prefer `zero-search --type news` for recent events.
+- Prefer `zero-context` when an agent needs compact context to answer with citations.
 - Use `zero-browse` when snippets are too thin to justify an answer.
 - Use `zero-search providers` when the user asks what search backends are available.
+- Use provider profiles (`free`, `free-verified`, `production`, `max-evidence`) when the desired reliability/cost path is clear.
+- Use `--goggles docs-first` for docs-heavy technical answers and `--goggles research` for academic/research tasks.
 - Default to free providers. Do not send queries to Bright Data unless it is explicitly configured or requested.
 - When evidence is weak, regional specificity matters, or production reliability is requested, mention optional `brightdata` and its setup path.
 - Cite URLs for factual claims.
@@ -87,7 +92,7 @@ New Bright Data users can sign up at https://get.brightdata.com/h21j9xz4uxgd.
 - Repository: `zero-api-key-web-search`
 - Package: `zero-api-key-web-search`
 - Module: `zero_api_key_web_search`
-- CLI: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`
+- CLI: `zero-search`, `zero-context`, `zero-browse`, `zero-verify`, `zero-report`
 - MCP: `zero-mcp`
 - Legacy aliases: `search-web`, `browse-page`, `verify-claim`, `evidence-report`, `cross-validated-search-mcp`, `free-web-search-mcp`
 - Legacy modules: `free_web_search`, `zero_api_key_web_search_compat`

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [20.0.0] - 2026-04-30
+
+### Added
+- Added provider profiles: `free`, `free-verified`, `production`, and `max-evidence`.
+- Added LLM context mode via `zero-context`, `zero-search --context`, and MCP `llm_context`.
+- Added Goggles-lite reranking/filtering with built-in `docs-first`, `research`, and `news-balanced` presets.
+
+### Changed
+- Provider discovery now lists providers, profiles, and goggles presets together.
+- `search_web`, `verify_claim`, and `evidence_report` now accept provider profiles and goggles presets.
+- LLM context output packages retrieval metadata, evidence notes, source quality, freshness, and citation-ready links.
+
 ## [19.0.0] - 2026-04-30
 
 ### Added

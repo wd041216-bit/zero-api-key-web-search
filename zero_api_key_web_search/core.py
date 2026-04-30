@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
+import os
 import re
 import time
 from collections.abc import Callable
@@ -103,6 +105,19 @@ class EvidenceReportResult:
     metadata: dict
     elapsed_ms: int
     calibration_note: str = ""
+
+
+@dataclass
+class LlmContextResult:
+    """LLM-optimized search context with compact citations and risk notes."""
+
+    query: str
+    search_type: str
+    context_markdown: str
+    citations: list[str]
+    source_digest: list[dict]
+    metadata: dict
+    elapsed_ms: int
 
 
 STOPWORDS = {
@@ -255,6 +270,43 @@ CLAIM_DECOMPOSE_MIN_LENGTH = 10
 CIRCUIT_BREAKER_THRESHOLD = 3
 CIRCUIT_BREAKER_RESET_SECONDS = 60
 
+PROVIDER_PROFILES = {
+    "free": ["ddgs"],
+    "default": ["ddgs"],
+    "free-verified": ["ddgs", "searxng"],
+    "production": ["brightdata"],
+    "max-evidence": ["ddgs", "searxng", "brightdata"],
+}
+
+GOGGLES_PRESETS = {
+    "docs-first": {
+        "description": "Prefer official docs, developer docs, specs, and support pages.",
+        "boost_domains": [],
+        "boost_domain_markers": ["docs.", "developer.", "developers.", "api.", "support.", "help."],
+        "boost_title_terms": ["documentation", "docs", "release notes", "specification", "official"],
+        "block_domains": [],
+        "boost": 0.35,
+        "demote": 0.35,
+    },
+    "research": {
+        "description": "Prefer academic, institutional, and research-heavy sources.",
+        "boost_domains": ["arxiv.org", "pubmed.ncbi.nlm.nih.gov", "nature.com", "science.org"],
+        "boost_domain_suffixes": [".edu", ".ac.uk", ".gov"],
+        "boost_title_terms": ["paper", "study", "research", "journal", "proceedings", "preprint"],
+        "block_domains": [],
+        "boost": 0.3,
+        "demote": 0.25,
+    },
+    "news-balanced": {
+        "description": "Prefer reporting sources while demoting low-context aggregators.",
+        "boost_title_terms": ["breaking", "report", "analysis", "live updates"],
+        "block_domains": [],
+        "demote_domains": ["pinterest.com"],
+        "boost": 0.2,
+        "demote": 0.3,
+    },
+}
+
 class UltimateSearcher:
     """Search implementation backing the public package surface."""
 
@@ -315,6 +367,41 @@ class UltimateSearcher:
             ),
         }
 
+    def provider_profiles(self) -> dict:
+        """Return supported provider profiles for agent-facing discovery."""
+        return {
+            "free": {
+                "providers": ["ddgs"],
+                "description": "Zero-setup local/default search path.",
+            },
+            "free-verified": {
+                "providers": ["ddgs", "searxng"],
+                "description": "Free cross-validation path. Requires a configured SearXNG instance.",
+            },
+            "production": {
+                "providers": ["brightdata"],
+                "description": (
+                    "Production-grade Bright Data path for reliability, "
+                    "geo-targeting, and structured SERP data."
+                ),
+            },
+            "max-evidence": {
+                "providers": ["ddgs", "searxng", "brightdata"],
+                "description": "Maximum provider diversity across free and production backends.",
+            },
+        }
+
+    def goggles_presets(self) -> dict:
+        """Return built-in reranking/filtering presets."""
+        return {
+            name: {
+                "description": config.get("description", ""),
+                "boost_domains": config.get("boost_domains", []),
+                "block_domains": config.get("block_domains", []),
+            }
+            for name, config in GOGGLES_PRESETS.items()
+        }
+
     def provider_statuses(self) -> list[dict]:
         """Return provider readiness for CLI, MCP, and skill discovery flows."""
         configured_names = {provider.name for provider in self.providers}
@@ -351,6 +438,17 @@ class UltimateSearcher:
             },
         ]
 
+    def _resolve_provider_profile(self, profile: str | None) -> list[str] | None:
+        if not profile:
+            return None
+        normalized = profile.strip().lower()
+        if not normalized:
+            return None
+        if normalized not in PROVIDER_PROFILES:
+            supported = ", ".join(sorted(PROVIDER_PROFILES))
+            raise ValueError(f"Unsupported provider profile '{profile}'. Supported profiles: {supported}")
+        return list(PROVIDER_PROFILES[normalized])
+
     def _known_optional_provider(self, provider_name: str) -> SearchProvider | None:
         if provider_name == "searxng":
             return SearxngProvider(timeout=self.timeout)
@@ -367,8 +465,15 @@ class UltimateSearcher:
                     registry[provider_name] = provider
         return registry
 
-    def _normalize_provider_names(self, providers: list[str] | None) -> list[str]:
+    def _normalize_provider_names(
+        self,
+        providers: list[str] | None,
+        profile: str | None = None,
+    ) -> list[str]:
         registry = self._provider_registry()
+        profile_providers = self._resolve_provider_profile(profile)
+        if profile_providers is not None and not providers:
+            providers = profile_providers
         if not providers:
             return [provider.name for provider in self.providers]
 
@@ -385,6 +490,111 @@ class UltimateSearcher:
             normalized.append(value)
 
         return normalized or list(registry.keys())
+
+    def _load_goggles(self, goggles: str | dict | None) -> dict | None:
+        if not goggles:
+            return None
+        if isinstance(goggles, dict):
+            return goggles
+
+        value = goggles.strip()
+        if not value:
+            return None
+        preset = GOGGLES_PRESETS.get(value.lower())
+        if preset is not None:
+            return dict(preset)
+
+        if os.path.exists(value):
+            with open(value, encoding="utf-8") as handle:
+                loaded = json.load(handle)
+            if not isinstance(loaded, dict):
+                raise ValueError("Goggles file must contain a JSON object.")
+            return loaded
+
+        supported = ", ".join(sorted(GOGGLES_PRESETS))
+        raise ValueError(f"Unsupported goggles preset or file '{goggles}'. Built-ins: {supported}")
+
+    def _source_matches_domain(self, domain: str, patterns: list[str]) -> bool:
+        for pattern in patterns:
+            normalized = pattern.lower().strip()
+            if normalized and (domain == normalized or domain.endswith(f".{normalized}")):
+                return True
+        return False
+
+    def _apply_goggles(self, sources: list[Source], goggles: str | dict | None) -> tuple[list[Source], dict]:
+        config = self._load_goggles(goggles)
+        if not config:
+            return sources, {"applied": False}
+
+        block_domains = [item.lower() for item in config.get("block_domains", [])]
+        demote_domains = [item.lower() for item in config.get("demote_domains", [])]
+        boost_domains = [item.lower() for item in config.get("boost_domains", [])]
+        boost_domain_markers = [item.lower() for item in config.get("boost_domain_markers", [])]
+        boost_domain_suffixes = [item.lower() for item in config.get("boost_domain_suffixes", [])]
+        boost_title_terms = [item.lower() for item in config.get("boost_title_terms", [])]
+        boost = float(config.get("boost", 0.25))
+        demote = float(config.get("demote", 0.25))
+
+        filtered: list[Source] = []
+        blocked = 0
+        boosted = 0
+        demoted = 0
+        for source in sources:
+            domain = self._source_domain(source.url)
+            haystack = f"{source.title} {source.snippet}".lower()
+            if self._source_matches_domain(domain, block_domains):
+                blocked += 1
+                continue
+
+            score = 1.0
+            signals: list[str] = []
+            if self._source_matches_domain(domain, boost_domains):
+                score += boost
+                signals.append("boost_domain")
+            if any(marker in domain for marker in boost_domain_markers):
+                score += boost
+                signals.append("boost_domain_marker")
+            if any(domain.endswith(suffix) for suffix in boost_domain_suffixes):
+                score += boost
+                signals.append("boost_domain_suffix")
+            if any(term in haystack for term in boost_title_terms):
+                score += boost
+                signals.append("boost_title_term")
+            if self._source_matches_domain(domain, demote_domains):
+                score -= demote
+                signals.append("demote_domain")
+
+            if score > 1.0:
+                boosted += 1
+            if score < 1.0:
+                demoted += 1
+            source.extra = {
+                **source.extra,
+                "goggles": {
+                    "score": round(score, 3),
+                    "signals": signals,
+                    "domain": domain,
+                },
+            }
+            filtered.append(source)
+
+        filtered.sort(
+            key=lambda item: (
+                item.extra.get("goggles", {}).get("score", 1.0),
+                item.cross_validated,
+            ),
+            reverse=True,
+        )
+        for index, source in enumerate(filtered, 1):
+            source.rank = index
+
+        return filtered, {
+            "applied": True,
+            "description": config.get("description", ""),
+            "blocked": blocked,
+            "boosted": boosted,
+            "demoted": demoted,
+        }
 
     def _provider_results_to_sources(
         self,
@@ -547,12 +757,14 @@ class UltimateSearcher:
         timelimit: str | None = None,
         region: str = "wt-wt",
         providers: list[str] | None = None,
+        profile: str | None = None,
+        goggles: str | dict | None = None,
         **kwargs,
     ) -> Answer:
         """Search the web and return a structured answer."""
         start_time = time.time()
         max_results = 30 if search_type == "text" else 20
-        selected_providers = self._normalize_provider_names(providers)
+        selected_providers = self._normalize_provider_names(providers, profile=profile)
         logger.info("search: query=%r type=%s providers=%s", query, search_type, selected_providers)
 
         raw_results: list[Source] = []
@@ -606,6 +818,9 @@ class UltimateSearcher:
                 all_results.append(result)
 
         validated_results = self._cross_validate(all_results)
+        goggles_metadata: dict = {"applied": False}
+        if goggles:
+            validated_results, goggles_metadata = self._apply_goggles(validated_results, goggles)
 
         if validated_results:
             answer_parts = []
@@ -635,11 +850,15 @@ class UltimateSearcher:
                 "cross_validated": cross_count,
                 "min_sources_target": self.min_sources,
                 "providers_requested": selected_providers,
+                "provider_profile": profile,
+                "goggles": goggles_metadata,
             },
             metadata={
+                "provider_profile": profile,
                 "providers_requested": selected_providers,
                 "providers_used": successful_providers,
                 "providers_attempted": attempted_providers,
+                "goggles": goggles_metadata,
                 "errors": errors,
                 "circuit_breaker_state": {
                     name: state["consecutive_failures"]
@@ -903,12 +1122,14 @@ class UltimateSearcher:
         timelimit: str | None = None,
         region: str = "wt-wt",
         providers: list[str] | None = None,
+        profile: str | None = None,
+        goggles: str | dict | None = None,
         **kwargs,
     ) -> Answer:
         """Async variant of search using async provider calls."""
         start_time = time.time()
         max_results = 30 if search_type == "text" else 20
-        selected_providers = self._normalize_provider_names(providers)
+        selected_providers = self._normalize_provider_names(providers, profile=profile)
         logger.info("asearch: query=%r type=%s providers=%s", query, search_type, selected_providers)
 
         raw_results: list[Source] = []
@@ -981,6 +1202,9 @@ class UltimateSearcher:
                 all_results.append(result)
 
         validated_results = self._cross_validate(all_results)
+        goggles_metadata: dict = {"applied": False}
+        if goggles:
+            validated_results, goggles_metadata = self._apply_goggles(validated_results, goggles)
 
         if validated_results:
             answer_parts = []
@@ -1010,11 +1234,15 @@ class UltimateSearcher:
                 "cross_validated": cross_count,
                 "min_sources_target": self.min_sources,
                 "providers_requested": selected_providers,
+                "provider_profile": profile,
+                "goggles": goggles_metadata,
             },
             metadata={
+                "provider_profile": profile,
                 "providers_requested": selected_providers,
                 "providers_used": successful_providers,
                 "providers_attempted": attempted_providers,
+                "goggles": goggles_metadata,
                 "errors": errors,
                 "circuit_breaker_state": {
                     name: state["consecutive_failures"]
@@ -1033,6 +1261,8 @@ class UltimateSearcher:
         timelimit: str | None = None,
         region: str = "wt-wt",
         providers: list[str] | None = None,
+        profile: str | None = None,
+        goggles: str | dict | None = None,
         include_pages: bool = False,
         deep: bool = False,
         max_pages: int = 3,
@@ -1049,6 +1279,8 @@ class UltimateSearcher:
             timelimit=timelimit,
             region=region,
             providers=providers,
+            profile=profile,
+            goggles=goggles,
             **kwargs,
         )
 
@@ -1062,6 +1294,8 @@ class UltimateSearcher:
                     timelimit=timelimit,
                     region=region,
                     providers=providers,
+                    profile=profile,
+                    goggles=goggles,
                     **kwargs,
                 )
                 sub_keywords = self._extract_keywords(sub)
@@ -1497,6 +1731,138 @@ class UltimateSearcher:
 
         return steps
 
+    def _build_llm_source_digest(self, source: Source) -> dict:
+        quality = self._estimate_source_quality(source)
+        freshness = self._source_freshness(source)
+        return {
+            "rank": source.rank,
+            "title": source.title,
+            "url": source.url,
+            "snippet": source.snippet,
+            "engine": source.engine,
+            "date": source.date,
+            "domain": quality["domain"],
+            "quality": quality["tier"],
+            "freshness": freshness["bucket"],
+            "cross_validated": source.cross_validated,
+            "goggles": source.extra.get("goggles", {}),
+        }
+
+    def llm_context(
+        self,
+        query: str,
+        search_type: str = "text",
+        timelimit: str | None = None,
+        region: str = "wt-wt",
+        providers: list[str] | None = None,
+        profile: str | None = None,
+        goggles: str | dict | None = None,
+        max_sources: int = 8,
+        include_verification: bool = True,
+        **kwargs,
+    ) -> LlmContextResult:
+        """Build compact, citation-ready context optimized for LLM prompts."""
+        start_time = time.time()
+        answer = self.search(
+            query=query,
+            search_type=search_type,
+            timelimit=timelimit,
+            region=region,
+            providers=providers,
+            profile=profile,
+            goggles=goggles,
+            **kwargs,
+        )
+        selected_sources = answer.sources[:max_sources]
+        source_digest = [self._build_llm_source_digest(source) for source in selected_sources]
+        citations = [f"[{item['title']}]({item['url']})" for item in source_digest]
+
+        verification: VerificationResult | None = None
+        if include_verification and search_type == "text" and selected_sources:
+            verification = self.verify_claim(
+                claim=query,
+                timelimit=timelimit,
+                region=region,
+                providers=providers,
+                profile=profile,
+                goggles=goggles,
+                answer=answer,
+                **kwargs,
+            )
+
+        lines = [
+            f"# Search context: {query}",
+            "",
+            "## Retrieval",
+            f"- Search type: {search_type}",
+            f"- Confidence: {answer.confidence}",
+            f"- Providers used: {', '.join(answer.metadata.get('providers_used', [])) or 'none'}",
+            f"- Provider profile: {profile or 'default'}",
+        ]
+        if answer.metadata.get("goggles", {}).get("applied"):
+            goggles_meta = answer.metadata["goggles"]
+            lines.append(
+                "- Goggles: applied"
+                f" (boosted={goggles_meta.get('boosted', 0)}, blocked={goggles_meta.get('blocked', 0)})"
+            )
+        if verification is not None:
+            lines.extend([
+                "",
+                "## Evidence read",
+                f"- Verdict: {verification.verdict}",
+                f"- Confidence: {verification.confidence}",
+                f"- Support score: {verification.analysis['support_score']:.2f}",
+                f"- Conflict score: {verification.analysis['conflict_score']:.2f}",
+                f"- Domain diversity: {verification.analysis['domain_diversity']}",
+            ])
+        if answer.metadata.get("errors"):
+            lines.extend(["", "## Retrieval warnings"])
+            lines.extend(f"- {error}" for error in answer.metadata["errors"])
+
+        lines.extend(["", "## Sources"])
+        for item in source_digest:
+            badge = "cross-validated" if item["cross_validated"] else "single-provider"
+            date = f" | date={item['date']}" if item["date"] else ""
+            lines.append(
+                f"{item['rank']}. [{item['title']}]({item['url']}) "
+                f"({badge} | {item['domain']} | quality={item['quality']} | freshness={item['freshness']}{date})"
+            )
+            if item["snippet"]:
+                lines.append(f"   - {item['snippet']}")
+
+        lines.extend([
+            "",
+            "## Use guidance",
+            "- Cite sources directly for factual claims.",
+            "- Treat low provider or domain diversity as a reason to hedge.",
+            "- Surface conflict explicitly when support and conflict are both meaningful.",
+        ])
+
+        metadata = {
+            **answer.metadata,
+            "context_model": "llm-context-v1",
+            "source_count": len(source_digest),
+            "verification": (
+                {
+                    "verdict": verification.verdict,
+                    "confidence": verification.confidence,
+                    "support_score": verification.analysis["support_score"],
+                    "conflict_score": verification.analysis["conflict_score"],
+                }
+                if verification is not None
+                else None
+            ),
+        }
+        return LlmContextResult(
+            query=query,
+            search_type=search_type,
+            context_markdown="\n".join(lines),
+            citations=citations,
+            source_digest=source_digest,
+            metadata=metadata,
+            elapsed_ms=int((time.time() - start_time) * 1000),
+        )
+
     def evidence_report(
         self,
         query: str,
@@ -1504,6 +1870,8 @@ class UltimateSearcher:
         timelimit: str | None = None,
         region: str = "wt-wt",
         providers: list[str] | None = None,
+        profile: str | None = None,
+        goggles: str | dict | None = None,
         include_pages: bool = False,
         deep: bool = False,
         max_pages: int = 3,
@@ -1522,6 +1890,8 @@ class UltimateSearcher:
             timelimit=timelimit,
             region=region,
             providers=providers,
+            profile=profile,
+            goggles=goggles,
             **kwargs,
         )
         verification = self.verify_claim(
@@ -1529,6 +1899,8 @@ class UltimateSearcher:
             timelimit=timelimit,
             region=region,
             providers=providers,
+            profile=profile,
+            goggles=goggles,
             include_pages=include_pages or deep,
             deep=deep,
             max_pages=max_pages,
@@ -1646,6 +2018,7 @@ class CrossValidatedSearcher(UltimateSearcher):
 __all__ = [
     "Answer",
     "EvidenceReportResult",
+    "LlmContextResult",
     "CrossValidatedSearcher",
     "Source",
     "SubClaimResult",

@@ -1,6 +1,6 @@
 ---
 name: zero-api-key-web-search
-version: "19.0.0"
+version: "20.0.0"
 description: >
   OpenClaw skill for source-backed web search, page reading, and evidence-aware claim checking.
   No API keys required by default; optional providers can be enabled for stronger coverage.

@@ -15,8 +15,16 @@ from zero_api_key_web_search.core import (  # noqa: F401
 
 def _print_provider_statuses(searcher: UltimateSearcher, as_json: bool = False) -> None:
     statuses = searcher.provider_statuses()
+    profiles = searcher.provider_profiles()
+    goggles = searcher.goggles_presets()
     if as_json:
-        print(json.dumps({"providers": statuses}, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {"providers": statuses, "profiles": profiles, "goggles": goggles},
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return
 
     print("\nAvailable providers\n")
@@ -33,6 +41,12 @@ def _print_provider_statuses(searcher: UltimateSearcher, as_json: bool = False) 
             print(f"- {item['name']}: {item['setup']}")
     current = ", ".join(provider.name for provider in searcher.providers)
     print(f"\nCurrent default path: {current}")
+    print("\nProfiles")
+    for name, item in profiles.items():
+        print(f"- {name}: {', '.join(item['providers'])} - {item['description']}")
+    print("\nGoggles")
+    for name, item in goggles.items():
+        print(f"- {name}: {item['description']}")
 
 
 def main():
@@ -54,6 +68,8 @@ def main():
             "  search-web \"Python 3.12\"\n"
             "  search-web \"OpenAI\" --type news\n"
             "  search-web \"AI news\" --type news --timelimit w\n"
+            "  search-web \"Python release\" --profile free-verified --goggles docs-first\n"
+            "  search-web \"Python release\" --context\n"
             "  search-web providers\n"
             "  search-web  # Run without arguments to enter REPL mode"
         ),
@@ -90,6 +106,20 @@ def main():
         action="append",
         dest="providers",
         help="Search provider to use. Repeat to enable multiple providers, e.g. --provider ddgs --provider searxng",
+    )
+    parser.add_argument(
+        "--profile",
+        choices=["free", "default", "free-verified", "production", "max-evidence"],
+        help="Provider profile. Ignored when --provider is supplied.",
+    )
+    parser.add_argument(
+        "--goggles",
+        help="Built-in goggles preset or path to a JSON goggles file for reranking/filtering.",
+    )
+    parser.add_argument(
+        "--context",
+        action="store_true",
+        help="Return LLM-optimized Markdown context instead of the standard search view.",
     )
 
     # Image-specific parameters
@@ -166,6 +196,8 @@ def main():
                         timelimit=parsed_repl.timelimit,
                         region=parsed_repl.region,
                         providers=parsed_repl.providers,
+                        profile=parsed_repl.profile,
+                        goggles=parsed_repl.goggles,
                         **kwargs,
                     )
                     print(
@@ -194,12 +226,31 @@ def main():
     if args.license:
         kwargs["license_image"] = args.license
 
+    if args.context:
+        context = searcher.llm_context(
+            args.query,
+            search_type=args.type,
+            timelimit=args.timelimit,
+            region=args.region,
+            providers=args.providers,
+            profile=args.profile,
+            goggles=args.goggles,
+            **kwargs,
+        )
+        if args.json:
+            print(json.dumps(asdict(context), indent=2, ensure_ascii=False))
+        else:
+            print(context.context_markdown)
+        return
+
     answer = searcher.search(
         args.query,
         search_type=args.type,
         timelimit=args.timelimit,
         region=args.region,
         providers=args.providers,
+        profile=args.profile,
+        goggles=args.goggles,
         **kwargs,
     )
 

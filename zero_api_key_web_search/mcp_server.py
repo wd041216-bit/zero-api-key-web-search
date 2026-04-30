@@ -29,8 +29,7 @@ async def list_tools() -> list[Tool]:
         Tool(
             name="list_providers",
             description=(
-                "List available search providers and setup hints. Use this when a user asks "
-                "what providers are available or how to enable Bright Data/SearXNG."
+                "List available search providers, provider profiles, goggles presets, and setup hints."
             ),
             inputSchema={
                 "type": "object",
@@ -77,10 +76,69 @@ async def list_tools() -> list[Tool]:
                         "type": "array",
                         "items": {"type": "string"},
                         "description": "Optional list of providers, e.g. ['ddgs', 'searxng', 'brightdata']."
+                    },
+                    "profile": {
+                        "type": "string",
+                        "enum": ["free", "default", "free-verified", "production", "max-evidence"],
+                        "description": "Provider profile to use when providers is not supplied."
+                    },
+                    "goggles": {
+                        "type": "string",
+                        "description": "Built-in goggles preset for reranking/filtering, e.g. docs-first or research."
                     }
                 },
                 "required": ["query"]
             }
+        ),
+        Tool(
+            name="llm_context",
+            description=(
+                "Build compact, citation-ready Markdown context for LLMs. Prefer this when an agent "
+                "needs grounded context rather than raw search results."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Search query to ground."},
+                    "type": {
+                        "type": "string",
+                        "enum": ["text", "news", "images", "videos", "books"],
+                        "description": "Type of search. Default is text.",
+                        "default": "text",
+                    },
+                    "region": {"type": "string", "description": "Region code.", "default": "wt-wt"},
+                    "timelimit": {
+                        "type": "string",
+                        "enum": ["d", "w", "m", "y", ""],
+                        "description": "Optional freshness window.",
+                    },
+                    "providers": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Optional provider list. Overrides profile.",
+                    },
+                    "profile": {
+                        "type": "string",
+                        "enum": ["free", "default", "free-verified", "production", "max-evidence"],
+                        "description": "Provider profile.",
+                    },
+                    "goggles": {
+                        "type": "string",
+                        "description": "Built-in goggles preset, e.g. docs-first, research, or news-balanced.",
+                    },
+                    "max_sources": {
+                        "type": "integer",
+                        "description": "Maximum sources in the context pack.",
+                        "default": 8,
+                    },
+                    "include_verification": {
+                        "type": "boolean",
+                        "description": "Include lightweight support/conflict evidence read.",
+                        "default": True,
+                    },
+                },
+                "required": ["query"],
+            },
         ),
         Tool(
             name="browse_page",
@@ -132,6 +190,15 @@ async def list_tools() -> list[Tool]:
                         "items": {"type": "string"},
                         "description": "Optional list of providers, e.g. ['ddgs', 'searxng', 'brightdata']."
                     },
+                    "profile": {
+                        "type": "string",
+                        "enum": ["free", "default", "free-verified", "production", "max-evidence"],
+                        "description": "Provider profile to use when providers is not supplied."
+                    },
+                    "goggles": {
+                        "type": "string",
+                        "description": "Built-in goggles preset for reranking/filtering."
+                    },
                     "with_pages": {
                         "type": "boolean",
                         "description": "Fetch a few top pages and refine the classification using page text."
@@ -181,6 +248,15 @@ async def list_tools() -> list[Tool]:
                         "items": {"type": "string"},
                         "description": "Optional list of providers, e.g. ['ddgs', 'searxng', 'brightdata']."
                     },
+                    "profile": {
+                        "type": "string",
+                        "enum": ["free", "default", "free-verified", "production", "max-evidence"],
+                        "description": "Provider profile to use when providers is not supplied."
+                    },
+                    "goggles": {
+                        "type": "string",
+                        "description": "Built-in goggles preset for reranking/filtering."
+                    },
                     "with_pages": {
                         "type": "boolean",
                         "description": "Fetch a few top pages and refine the classification using page text."
@@ -211,6 +287,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     try:
         if name == "list_providers":
             statuses = searcher.provider_statuses()
+            profiles = searcher.provider_profiles()
+            goggles = searcher.goggles_presets()
             result_text = "Available providers:\n"
             for item in statuses:
                 result_text += (
@@ -221,6 +299,15 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                     result_text += f"  Setup: {item['setup']}\n"
             current = ", ".join(provider.name for provider in searcher.providers)
             result_text += f"\nCurrent default path: {current}\n"
+            result_text += "\nProvider profiles:\n"
+            for profile_name, item in profiles.items():
+                result_text += (
+                    f"- {profile_name}: {', '.join(item['providers'])} | "
+                    f"{item['description']}\n"
+                )
+            result_text += "\nGoggles presets:\n"
+            for goggles_name, item in goggles.items():
+                result_text += f"- {goggles_name}: {item['description']}\n"
             return [TextContent(type="text", text=result_text)]
 
         if name == "search_web":
@@ -229,6 +316,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             region = arguments.get("region", "wt-wt")
             timelimit = arguments.get("timelimit")
             providers = arguments.get("providers")
+            profile = arguments.get("profile")
+            goggles = arguments.get("goggles")
             if timelimit == "":
                 timelimit = None
 
@@ -240,6 +329,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 region=region,
                 timelimit=timelimit,
                 providers=providers,
+                profile=profile,
+                goggles=goggles,
             )
 
             # Format the output for the LLM
@@ -255,6 +346,33 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 result_text += "\n"
 
             return [TextContent(type="text", text=result_text)]
+
+        elif name == "llm_context":
+            query = arguments.get("query", "")
+            search_type = arguments.get("type", "text")
+            region = arguments.get("region", "wt-wt")
+            timelimit = arguments.get("timelimit")
+            providers = arguments.get("providers")
+            profile = arguments.get("profile")
+            goggles = arguments.get("goggles")
+            max_sources = arguments.get("max_sources", 8)
+            include_verification = arguments.get("include_verification", True)
+            if timelimit == "":
+                timelimit = None
+
+            logger.info(f"Executing llm_context: query='{query}', type='{search_type}', region='{region}'")
+            context = searcher.llm_context(
+                query=query,
+                search_type=search_type,
+                region=region,
+                timelimit=timelimit,
+                providers=providers,
+                profile=profile,
+                goggles=goggles,
+                max_sources=max_sources,
+                include_verification=include_verification,
+            )
+            return [TextContent(type="text", text=context.context_markdown)]
 
         elif name == "browse_page":
             url = arguments.get("url", "")
@@ -280,6 +398,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             region = arguments.get("region", "wt-wt")
             timelimit = arguments.get("timelimit")
             providers = arguments.get("providers")
+            profile = arguments.get("profile")
+            goggles = arguments.get("goggles")
             with_pages = arguments.get("with_pages", False)
             deep = arguments.get("deep", False)
             max_pages = arguments.get("max_pages", 3)
@@ -292,6 +412,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 region=region,
                 timelimit=timelimit,
                 providers=providers,
+                profile=profile,
+                goggles=goggles,
                 include_pages=with_pages or deep,
                 deep=deep,
                 max_pages=max_pages,
@@ -341,6 +463,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             region = arguments.get("region", "wt-wt")
             timelimit = arguments.get("timelimit")
             providers = arguments.get("providers")
+            profile = arguments.get("profile")
+            goggles = arguments.get("goggles")
             with_pages = arguments.get("with_pages", False)
             deep = arguments.get("deep", False)
             max_pages = arguments.get("max_pages", 3)
@@ -355,6 +479,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 region=region,
                 timelimit=timelimit,
                 providers=providers,
+                profile=profile,
+                goggles=goggles,
                 include_pages=with_pages or deep,
                 deep=deep,
                 max_pages=max_pages,
