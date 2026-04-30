@@ -1,6 +1,6 @@
 {
   "name": "zero-api-key-web-search",
-  "version": "20.0.0",
+  "version": "21.0.0",
   "description": "Search infrastructure for AI agents: free by default, MCP-ready, LLM-context aware, and production-grade when needed.",
   "author": "wd041216-bit",
   "homepage": "https://github.com/wd041216-bit/zero-api-key-web-search",

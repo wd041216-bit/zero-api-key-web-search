@@ -9,7 +9,7 @@ It exists so agent developers can use npm/npx workflows for the CLI and MCP serv
 Install the Python runtime package first:
 
 ```bash
-python -m pip install zero-api-key-web-search==20.0.0
+python -m pip install zero-api-key-web-search==21.0.0
 ```
 
 Then install the npm wrapper globally:
@@ -73,7 +73,7 @@ That keeps installation transparent, avoids cross-language supply-chain surprise
 If the Python package is missing, the wrapper prints:
 
 ```bash
-python -m pip install zero-api-key-web-search==20.0.0
+python -m pip install zero-api-key-web-search==21.0.0
 ```
 
 ## Publishing Notes

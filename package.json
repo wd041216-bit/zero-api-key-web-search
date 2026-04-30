@@ -1,6 +1,6 @@
 {
   "name": "zero-api-key-web-search",
-  "version": "20.0.0",
+  "version": "21.0.0",
   "description": "npm/npx wrapper for AI-agent search infrastructure: MCP, LLM context, browsing, and claim verification.",
   "license": "MIT",
   "author": "wd041216-bit <wd041216@uw.edu>",

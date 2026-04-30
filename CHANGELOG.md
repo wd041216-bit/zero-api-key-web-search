@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [21.0.0] - 2026-04-30
+
+### Added
+- Added a stronger agent-infrastructure README with visual positioning, a pipeline diagram, and a terminal demo.
+- Added an agent developer guide, demo transcript, and launch kit for easier adoption and sharing.
+- Added npm wrapper package metadata and executable wrappers for the `zero-*` command surface.
+
+### Changed
+- Refined package, skill, and repository metadata around MCP-ready AI-agent search infrastructure.
+- Expanded GitHub topics and documentation links for discoverability.
+
 ## [20.0.0] - 2026-04-30
 
 ### Added

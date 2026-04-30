@@ -18,7 +18,7 @@ This repository is prepared for the current Gemini CLI extension-gallery path.
 - Root skill: [`skills/zero-api-key-web-search/SKILL.md`](../skills/zero-api-key-web-search/SKILL.md)
 - Gemini context: [`GEMINI.md`](../GEMINI.md) and [`.gemini/SKILL.md`](../.gemini/SKILL.md)
 - Package published: [`zero-api-key-web-search` on PyPI](https://pypi.org/project/zero-api-key-web-search/)
-- Tagged release: [`v20.0.0`](https://github.com/wd041216-bit/zero-api-key-web-search/releases/tag/v20.0.0)
+- Tagged release: [`v21.0.0`](https://github.com/wd041216-bit/zero-api-key-web-search/releases/tag/v21.0.0)
 - Fast verification path: [`README.md`](../README.md) and [`docs/ecosystem-readiness.md`](./ecosystem-readiness.md)
 - Free dual-provider path: [`docs/searxng-self-hosted.md`](./searxng-self-hosted.md)
 
