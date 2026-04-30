@@ -6,7 +6,7 @@ const path = require("node:path");
 
 const PYTHON_MODULE = "zero_api_key_web_search";
 const PYPI_PACKAGE = "zero-api-key-web-search";
-const PYPI_VERSION = "20.0.0";
+const PYPI_VERSION = "21.0.0";
 
 const COMMANDS = {
   "zero-search": "zero_api_key_web_search.search_web",
