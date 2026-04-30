@@ -1,6 +1,6 @@
 {
   "name": "zero-api-key-web-search",
   "version": "20.0.0",
-  "description": "Free-by-default web search, page reading, and claim verification for AI agents, with optional production providers.",
+  "description": "Search infrastructure for AI agents: free by default, MCP-ready, LLM-context aware, and production-grade when needed.",
   "contextFileName": "GEMINI.md"
 }

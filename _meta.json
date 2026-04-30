@@ -1,13 +1,17 @@
 {
   "name": "zero-api-key-web-search",
   "version": "20.0.0",
-  "description": "Free-by-default web search, browsing, and claim verification for AI agents, with optional production providers. Works with MCP, Claude Code, Gemini, Cursor, Copilot, and more.",
+  "description": "Search infrastructure for AI agents: free by default, MCP-ready, LLM-context aware, and production-grade when needed.",
   "author": "wd041216-bit",
   "homepage": "https://github.com/wd041216-bit/zero-api-key-web-search",
   "tags": [
     "free",
     "no-api-key",
     "web-search",
+    "ai-search",
+    "agent-infrastructure",
+    "llm-context",
+    "rag",
     "claim-verification",
     "evidence-report",
     "mcp",

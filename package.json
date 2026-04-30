@@ -1,7 +1,7 @@
 {
   "name": "zero-api-key-web-search",
   "version": "20.0.0",
-  "description": "npm/npx wrapper for Zero-API-Key Web Search: AI-agent search, LLM context, MCP, browsing, and claim verification.",
+  "description": "npm/npx wrapper for AI-agent search infrastructure: MCP, LLM context, browsing, and claim verification.",
   "license": "MIT",
   "author": "wd041216-bit <wd041216@uw.edu>",
   "homepage": "https://github.com/wd041216-bit/zero-api-key-web-search#readme",
@@ -20,7 +20,10 @@
     "llm-context",
     "citations",
     "fact-checking",
-    "claim-verification"
+    "claim-verification",
+    "ai-search",
+    "agent-infrastructure",
+    "rag"
   ],
   "type": "commonjs",
   "bin": {

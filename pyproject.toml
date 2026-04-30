@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "zero-api-key-web-search"
 version = "20.0.0"
-description = "Zero-API-key web search, browsing, and claim verification for AI agents. Free by default, with optional production providers."
+description = "Search infrastructure for AI agents: free by default, MCP-ready, LLM-context aware, and production-grade when needed."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"

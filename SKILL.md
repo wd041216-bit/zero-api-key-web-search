@@ -2,9 +2,8 @@
 name: zero-api-key-web-search
 version: "20.0.0"
 description: >
-  Zero-API-key free web search, browsing, and claim verification for AI agents.
-  No API keys required by default. Designed to reduce hallucination risk by
-  surfacing corroborating and conflicting sources.
+  Search infrastructure for AI agents. Free by default, MCP-ready,
+  LLM-context aware, and designed to surface corroborating and conflicting sources.
 homepage: https://github.com/wd041216-bit/zero-api-key-web-search
 platforms:
   - claude-code

@@ -1,36 +1,39 @@
 <div align="center">
   <h1>Zero-API-Key Web Search</h1>
-  <p><strong>Free web search, browsing & claim verification for AI agents.</strong></p>
-  <p><em>No API keys by default. Free locally, production-grade when you opt in.</em></p>
+  <p><strong>Search infrastructure for AI agents.</strong></p>
+  <p><em>Free by default. MCP-ready. LLM-context aware. Production-grade when you opt in.</em></p>
 
   [![PyPI](https://img.shields.io/pypi/v/zero-api-key-web-search?label=pypi)](https://pypi.org/project/zero-api-key-web-search/)
   [![Python](https://img.shields.io/pypi/pyversions/zero-api-key-web-search)](https://python.org)
   [![MCP](https://img.shields.io/badge/MCP-Ready-0f766e.svg)](https://modelcontextprotocol.io/)
   [![Tests](https://img.shields.io/badge/tests-98%20passing-22c55e.svg)](./tests)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+  <br><br>
+  <img src="assets/agent-search-pipeline.svg" alt="AI-agent search pipeline" width="920">
 </div>
 
 ---
 
-## What is this?
+## Why Agents Use It
 
-A single `pip install` gives your AI agent live web search, full-page reading, and evidence-aware claim verification — all without any API key, account, or paid service by default.
+A single install gives your agent live search, page reading, claim verification, and citation-ready context without requiring an API key by default.
 
-- **Search**: Live results from DuckDuckGo (free) + optional SearXNG (self-hosted, free)
-- **Providers**: Discover free and production providers with `zero-search providers`
-- **Context**: Generate LLM-ready context packs with `zero-context`
-- **Goggles-lite**: Rerank or filter sources with local presets like `docs-first`
-- **Browse**: Extract clean text from any URL, stripping boilerplate automatically
-- **Verify**: Classify claims as supported / contested / likely false with evidence scores
-- **Report**: Generate citation-ready evidence reports with rationale and next steps
+| Agent job | Command | What the agent gets |
+| --- | --- | --- |
+| Ground an answer | `zero-context "FastAPI lifespan docs"` | compact Markdown context with citations |
+| Verify a claim | `zero-verify "Python 3.13 is the latest stable release"` | supported / contested / likely false verdict |
+| Build an evidence report | `zero-report "AI regulation news"` | rationale, source digest, warnings, next steps |
+| Serve an MCP client | `zero-mcp` | `search_web`, `llm_context`, `browse_page`, `verify_claim`, `evidence_report` |
+
+<p align="center">
+  <img src="assets/terminal-demo.svg" alt="zero-context terminal demo" width="860">
+</p>
 
 ## Quick start
 
 ```bash
 pip install zero-api-key-web-search
-
-# Optional npm/npx wrapper for Node-based agent toolchains
-npm install -g zero-api-key-web-search
 
 # Search the web
 zero-search "Python 3.13 release" --json
@@ -54,14 +57,15 @@ zero-report "Python 3.13 stable release" \
 
 Legacy CLI aliases (`search-web`, `browse-page`, `verify-claim`, `evidence-report`) also work.
 
-Node-based agent runtimes can use the npm wrapper:
+Node-based agent runtimes can use the npm wrapper once the package is published. The wrapper source is included in this repository; see [docs/npm-package.md](docs/npm-package.md).
 
-```bash
-npx zero-api-key-web-search zero-context "Python 3.13 stable release" --goggles docs-first
-npx zero-api-key-web-search zero-mcp
-```
+## The 30-Second Pitch
 
-The npm package is a thin wrapper around the Python package. See [docs/npm-package.md](docs/npm-package.md).
+- **Zero-key default**: useful immediately for local agents, evals, demos, and prototypes.
+- **MCP-native**: works as a reusable tool server for Claude Code, Cursor, Copilot-style clients, Codex, Gemini, OpenClaw, and other MCP-compatible runtimes.
+- **LLM-context first**: `zero-context` returns context a model can actually use, not just a pile of links.
+- **Evidence-aware**: `zero-verify` and `zero-report` preserve support, conflict, source quality, freshness, and domain diversity.
+- **Provider-aware**: start free with `ddgs`, add self-hosted `searxng`, or opt into Bright Data for production reliability and geo-targeting.
 
 ## Why this over a plain search wrapper?
 
@@ -78,6 +82,16 @@ The npm package is a thin wrapper around the Python package. See [docs/npm-packa
 | API key required | Often | **Never by default** |
 | Cost | Sometimes | **Free by default** |
 
+## Compare the Shape
+
+| Project shape | Best at | Tradeoff |
+| --- | --- | --- |
+| Plain search wrapper | returning links quickly | leaves grounding, citation shaping, and conflict handling to the agent |
+| Hosted search API | managed reliability and scale | usually requires an account/key from the first request |
+| Zero-API-Key Web Search | local agent search infrastructure with optional production providers | default results depend on free upstreams unless you add SearXNG or Bright Data |
+
+This project is not trying to be a hosted search engine. It is the missing search/evidence layer inside agent runtimes.
+
 ## MCP server
 
 Works with Claude Code, Cursor, Copilot, and any MCP-compatible agent:
@@ -92,7 +106,7 @@ Works with Claude Code, Cursor, Copilot, and any MCP-compatible agent:
 }
 ```
 
-For npm/npx-based MCP launchers:
+For npm/npx-based MCP launchers after npm publication:
 
 ```json
 {
@@ -191,6 +205,12 @@ You can also pass a JSON file to `--goggles` with `boost_domains`, `block_domain
 
 Full guide: [docs/agent-search-controls.md](docs/agent-search-controls.md).
 
+More agent integration material:
+
+- [Agent Developer Guide](docs/agent-developer-guide.md)
+- [Demo Transcript](examples/demo-transcript.md)
+- [Launch Kit](docs/launch-kit.md)
+
 ## Optional Bright Data provider
 
 The default path stays free and zero-key. For production agents that need higher reliability, structured SERP data, geo-targeted results, or stronger cross-provider verification, enable the optional Bright Data provider.
@@ -270,11 +290,10 @@ pip install zero-api-key-web-search
 
 Python 3.10+ required. No API keys, no accounts, no configuration needed.
 
-Optional npm wrapper:
+Optional npm wrapper source:
 
 ```bash
-npm install -g zero-api-key-web-search
-npx zero-api-key-web-search --help
+npm pack --dry-run
 ```
 
 ## Development
