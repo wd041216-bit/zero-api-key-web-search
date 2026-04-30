@@ -62,9 +62,14 @@ This model is useful for:
 
 ## Current Limits
 
-This repository does **not** yet provide:
+This repository **does** provide:
 
-- multi-provider evidence fusion
+- multi-provider evidence fusion with weighted provider trust scores (via `_cross_validate` in `core.py`)
+- optional page-aware verification (`--deep` / `--with-pages`)
+- conflict summarization with stance buckets and domain-level breakdowns
+
+It does **not** yet provide:
+
 - fact-level extraction from full documents
 - citation-level entailment checking
 - domain-specific authority models
@@ -77,11 +82,11 @@ The flagship reviewer-facing surface built on top of this model is `evidence-rep
 - coverage warnings
 - citation-ready source digests
 
-## Recommended Next Steps
+## Extension Points
 
-The next major upgrades should be:
-
-1. provider adapters beyond `ddgs`
-2. page-aware verification using `browse-page`
-3. conflict summarization from full-page evidence
+1. fact-level extraction from full documents
+2. citation-level entailment checking
+3. domain-specific authority models
 4. benchmark fixtures and regression scoring
+
+See `docs/trust-model.md` for the semantic oracle boundary and `docs/claim-ledger.md` for the status of each claim.

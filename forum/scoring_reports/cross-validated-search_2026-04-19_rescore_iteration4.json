@@ -5,7 +5,13 @@
   "council_id": "cross-validated-search-main-council",
   "previous_iteration": {
     "iteration": 3,
-    "scores": {"breadth": 20, "depth": 20, "thickness": 22, "effectiveness": 21, "total": 83}
+    "scores": {
+      "breadth": 20,
+      "depth": 20,
+      "thickness": 22,
+      "effectiveness": 21,
+      "total": 83
+    }
   },
   "axes": [
     {
@@ -30,7 +36,7 @@
         "Production deployment / SRE / latency expertise remains without a dedicated expert",
         "Adversarial robustness of credibility scoring and search result manipulation is a cross-cutting blind spot"
       ],
-      "improvement_from_iteration_3": "+1 point (20→21). Soria Parra's expertise now fully integrated into scoring. Minor improvement reflects consolidation rather than new coverage."
+      "improvement_from_iteration_3": "+1 point (20\u219221). Soria Parra's expertise now fully integrated into scoring. Minor improvement reflects consolidation rather than new coverage."
     },
     {
       "axis": "depth",
@@ -54,7 +60,7 @@
         "No profile reaches 23-25 (authoritative standalone reference work level)",
         "Soria Parra's quote bank needs more verbatim quotes from public interviews"
       ],
-      "improvement_from_iteration_3": "+1 point (20→21). Consolidation improvement. Soria Parra's profile adds depth on the MCP axis."
+      "improvement_from_iteration_3": "+1 point (20\u219221). Consolidation improvement. Soria Parra's profile adds depth on the MCP axis."
     },
     {
       "axis": "thickness",
@@ -83,7 +89,7 @@
         "No structured logging or monitoring hooks for production deployment",
         "browse_page readability heuristic not validated against diverse real-world pages"
       ],
-      "improvement_from_iteration_3": "+1 point (22→23). Circuit breaker, coverage enforcement, and baseline heuristics add meaningful thickness. Coverage measurement is a significant quality gate."
+      "improvement_from_iteration_3": "+1 point (22\u219223). Circuit breaker, coverage enforcement, and baseline heuristics add meaningful thickness. Coverage measurement is a significant quality gate."
     },
     {
       "axis": "effectiveness",
@@ -111,7 +117,7 @@
         "No confidence calibration against a gold-standard dataset",
         "Baselines are reported but not benchmarked against a labeled dataset to quantify improvement"
       ],
-      "improvement_from_iteration_3": "+2 points (21→23). Baseline comparison heuristics in evidence_report provide transparency and enable effectiveness validation. Circuit breaker adds resilience. Coverage enforcement prevents regression."
+      "improvement_from_iteration_3": "+2 points (21\u219223). Baseline comparison heuristics in evidence_report provide transparency and enable effectiveness validation. Circuit breaker adds resilience. Coverage enforcement prevents regression."
     }
   ],
   "total": 88,

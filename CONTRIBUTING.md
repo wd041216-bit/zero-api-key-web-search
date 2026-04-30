@@ -129,6 +129,12 @@ When adding new features, please include:
 
 If you discover a security vulnerability, please do **not** open a public issue. Instead, contact the maintainer directly through GitHub's private vulnerability reporting feature.
 
+## Language Policy
+
+- Claims about what the system **does** must trace to a test, benchmark, or code path.
+- Claims about what the system **will do** must be marked `[planned]` with a tracking reference.
+- No aspirational language ("production-grade", "battle-tested") in code comments, docstrings, or README without an evidence citation.
+
 ---
 
 Thank you for helping make Zero-API-Key Web Search better for everyone.

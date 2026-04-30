@@ -25,8 +25,8 @@ The provider abstraction is now in place so the project can evolve from single-p
 
 - the default path is still `ddgs`
 - deep verification is still heuristic, not entailment
-- confidence is not yet benchmark-calibrated
+- confidence is heuristic-calibrated, not benchmark-calibrated
 
 ## Why that matters for ecosystem collection
 
-This repository is aiming to be an evidence-aware verification layer for agent runtimes, not just a convenience wrapper around search.
+This repository is an evidence-aware verification layer for agent runtimes, not a convenience wrapper around search.

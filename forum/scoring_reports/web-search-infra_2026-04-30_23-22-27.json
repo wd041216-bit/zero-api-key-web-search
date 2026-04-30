@@ -1,0 +1,174 @@
+{
+  "domain": "web-search-infra",
+  "artifact_path": "/tmp/zero-api-key-web-search",
+  "iteration": 7,
+  "council_id": "cross-validated-search-main-council",
+  "mode": "standalone-real-score",
+  "artifact_signals": {
+    "coverage_axes_mentioned": 0,
+    "coverage_axes_total": 0,
+    "exists": true,
+    "has_abstract": false,
+    "has_claim_ledger": false,
+    "has_clean_assets": false,
+    "has_conclusion": true,
+    "has_data_availability": false,
+    "has_discussion": true,
+    "has_failure_taxonomy": true,
+    "has_figures": true,
+    "has_full_matrix": false,
+    "has_introduction": false,
+    "has_limitations": true,
+    "has_manifest": true,
+    "has_method": true,
+    "has_paired_analysis": true,
+    "has_references": true,
+    "has_related_work": true,
+    "has_repro_commands": true,
+    "has_results": true,
+    "has_scripts": true,
+    "has_semantic_oracle_boundary": false,
+    "has_tests": true,
+    "has_token_cap": true,
+    "has_uncertainty": true,
+    "numeric_count": 2338,
+    "overclaim_count": 0,
+    "placeholder_count": 3,
+    "section_count": 407,
+    "table_count": 179,
+    "word_count": 41934
+  },
+  "axes": [
+    {
+      "axis": "breadth",
+      "score": 17,
+      "base_score": 17,
+      "evidence": [
+        "Includes related work / positioning",
+        "Includes method or study design",
+        "Includes results",
+        "Includes discussion",
+        "Includes limitations",
+        "Includes conclusion",
+        "Includes references"
+      ],
+      "gaps": [
+        "Missing abstract",
+        "Missing introduction",
+        "Missing claim ledger",
+        "Missing semantic-oracle boundary",
+        "Missing artifact/data availability"
+      ],
+      "expert_votes": {
+        "andreas-hanselowski": 17,
+        "david-soria-parra": 17,
+        "isabelle-augenstein": 17,
+        "pepa-atanasova": 17,
+        "preslav-nakov": 17,
+        "reihaneh-rabbany": 17
+      },
+      "weighted_median": 17
+    },
+    {
+      "axis": "depth",
+      "score": 21,
+      "base_score": 21,
+      "evidence": [
+        "Has sample sizes and numeric results",
+        "Has uncertainty reporting",
+        "Has paired analysis",
+        "Has task/failure heterogeneity",
+        "Has token/cap diagnostics",
+        "Has tables"
+      ],
+      "gaps": [
+        "Needs full matrix or broad subgroup accounting",
+        "Needs limitations tied to evidence"
+      ],
+      "expert_votes": {
+        "andreas-hanselowski": 21,
+        "david-soria-parra": 21,
+        "isabelle-augenstein": 21,
+        "pepa-atanasova": 21,
+        "preslav-nakov": 21,
+        "reihaneh-rabbany": 21
+      },
+      "weighted_median": 21
+    },
+    {
+      "axis": "thickness",
+      "score": 19,
+      "base_score": 19,
+      "evidence": [
+        "Includes manifest",
+        "Includes scripts or implementation files",
+        "Includes tests or verification commands",
+        "Includes reproducibility commands",
+        "Includes figure assets"
+      ],
+      "gaps": [
+        "Missing or weak: clean asset package",
+        "Missing or weak: claim discipline",
+        "Missing or weak: no placeholders"
+      ],
+      "expert_votes": {
+        "andreas-hanselowski": 19,
+        "david-soria-parra": 19,
+        "isabelle-augenstein": 19,
+        "pepa-atanasova": 19,
+        "preslav-nakov": 19,
+        "reihaneh-rabbany": 19
+      },
+      "weighted_median": 19
+    },
+    {
+      "axis": "effectiveness",
+      "score": 15,
+      "base_score": 15,
+      "evidence": [
+        "Artifact results support narrative",
+        "Artifact submission-like completeness"
+      ],
+      "gaps": [
+        "Artifact does not yet answers the research question",
+        "Artifact does not yet main claim bounded",
+        "Artifact does not yet semantic correctness separated",
+        "Artifact does not yet reader can trace artifacts",
+        "Artifact does not yet polished surface"
+      ],
+      "expert_votes": {
+        "andreas-hanselowski": 15,
+        "david-soria-parra": 15,
+        "isabelle-augenstein": 15,
+        "pepa-atanasova": 15,
+        "preslav-nakov": 15,
+        "reihaneh-rabbany": 15
+      },
+      "weighted_median": 15
+    }
+  ],
+  "score": {
+    "total": 72,
+    "breadth": 17,
+    "depth": 21,
+    "thickness": 19,
+    "effectiveness": 15
+  },
+  "total": 72,
+  "verdict": "needs_work",
+  "generated_at": "2026-04-30T23:22:27Z",
+  "recommendations": [
+    "No placeholder language detected.",
+    "breadth: Missing abstract",
+    "breadth: Missing introduction",
+    "breadth: Missing claim ledger",
+    "depth: Needs full matrix or broad subgroup accounting",
+    "depth: Needs limitations tied to evidence",
+    "thickness: Missing or weak: clean asset package",
+    "thickness: Missing or weak: claim discipline",
+    "thickness: Missing or weak: no placeholders",
+    "effectiveness: Artifact does not yet answers the research question",
+    "effectiveness: Artifact does not yet main claim bounded",
+    "effectiveness: Artifact does not yet semantic correctness separated"
+  ]
+}

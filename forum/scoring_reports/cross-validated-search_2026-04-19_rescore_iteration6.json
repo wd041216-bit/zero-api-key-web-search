@@ -5,7 +5,13 @@
   "council_id": "cross-validated-search-main-council",
   "previous_iteration": {
     "iteration": 5,
-    "scores": {"breadth": 22, "depth": 22, "thickness": 24, "effectiveness": 24, "total": 92}
+    "scores": {
+      "breadth": 22,
+      "depth": 22,
+      "thickness": 24,
+      "effectiveness": 24,
+      "total": 92
+    }
   },
   "axes": [
     {
@@ -31,7 +37,7 @@
       "gaps": [
         "Production deployment / SRE / latency expertise remains without a dedicated expert -- minor gap given Hanselowski's production RAG experience"
       ],
-      "improvement_from_iteration_5": "+1 point (22→23). Nakov's expanded profile with human-in-the-loop fact-checking philosophy adds breadth to the fact-checking methodology axis."
+      "improvement_from_iteration_5": "+1 point (22\u219223). Nakov's expanded profile with human-in-the-loop fact-checking philosophy adds breadth to the fact-checking methodology axis."
     },
     {
       "axis": "depth",
@@ -54,7 +60,7 @@
       "gaps": [
         "No profile reaches 25 (authoritative standalone reference work level)"
       ],
-      "improvement_from_iteration_5": "+1 point (22→23). Nakov's profile deepened significantly -- source confidence now 1.0, quote bank now 10 verbatim entries, canonical works expanded to 8 with citation counts."
+      "improvement_from_iteration_5": "+1 point (22\u219223). Nakov's profile deepened significantly -- source confidence now 1.0, quote bank now 10 verbatim entries, canonical works expanded to 8 with citation counts."
     },
     {
       "axis": "thickness",
@@ -82,7 +88,7 @@
       "gaps": [
         "browse_page readability heuristic not validated against diverse real-world pages -- minor gap"
       ],
-      "improvement_from_iteration_5": "+1 point (24→25). Async search support fills the last structural gap. All major thickness criteria now met: type checking, linting, coverage, circuit breaker, logging, readability, baselines, async."
+      "improvement_from_iteration_5": "+1 point (24\u219225). Async search support fills the last structural gap. All major thickness criteria now met: type checking, linting, coverage, circuit breaker, logging, readability, baselines, async."
     },
     {
       "axis": "effectiveness",
@@ -107,7 +113,7 @@
         "Nakov's human-in-the-loop philosophy integrated into the calibration note"
       ],
       "gaps": [],
-      "improvement_from_iteration_5": "+1 point (24→25). Async search and Nakov's deepened profile complete the effectiveness axis. All council members agree the artifact demonstrates sufficient effectiveness for the stated purpose."
+      "improvement_from_iteration_5": "+1 point (24\u219225). Async search and Nakov's deepened profile complete the effectiveness axis. All council members agree the artifact demonstrates sufficient effectiveness for the stated purpose."
     }
   ],
   "total": 96,

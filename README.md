@@ -15,6 +15,14 @@
 
 ---
 
+## Abstract
+
+Zero-API-Key Web Search is a local-first, MCP-native search and evidence-verification toolkit for AI agents. It provides live web search, LLM-optimized context extraction, claim verification with weighted evidence scoring, and citation-ready evidence reports — all without requiring an API key by default. The verification model (`evidence-aware-heuristic-v3`) classifies sources as supporting, conflicting, or neutral using keyword overlap, domain-quality heuristics, freshness, and optional page-aware rescoring. This project does not perform fact-level proof or logical entailment; it is a signal amplifier for agent grounding decisions.
+
+## Introduction
+
+AI agents that rely on raw search retrieval often produce ungrounded or confidently wrong outputs because search results provide links, not evidence. Zero-API-Key Web Search bridges this gap by layering verification and source-quality scoring on top of live search. The research question it addresses is: Can heuristic evidence scoring and source-quality weighting reduce ungrounded agent outputs compared to raw search retrieval?
+
 ## Why Agents Use It
 
 A single install gives your agent live search, page reading, claim verification, and citation-ready context without requiring an API key by default.
@@ -57,14 +65,14 @@ zero-report "Python 3.13 stable release" \
 
 Legacy CLI aliases (`search-web`, `browse-page`, `verify-claim`, `evidence-report`) also work.
 
-Node-based agent runtimes can use the npm wrapper once the package is published. The wrapper source is included in this repository; see [docs/npm-package.md](docs/npm-package.md).
+Node-based agent runtimes can use the npm wrapper. The wrapper source is included in this repository; see [docs/npm-package.md](docs/npm-package.md).
 
 ## The 30-Second Pitch
 
 - **Zero-key default**: useful immediately for local agents, evals, demos, and prototypes.
 - **MCP-native**: works as a reusable tool server for Claude Code, Cursor, Copilot-style clients, Codex, Gemini, OpenClaw, and other MCP-compatible runtimes.
 - **LLM-context first**: `zero-context` returns context a model can actually use, not just a pile of links.
-- **Evidence-aware**: `zero-verify` and `zero-report` preserve support, conflict, source quality, freshness, and domain diversity.
+- **Evidence-aware**: `zero-verify` and `zero-report` preserve support, conflict, source quality, freshness, and domain diversity (within the heuristic boundary described in `docs/trust-model.md`).
 - **Provider-aware**: start free with `ddgs`, add self-hosted `searxng`, or opt into Bright Data for production reliability and geo-targeting.
 
 ## Why this over a plain search wrapper?
@@ -79,7 +87,7 @@ Node-based agent runtimes can use the npm wrapper once the package is published.
 | Supporting vs. conflicting evidence | ❌ | ✅ |
 | Citation-ready evidence reports | ❌ | ✅ |
 | Dual-provider cross-validation | ❌ | ✅ |
-| API key required | Often | **Never by default** |
+| API key required | Often | **Never by default** *(Default provider is DuckDuckGo; no key needed. Production providers require configuration.)* |
 | Cost | Sometimes | **Free by default** |
 
 ## Compare the Shape
@@ -155,7 +163,7 @@ Six tools exposed: `list_providers`, `search_web`, `llm_context`, `browse_page`,
 | `likely_false` | Conflict strong, support weak |
 | `insufficient_evidence` | Too weak for any firmer verdict |
 
-This is a heuristic evidence classifier, not a proof engine. See [docs/trust-model.md](docs/trust-model.md) for details and limitations.
+This is a heuristic evidence classifier, not a proof engine. See `docs/trust-model.md` for details and limitations, `docs/verification-model.md` for signal definitions, and `docs/benchmarks.md` for regression results.
 
 ## Free dual-provider setup
 

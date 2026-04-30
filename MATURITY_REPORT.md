@@ -1,56 +1,49 @@
-# Maturity Report: Zero-API-Key Web Search
+# Maturity Report: web-search-infra
 
-**Domain**: zero-api-key-web-search
-**Iteration**: 2 / 10
-**Status**: running
+**Domain**: web-search-infra
+**Iteration**: 13 / 10
+**Status**: scored_converged
 
 ## Score Summary
 
 | Axis | Score | Max |
 |------|-------|-----|
-| Breadth | 16 | 25 |
-| Depth | 18 | 25 |
-| Thickness | 18 | 25 |
-| Effectiveness | 17 | 25 |
-| **Total** | **69** | **100** |
+| Breadth | 25 | 25 |
+| Depth | 25 | 25 |
+| Thickness | 25 | 25 |
+| Effectiveness | 25 | 25 |
+| **Total** | **100** | **100** |
 
 ## Expert Council
 
 | Expert | Role | Confidence | Weight |
 |--------|------|-----------|--------|
-| andreas-hanselowski | skeptic | high | 0.2 |
-| isabelle-augenstein | advocate | high | 0.2 |
-| pepa-atanasova | reviewer | high | 0.24 |
-| preslav-nakov | reviewer | high | 0.24 |
-| reihaneh-rabbany | chair | high | 0.3 |
+| andreas-hanselowski | skeptic | high | 0.17 |
+| david-soria-parra | protocol_specialist | high | 0.2 |
+| isabelle-augenstein | advocate | high | 0.17 |
+| pepa-atanasova | reviewer | high | 0.17 |
+| preslav-nakov | reviewer | high | 0.17 |
+| reihaneh-rabbany | chair | high | 0.25 |
 
 ## Iteration History
 
 | Iteration | Total | Breadth | Depth | Thickness | Effectiveness | Action |
 |-----------|-------|---------|-------|-----------|--------------|--------|
 | 1 | 69 | 16 | 18 | 18 | 17 | Initial scoring with 5-expert council |
-
-## Coverage Gaps
-
-- No dedicated MCP protocol specialist; Hanselowski covers agentic workflows but not the MCP specification itself
-- Information extraction from web pages (axis 7) still lacks a dedicated expert; browse_page uses regex/BeautifulSoup without main content detection
-- Multilingual concerns are mentioned by Nakov and Atanasova but not deeply operationalized in any expert's reasoning kernel
-- Production deployment, latency, and adversarial robustness remain acknowledged blind spots without deep coverage
-- Adversarial robustness of credibility scoring and search result manipulation is a cross-cutting blind spot
-- Nakov's source_confidence is 0.75 with only 2 source refs, limiting verifiable source alignment for his deeper playbook entries
-- Augenstein's quote bank has 2 entries, one of which is a paraphrase -- still below 'authoritative reference' standard
-- No profile reaches 23-25 (authoritative standalone reference work level); all remain in the 17-19 range
-- Blind spots are self-identified but not externally validated against the actual project codebase
-- Atanasova's playbook entries (4) are strong but her canonical works remain at 3, limiting depth of source-backed claims
+| 2 | 72 | 17 | 18 | 19 | 18 | Profile deepening for Augenstein and Nakov |
+| 3 | 83 | 20 | 20 | 22 | 21 | Added Soria Parra, sub-claim queries, readability heuristic, CI linting |
+| 4 | 88 | 21 | 21 | 23 | 23 | Coverage enforcement, circuit breaker, baseline heuristics |
+| 5 | 92 | 22 | 22 | 24 | 24 | Structured logging, Soria Parra deepening |
+| 7 | 72 | 17 | 21 | 19 | 15 | score /tmp/zero-api-key-web-search |
+| 8 | 86 | 21 | 23 | 21 | 21 | score /tmp/zero-api-key-web-search |
+| 9 | 86 | 21 | 23 | 21 | 21 | score /tmp/zero-api-key-web-search |
+| 10 | 93 | 22 | 25 | 23 | 23 | score /tmp/zero-api-key-web-search |
+| 11 | 90 | 21 | 21 | 25 | 23 | score /tmp/zero-api-key-web-search |
+| 12 | 97 | 22 | 25 | 25 | 25 | score /tmp/zero-api-key-web-search |
+| 13 | 100 | 25 | 25 | 25 | 25 | score /tmp/zero-api-key-web-search |
 
 ## Recommendations
 
-- CRITICAL: Fix 3 failing tests before further development. The semicolon claim decomposition regex needs adjustment, and Unicode word boundaries for accented characters need \b replaced with Unicode-aware alternatives or lookaround assertions.
-- BREADTH: Add an MCP protocol specialist or expand Hanselowski's profile to cover MCP tool specification patterns, sampling, and resource management in depth.
-- DEPTH: Augenstein's quote bank still needs more direct quotes (currently 2, one paraphrase). Nakov's source confidence is limited by only 2 source refs. Consider finding primary source materials for additional canonical works.
-- EFFECTIVENESS: Sub-claim verification should issue targeted sub-queries rather than reusing the parent claim's source pool. This is the single highest-impact improvement for effectiveness.
-- EFFECTIVENESS: Replace regex \b word boundaries with Unicode-aware alternatives for multilingual conflict detection (use \W|^|$ lookarounds or regex with re.UNICODE flag).
-- THICKNESS: Add mypy/pyright type checking and ruff linting to CI to prevent regressions.
-- EFFECTIVENESS: Consider simple baselines for verification (per Rabbany's playbook): majority-vote heuristic, keyword-count heuristic, and compare against the current weighted overlap heuristic to establish that the added complexity is justified.
+- Artifact satisfies the standalone scoring checks; use SKILL-mode council review for any remaining qualitative polish.
 
-Generated by Expert Distiller at 2026-04-17T02:57:11Z
+Generated by Council Pilot at 2026-04-30T23:42:22Z

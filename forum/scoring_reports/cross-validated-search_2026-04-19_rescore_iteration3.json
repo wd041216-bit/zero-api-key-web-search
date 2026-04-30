@@ -5,7 +5,13 @@
   "council_id": "cross-validated-search-main-council",
   "previous_iteration": {
     "iteration": 2,
-    "scores": {"breadth": 17, "depth": 18, "thickness": 19, "effectiveness": 18, "total": 72}
+    "scores": {
+      "breadth": 17,
+      "depth": 18,
+      "thickness": 19,
+      "effectiveness": 18,
+      "total": 72
+    }
   },
   "axes": [
     {
@@ -32,7 +38,7 @@
         "Adversarial robustness of credibility scoring and search result manipulation is a cross-cutting blind spot",
         "No dedicated information retrieval / web scraping specialist for browse_page content extraction (though readability heuristic now implemented)"
       ],
-      "improvement_from_iteration_2": "+3 points (17→20). MCP protocol gap closed with Soria Parra addition. All 8 coverage axes now have at least one expert with direct domain expertise."
+      "improvement_from_iteration_2": "+3 points (17\u219220). MCP protocol gap closed with Soria Parra addition. All 8 coverage axes now have at least one expert with direct domain expertise."
     },
     {
       "axis": "depth",
@@ -58,7 +64,7 @@
         "Soria Parra's profile is newly created -- needs time to deepen with additional source reads and playbook entries",
         "Blind spots are self-identified but not externally validated against the actual project codebase"
       ],
-      "improvement_from_iteration_2": "+2 points (18→20). Soria Parra addition adds depth on MCP/protocol axis. Profile quality across all experts is consistent with no weak links."
+      "improvement_from_iteration_2": "+2 points (18\u219220). Soria Parra addition adds depth on MCP/protocol axis. Profile quality across all experts is consistent with no weak links."
     },
     {
       "axis": "thickness",
@@ -88,7 +94,7 @@
         "No structured logging or monitoring hooks for production deployment",
         "Coverage and branch coverage not measured (no coverage.py integration)"
       ],
-      "improvement_from_iteration_2": "+3 points (19→22). Key improvements: (1) ruff + pyright in CI, (2) readability heuristic for browse_page, (3) 4 new tests, (4) Source.extra type fix eliminating pyright errors. The shift from 3 failing tests to 0 is a significant thickness improvement.",
+      "improvement_from_iteration_2": "+3 points (19\u219222). Key improvements: (1) ruff + pyright in CI, (2) readability heuristic for browse_page, (3) 4 new tests, (4) Source.extra type fix eliminating pyright errors. The shift from 3 failing tests to 0 is a significant thickness improvement.",
       "skeptic_challenge": "Hanselowski (skeptic) notes: Ruff and pyright are now in CI but coverage measurement is not. The readability heuristic is a good start but not validated against real-world page diversity. Scores above 22 need demonstrated production resilience."
     },
     {
@@ -105,7 +111,7 @@
       "score": 21,
       "evidence": [
         "Sub-claim verification now issues targeted sub-queries (self.search(query=sub, ...)) instead of reusing parent claim source pool -- single highest-impact effectiveness improvement",
-        "Sub-claim verdicts use the same weighted scoring thresholds as parent claims (support >= 0.7, conflict <= 0.35 → supported, etc.)",
+        "Sub-claim verdicts use the same weighted scoring thresholds as parent claims (support >= 0.7, conflict <= 0.35 \u2192 supported, etc.)",
         "Readability-style content extraction in browse_page reduces noise from nav/header/footer boilerplate, improving page-aware verification quality",
         "Multilingual conflict detection covers 5 languages with Unicode-aware patterns",
         "Claim decomposition implemented with connector-based splitting and min-length filtering",
@@ -117,7 +123,7 @@
         "No confidence calibration against a gold-standard dataset",
         "Binary provider diversity without reliability or quality weighting per provider"
       ],
-      "improvement_from_iteration_2": "+3 points (18→21). Targeted sub-queries for sub-claims is the highest-impact single improvement. Readability heuristic improves page-aware verification. MCP schema validation is now within scope with Soria Parra's expertise.",
+      "improvement_from_iteration_2": "+3 points (18\u219221). Targeted sub-queries for sub-claims is the highest-impact single improvement. Readability heuristic improves page-aware verification. MCP schema validation is now within scope with Soria Parra's expertise.",
       "advocate_affirmation": "Augenstein (advocate) notes: The sub-claim targeted search is a meaningful structural improvement that directly addresses the playbook recommendation on claim decomposition trees. The readability heuristic brings browse_page closer to production-grade content extraction. Scores below 21 would undervalue these genuine improvements."
     }
   ],

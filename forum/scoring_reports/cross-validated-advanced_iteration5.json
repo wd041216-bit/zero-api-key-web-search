@@ -5,7 +5,13 @@
   "council_id": "cross-validated-search-main-council",
   "previous_iteration": {
     "iteration": 4,
-    "scores": {"breadth": 21, "depth": 21, "thickness": 23, "effectiveness": 23, "total": 88}
+    "scores": {
+      "breadth": 21,
+      "depth": 21,
+      "thickness": 23,
+      "effectiveness": 23,
+      "total": 88
+    }
   },
   "axes": [
     {
@@ -29,7 +35,7 @@
       "gaps": [
         "Production deployment / SRE / latency expertise remains without a dedicated expert"
       ],
-      "improvement_from_iteration_4": "+1 point (21→22). Soria Parra's profile deepening adds breadth through expanded routing keywords and playbook coverage of primitive usage balance, server granularity, and trust boundaries."
+      "improvement_from_iteration_4": "+1 point (21\u219222). Soria Parra's profile deepening adds breadth through expanded routing keywords and playbook coverage of primitive usage balance, server granularity, and trust boundaries."
     },
     {
       "axis": "depth",
@@ -53,7 +59,7 @@
         "Nakov's source confidence is 0.75 with only 2 source refs, limiting verifiable depth",
         "No profile reaches 24-25 (authoritative standalone reference work level)"
       ],
-      "improvement_from_iteration_4": "+1 point (21→22). Soria Parra's profile deepened significantly with verbatim quotes from 3 podcast interviews, detailed playbook entries, and expanded anti-pattern catalog."
+      "improvement_from_iteration_4": "+1 point (21\u219222). Soria Parra's profile deepened significantly with verbatim quotes from 3 podcast interviews, detailed playbook entries, and expanded anti-pattern catalog."
     },
     {
       "axis": "thickness",
@@ -80,7 +86,7 @@
         "No async/await implementation; concurrent execution relies on threads",
         "browse_page readability heuristic not validated against diverse real-world pages"
       ],
-      "improvement_from_iteration_4": "+1 point (23→24). Structured logging fills the production monitoring gap. Soria Parra's enriched profile provides deeper review coverage for MCP/protocol aspects.",
+      "improvement_from_iteration_4": "+1 point (23\u219224). Structured logging fills the production monitoring gap. Soria Parra's enriched profile provides deeper review coverage for MCP/protocol aspects.",
       "skeptic_challenge": "Hanselowski (skeptic) notes: Scores above 24 need demonstrated production resilience under load. The logging is present but not yet validated in a production environment. The async gap remains."
     },
     {
@@ -109,7 +115,7 @@
         "No confidence calibration against a gold-standard dataset",
         "Baselines are reported but not benchmarked against a labeled dataset"
       ],
-      "improvement_from_iteration_4": "+1 point (23→24). Structured logging enables production debugging of effectiveness regressions. Soria Parra's primitive-usage review perspective adds depth to MCP tool effectiveness evaluation."
+      "improvement_from_iteration_4": "+1 point (23\u219224). Structured logging enables production debugging of effectiveness regressions. Soria Parra's primitive-usage review perspective adds depth to MCP tool effectiveness evaluation."
     }
   ],
   "total": 92,

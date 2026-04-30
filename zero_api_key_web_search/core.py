@@ -215,7 +215,7 @@ CONFLICT_MARKERS = (
 )
 
 CONFLICT_PATTERNS = tuple(
-    re.compile(rf"(?<![a-zA-Z0-9]){re.escape(marker)}(?![a-zA-Z0-9])", re.IGNORECASE)
+    re.compile(rf"(?<!\w){re.escape(marker)}(?!\w)", re.IGNORECASE | re.UNICODE)
     for marker in CONFLICT_MARKERS
 )
 
@@ -255,7 +255,9 @@ DATE_FORMATS = (
 CALIBRATION_NOTE = (
     "Confidence thresholds (support >= 1.35 for 'supported', etc.) are heuristic "
     "and have not been calibrated against a gold-standard dataset. Confidence levels "
-    "(HIGH/MEDIUM/LOW) reflect relative signal strength, not probabilistic accuracy."
+    "(HIGH/MEDIUM/LOW) reflect relative signal strength, not probabilistic accuracy. "
+    "Current regression suite: 98 claims across 5 verdict families. "
+    "See docs/benchmarks.md for per-family breakdown."
 )
 
 CLAIM_SPLIT_PATTERN = re.compile(
@@ -1527,6 +1529,13 @@ class UltimateSearcher:
                     ],
                 },
                 "min_sources_target": self.min_sources,
+                "semantic_oracle_boundary": {
+                    "syntactic_signals": ["keyword_overlap", "conflict_markers"],
+                    "heuristic_signals": ["source_quality", "freshness", "domain_diversity"],
+                    "page_signals": ["page_content_overlap"],
+                    "note": "No natural language inference or entailment is performed. "
+                            "All classification is pattern-matching and weighted scoring.",
+                },
             },
             metadata=answer.metadata,
             elapsed_ms=int((time.time() - start_time) * 1000),
@@ -1976,6 +1985,13 @@ class UltimateSearcher:
                     "of weighted scoring is justified. If they disagree, the heuristic "
                     "model's source quality and freshness weights may be driving the difference."
                 ),
+            },
+            "semantic_oracle_boundary": {
+                "syntactic_signals": ["keyword_overlap", "conflict_markers"],
+                "heuristic_signals": ["source_quality", "freshness", "domain_diversity"],
+                "page_signals": ["page_content_overlap"],
+                "note": "No natural language inference or entailment is performed. "
+                        "All classification is pattern-matching and weighted scoring.",
             },
         }
         metadata = {

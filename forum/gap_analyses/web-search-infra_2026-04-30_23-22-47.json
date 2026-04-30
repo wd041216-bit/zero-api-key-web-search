@@ -1,0 +1,25 @@
+{
+  "domain": "web-search-infra",
+  "coverage_axes": [
+    "Zero-API-Key Web Search: free-by-default search infrastructure for AI agents with MCP, LLM context, claim verification, and evidence reports"
+  ],
+  "expert_count": 6,
+  "covered": [],
+  "uncovered": [
+    "Zero-API-Key Web Search: free-by-default search infrastructure for AI agents with MCP, LLM context, claim verification, and evidence reports"
+  ],
+  "coverage_matrix": {
+    "Zero-API-Key Web Search: free-by-default search infrastructure for AI agents with MCP, LLM context, claim verification, and evidence reports": {
+      "andreas-hanselowski": false,
+      "david-soria-parra": false,
+      "isabelle-augenstein": false,
+      "pepa-atanasova": false,
+      "preslav-nakov": false,
+      "reihaneh-rabbany": false
+    }
+  },
+  "recommendations": [
+    "Add expert for: Zero-API-Key Web Search: free-by-default search infrastructure for AI agents with MCP, LLM context, claim verification, and evidence reports"
+  ],
+  "generated_at": "2026-04-30T23:22:47Z"
+}

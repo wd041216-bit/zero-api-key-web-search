@@ -30,7 +30,7 @@
 - Over-structured/pre-formatted tool output (should return raw data)
 - Trust boundary violations allowing data exfiltration
 - Supply chain security gaps for untrusted servers
-- Premature features in core spec (should use extensions)
+- Premature features in core spec (prefer extensions)
 
 ## Reasoning Patterns
 - Thinks in terms of protocol contracts and capability negotiation

@@ -1,0 +1,10 @@
+{
+  "id": "web-search-infra",
+  "name": "web-search-infra",
+  "topic": "Zero-API-Key Web Search: free-by-default search infrastructure for AI agents with MCP, LLM context, claim verification, and evidence reports",
+  "created_at": "2026-04-30T23:19:29Z",
+  "updated_at": "2026-04-30T23:19:29Z",
+  "coverage_axes": ["web-search", "mcp-integration", "claim-verification", "evidence-reports", "llm-context", "provider-diversity", "source-quality", "freshness-scoring"],
+  "active_experts": [],
+  "candidate_experts": []
+}

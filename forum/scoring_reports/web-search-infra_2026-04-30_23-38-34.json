@@ -1,0 +1,163 @@
+{
+  "domain": "web-search-infra",
+  "artifact_path": "/tmp/zero-api-key-web-search",
+  "iteration": 10,
+  "council_id": "cross-validated-search-main-council",
+  "mode": "standalone-real-score",
+  "artifact_signals": {
+    "coverage_axes_mentioned": 0,
+    "coverage_axes_total": 0,
+    "exists": true,
+    "has_abstract": true,
+    "has_claim_ledger": true,
+    "has_clean_assets": true,
+    "has_conclusion": true,
+    "has_data_availability": true,
+    "has_discussion": true,
+    "has_failure_taxonomy": true,
+    "has_figures": true,
+    "has_full_matrix": true,
+    "has_introduction": true,
+    "has_limitations": true,
+    "has_manifest": true,
+    "has_method": true,
+    "has_paired_analysis": true,
+    "has_references": true,
+    "has_related_work": true,
+    "has_repro_commands": true,
+    "has_results": true,
+    "has_scripts": true,
+    "has_semantic_oracle_boundary": true,
+    "has_tests": true,
+    "has_token_cap": true,
+    "has_uncertainty": true,
+    "numeric_count": 2459,
+    "overclaim_count": 0,
+    "placeholder_count": 9,
+    "section_count": 431,
+    "table_count": 231,
+    "word_count": 42708
+  },
+  "axes": [
+    {
+      "axis": "breadth",
+      "score": 22,
+      "base_score": 22,
+      "evidence": [
+        "Includes abstract",
+        "Includes introduction",
+        "Includes related work / positioning",
+        "Includes method or study design",
+        "Includes results",
+        "Includes discussion",
+        "Includes limitations",
+        "Includes conclusion",
+        "Includes claim ledger",
+        "Includes semantic-oracle boundary",
+        "Includes artifact/data availability",
+        "Includes references"
+      ],
+      "gaps": [],
+      "expert_votes": {
+        "andreas-hanselowski": 22,
+        "david-soria-parra": 22,
+        "isabelle-augenstein": 22,
+        "pepa-atanasova": 22,
+        "preslav-nakov": 22,
+        "reihaneh-rabbany": 22
+      },
+      "weighted_median": 22
+    },
+    {
+      "axis": "depth",
+      "score": 25,
+      "base_score": 25,
+      "evidence": [
+        "Has sample sizes and numeric results",
+        "Has uncertainty reporting",
+        "Has paired analysis",
+        "Has full matrix or broad subgroup accounting",
+        "Has task/failure heterogeneity",
+        "Has token/cap diagnostics",
+        "Has tables",
+        "Has limitations tied to evidence"
+      ],
+      "gaps": [],
+      "expert_votes": {
+        "andreas-hanselowski": 25,
+        "david-soria-parra": 25,
+        "isabelle-augenstein": 25,
+        "pepa-atanasova": 25,
+        "preslav-nakov": 25,
+        "reihaneh-rabbany": 25
+      },
+      "weighted_median": 25
+    },
+    {
+      "axis": "thickness",
+      "score": 23,
+      "base_score": 23,
+      "evidence": [
+        "Includes clean asset package",
+        "Includes manifest",
+        "Includes scripts or implementation files",
+        "Includes tests or verification commands",
+        "Includes reproducibility commands",
+        "Includes figure assets",
+        "Includes claim discipline"
+      ],
+      "gaps": [
+        "Missing or weak: no placeholders"
+      ],
+      "expert_votes": {
+        "andreas-hanselowski": 23,
+        "david-soria-parra": 23,
+        "isabelle-augenstein": 23,
+        "pepa-atanasova": 23,
+        "preslav-nakov": 23,
+        "reihaneh-rabbany": 23
+      },
+      "weighted_median": 23
+    },
+    {
+      "axis": "effectiveness",
+      "score": 23,
+      "base_score": 23,
+      "evidence": [
+        "Artifact answers the research question",
+        "Artifact main claim bounded",
+        "Artifact semantic correctness separated",
+        "Artifact results support narrative",
+        "Artifact reader can trace artifacts",
+        "Artifact submission-like completeness"
+      ],
+      "gaps": [
+        "Artifact does not yet polished surface"
+      ],
+      "expert_votes": {
+        "andreas-hanselowski": 23,
+        "david-soria-parra": 23,
+        "isabelle-augenstein": 23,
+        "pepa-atanasova": 23,
+        "preslav-nakov": 23,
+        "reihaneh-rabbany": 23
+      },
+      "weighted_median": 23
+    }
+  ],
+  "score": {
+    "total": 93,
+    "breadth": 22,
+    "depth": 25,
+    "thickness": 23,
+    "effectiveness": 23
+  },
+  "total": 93,
+  "verdict": "needs_work",
+  "generated_at": "2026-04-30T23:38:34Z",
+  "recommendations": [
+    "No placeholder language detected.",
+    "thickness: Missing or weak: no placeholders",
+    "effectiveness: Artifact does not yet polished surface"
+  ]
+}

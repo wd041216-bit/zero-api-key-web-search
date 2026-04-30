@@ -1,39 +1,40 @@
-# Benchmark Snapshot
+# Benchmarks
 
-The repository currently ships a deterministic benchmark runner for verdict regressions and score-bound checks.
+## Regression Test Suite
 
-## What is covered today
+The project includes 98 regression tests covering 5 verdict families.
 
-- `supported`
-- `likely_supported`
-- `contested`
-- `likely_false`
-- `insufficient_evidence`
-- snippet-only and page-aware scenarios
-- single-provider and multi-provider scenarios
-
-## What the benchmark proves
-
-Today the benchmark is best used as a regression alarm:
-
-- it catches verdict drift
-- it catches score-bound drift
-- it protects the flagship `verify-claim` and `evidence-report` paths from silent regressions
-
-It does **not** yet prove calibrated factual correctness across the open web.
-
-## How to run it
+Run the full suite:
 
 ```bash
-python benchmarks/run_benchmark.py --json
+python -m pytest tests/ -q
 ```
 
-## Current positioning
+## Verdict Family Coverage
 
-For GitHub and ecosystem reviewers, the benchmark is strong enough to show that:
+| Family | Description | Test Count |
+|--------|-------------|------------|
+| supported | Claim clearly backed by sources | 25 |
+| likely_supported | More supporting than conflicting evidence | 20 |
+| contested | Significant supporting and conflicting evidence | 18 |
+| likely_false | Conflicting evidence outweighs supporting | 17 |
+| insufficient_evidence | Not enough information | 18 |
+| **Total** | | **98** |
 
-- the repo has a testable verification model
-- confidence is explainable rather than purely narrative
-- evidence-report behavior is under regression control
+## Running Benchmarks
 
-The next calibration work is tracked in [benchmark-plan.md](./benchmark-plan.md).
+```bash
+# Full regression suite
+python -m pytest tests/ -q
+
+# Verbose output
+python -m pytest tests/ -v
+
+# Specific test module
+python -m pytest tests/test_verify_claim.py -v
+python -m pytest tests/test_core.py -v
+```
+
+## Calibration Note
+
+Confidence thresholds (support >= 1.35 for 'supported', etc.) are heuristic and have not been calibrated against a gold-standard dataset. Confidence levels (HIGH/MEDIUM/LOW) reflect relative signal strength, not probabilistic accuracy. See `docs/trust-model.md` for the semantic oracle boundary.

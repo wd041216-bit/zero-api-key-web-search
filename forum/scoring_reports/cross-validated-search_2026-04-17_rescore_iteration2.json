@@ -5,7 +5,13 @@
   "council_id": "cross-validated-search-main-council",
   "previous_iteration": {
     "iteration": 1,
-    "scores": { "breadth": 16, "depth": 18, "thickness": 18, "effectiveness": 17, "total": 69 }
+    "scores": {
+      "breadth": 16,
+      "depth": 18,
+      "thickness": 18,
+      "effectiveness": 17,
+      "total": 69
+    }
   },
   "axes": [
     {

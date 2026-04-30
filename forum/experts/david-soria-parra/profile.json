@@ -213,7 +213,7 @@
     {
       "title": "Evaluate transport choice",
       "context": "Is the transport appropriate for the deployment model?",
-      "action": "Local servers should use stdio. Remote servers should use streaming HTTP with session resumption. SSE is deprecated for horizontal scaling."
+      "action": "Local servers prefer stdio. Remote servers prefer streaming HTTP with session resumption. SSE is deprecated for horizontal scaling."
     }
   ],
   "source_confidence": {

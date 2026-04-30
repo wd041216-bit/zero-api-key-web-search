@@ -59,8 +59,32 @@ Returned analysis includes:
 - add self-hosted `searxng` by setting `ZERO_SEARCH_SEARXNG_URL`
 - enable page-aware verification with `verify-claim --with-pages`
 
-## Planned upgrades
+## Semantic Oracle Boundary
 
-- calibrate provider weighting and scoring with regression data
-- improve page-aware verification beyond keyword heuristics
-- build a benchmark dataset for confidence tracking
+The verification model operates at the **snippet keyword** level. It does not perform:
+
+- Natural language inference or textual entailment
+- Semantic similarity beyond exact keyword overlap
+- Coreference resolution across sources
+- Logical consistency checking between claims
+
+The boundary between "syntactic signal" (keyword overlap, conflict markers) and "semantic signal" (source quality heuristics, domain trust) is at `_classify_source_against_claim` in `core.py`. Everything above that line is scoring arithmetic; everything below is string matching. The system is reliable inside this boundary and unreliable outside it.
+
+### Operating Boundaries
+
+The heuristic model is designed for:
+- Factual claims about verifiable entities (software versions, release dates, public events)
+- English-language claims (conflict markers exist for ES/FR/DE/ZH but are not calibrated)
+- Claims where at least 3-5 search results are returned
+
+It is **not** designed for:
+- Subjective or normative claims
+- Claims requiring domain-specific expertise (medical, legal, financial)
+- Claims with no web footprint
+- Multilingual claims where conflict markers may not fire
+
+## Extension points
+
+- provider weighting and scoring calibration via regression data (`tests/` fixtures)
+- page-aware verification beyond keyword heuristics (`--deep` / `--with-pages`)
+- benchmark dataset for confidence tracking (`benchmarks/`)

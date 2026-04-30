@@ -1,8 +1,9 @@
 {
   "version": "expert_forum_index_v1",
-  "generated_at": "2026-04-19T00:00:00Z",
+  "generated_at": "2026-04-30T23:19:29Z",
   "domains": [
-    "cross-validated-search"
+    "cross-validated-search",
+    "web-search-infra"
   ],
   "candidate_count": 6,
   "expert_count": 6,
@@ -41,12 +42,12 @@
       "source_confidence": {
         "level": "high",
         "weighted_score": 1.0,
-        "rationale": "Multiple Tier A sources (MCP MAINTAINERS.md, Anthropic official announcement, Linux Foundation summit) plus Tier B podcast interviews with direct technical content. Core expertise in MCP specification directly substantiated."
+        "rationale": "Multiple Tier A sources (MAINTAINERS.md, official Anthropic announcement, Linux Foundation summit, Stack Overflow Blog) plus multiple Tier B podcast interviews with extensive direct technical content (a16z, Software Engineering Daily, Latent Space). Core expertise in MCP specification, design philosophy, anti-patterns, and evolution roadmap directly substantiated."
       },
       "freshness": {
         "status": "fresh",
         "last_checked": "2026-04-19",
-        "notes": "Active as Lead Maintainer at Anthropic; MCP Dev Summit keynote April 2026 confirms ongoing role."
+        "notes": "Active as Lead Maintainer at Anthropic; MCP Dev Summit keynote April 2026 confirms ongoing role. a16z and SED podcasts from 2025-2026 contain extensive design philosophy content."
       }
     },
     {
@@ -98,17 +99,18 @@
         "cross-validated-search"
       ],
       "roles": [
-        "venue_strategist"
+        "venue_strategist",
+        "methodology_reviewer"
       ],
       "source_confidence": {
         "level": "high",
         "weighted_score": 1.0,
-        "rationale": "Multiple Tier A sources (MBZUAI, Google Scholar, ACL Anthology) plus Tier B interviews with verbatim quotes. 8 canonical works with 250+ citations each."
+        "rationale": "Multiple Tier A sources (MBZUAI faculty page, Google Scholar, ACL Anthology, ORCID) plus Tier B sources with extensive verbatim content (MIT Technology Review interview, Checkstep/Medium interview, CoNLL 2023 keynote, Nature Machine Intelligence paper). 8 canonical works spanning 2018-2024 with 250+ citations each. Core expertise in fact-checking, propaganda detection, and LLM-era factuality directly substantiated."
       },
       "freshness": {
         "status": "fresh",
         "last_checked": "2026-04-19",
-        "notes": "Active at MBZUAI; Nature Machine Intelligence 2024 and CoNLL 2023 keynote confirm ongoing leadership."
+        "notes": "Active researcher at MBZUAI; Nature Machine Intelligence 2024 paper and CoNLL 2023 keynote confirm ongoing leadership in the field."
       }
     },
     {
