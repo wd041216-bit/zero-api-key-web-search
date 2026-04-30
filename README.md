@@ -29,6 +29,9 @@ A single `pip install` gives your AI agent live web search, full-page reading, a
 ```bash
 pip install zero-api-key-web-search
 
+# Optional npm/npx wrapper for Node-based agent toolchains
+npm install -g zero-api-key-web-search
+
 # Search the web
 zero-search "Python 3.13 release" --json
 
@@ -50,6 +53,15 @@ zero-report "Python 3.13 stable release" \
 ```
 
 Legacy CLI aliases (`search-web`, `browse-page`, `verify-claim`, `evidence-report`) also work.
+
+Node-based agent runtimes can use the npm wrapper:
+
+```bash
+npx zero-api-key-web-search zero-context "Python 3.13 stable release" --goggles docs-first
+npx zero-api-key-web-search zero-mcp
+```
+
+The npm package is a thin wrapper around the Python package. See [docs/npm-package.md](docs/npm-package.md).
 
 ## Why this over a plain search wrapper?
 
@@ -75,6 +87,19 @@ Works with Claude Code, Cursor, Copilot, and any MCP-compatible agent:
   "mcpServers": {
     "zero-api-key-web-search": {
       "command": "zero-mcp"
+    }
+  }
+}
+```
+
+For npm/npx-based MCP launchers:
+
+```json
+{
+  "mcpServers": {
+    "zero-api-key-web-search": {
+      "command": "npx",
+      "args": ["zero-api-key-web-search", "zero-mcp"]
     }
   }
 }
@@ -244,6 +269,13 @@ pip install zero-api-key-web-search
 ```
 
 Python 3.10+ required. No API keys, no accounts, no configuration needed.
+
+Optional npm wrapper:
+
+```bash
+npm install -g zero-api-key-web-search
+npx zero-api-key-web-search --help
+```
 
 ## Development
 
