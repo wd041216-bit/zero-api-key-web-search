@@ -17,9 +17,9 @@
       "status": "success",
       "url": "https://example.org/correction-page",
       "title": "Correction page",
-      "content": "This correction explains the statement is false, incorrect, and should no longer be treated as true.",
+      "content": "This correction explains the example corrected statement is false, incorrect, and should no longer be treated as true.",
       "truncated": false,
-      "total_length": 103
+      "total_length": 118
     }
   }
 }

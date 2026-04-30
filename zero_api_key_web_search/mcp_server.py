@@ -27,10 +27,22 @@ async def list_tools() -> list[Tool]:
     """List available tools."""
     return [
         Tool(
+            name="list_providers",
+            description=(
+                "List available search providers and setup hints. Use this when a user asks "
+                "what providers are available or how to enable Bright Data/SearXNG."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {},
+            }
+        ),
+        Tool(
             name="search_web",
             description=(
                 "Search the web for real-time information, news, images, books, or videos."
                 " Always use this to verify facts or get up-to-date information before answering."
+                " Optional providers include Bright Data when explicitly configured."
             ),
             inputSchema={
                 "type": "object",
@@ -64,7 +76,7 @@ async def list_tools() -> list[Tool]:
                     "providers": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng']."
+                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng', 'brightdata']."
                     }
                 },
                 "required": ["query"]
@@ -118,7 +130,7 @@ async def list_tools() -> list[Tool]:
                     "providers": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng']."
+                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng', 'brightdata']."
                     },
                     "with_pages": {
                         "type": "boolean",
@@ -167,7 +179,7 @@ async def list_tools() -> list[Tool]:
                     "providers": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng']."
+                        "description": "Optional list of providers, e.g. ['ddgs', 'searxng', 'brightdata']."
                     },
                     "with_pages": {
                         "type": "boolean",
@@ -197,6 +209,20 @@ async def list_tools() -> list[Tool]:
 async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     """Execute a tool."""
     try:
+        if name == "list_providers":
+            statuses = searcher.provider_statuses()
+            result_text = "Available providers:\n"
+            for item in statuses:
+                result_text += (
+                    f"- {item['name']}: {item['status']} | {item['kind']} | "
+                    f"{item['description']}\n"
+                )
+                if item["status"] != "ready":
+                    result_text += f"  Setup: {item['setup']}\n"
+            current = ", ".join(provider.name for provider in searcher.providers)
+            result_text += f"\nCurrent default path: {current}\n"
+            return [TextContent(type="text", text=result_text)]
+
         if name == "search_web":
             query = arguments.get("query", "")
             search_type = arguments.get("type", "text")
@@ -218,6 +244,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 
             # Format the output for the LLM
             result_text = f"Search Query: {answer.query}\n"
+            providers_used = ", ".join(answer.metadata.get("providers_used", [])) or "none"
+            result_text += f"Providers used: {providers_used}\n"
             result_text += f"Summary:\n{answer.answer}\n\n"
             result_text += "Detailed Sources:\n"
             for i, s in enumerate(answer.sources[:10], 1):

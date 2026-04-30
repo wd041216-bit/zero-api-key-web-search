@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import sys
 from dataclasses import asdict
 
 from zero_api_key_web_search.core import (  # noqa: F401
@@ -12,8 +13,40 @@ from zero_api_key_web_search.core import (  # noqa: F401
 )
 
 
+def _print_provider_statuses(searcher: UltimateSearcher, as_json: bool = False) -> None:
+    statuses = searcher.provider_statuses()
+    if as_json:
+        print(json.dumps({"providers": statuses}, indent=2, ensure_ascii=False))
+        return
+
+    print("\nAvailable providers\n")
+    print(f"{'provider':<12} {'status':<16} {'mode':<20} description")
+    print("-" * 76)
+    for item in statuses:
+        print(
+            f"{item['name']:<12} {item['status']:<16} "
+            f"{item['kind']:<20} {item['description']}"
+        )
+    print("\nSetup")
+    for item in statuses:
+        if item["status"] != "ready":
+            print(f"- {item['name']}: {item['setup']}")
+    current = ", ".join(provider.name for provider in searcher.providers)
+    print(f"\nCurrent default path: {current}")
+
+
 def main():
     """CLI entry point for search-web command."""
+    if len(sys.argv) >= 2 and sys.argv[1] in {"providers", "doctor"}:
+        provider_parser = argparse.ArgumentParser(
+            description="Inspect configured Zero-API-Key Web Search providers.",
+        )
+        provider_parser.add_argument("command", choices=["providers", "doctor"])
+        provider_parser.add_argument("--json", action="store_true", help="Output as JSON")
+        provider_args = provider_parser.parse_args()
+        _print_provider_statuses(UltimateSearcher(), as_json=provider_args.json)
+        return
+
     parser = argparse.ArgumentParser(
         description="Zero-API-Key Web Search CLI (package: zero-api-key-web-search)",
         epilog=(
@@ -21,6 +54,7 @@ def main():
             "  search-web \"Python 3.12\"\n"
             "  search-web \"OpenAI\" --type news\n"
             "  search-web \"AI news\" --type news --timelimit w\n"
+            "  search-web providers\n"
             "  search-web  # Run without arguments to enter REPL mode"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -105,6 +139,9 @@ def main():
                     continue
                 if user_input.lower() in ["exit", "quit"]:
                     break
+                if user_input.lower() in ["providers", "doctor"]:
+                    _print_provider_statuses(searcher)
+                    continue
 
                 repl_args = user_input.split()
                 try:
@@ -184,6 +221,8 @@ def main():
         )
         if answer.metadata["errors"]:
             print(f"⚠  {len(answer.metadata['errors'])} engine error(s)")
+        used = ", ".join(answer.metadata.get("providers_used", [])) or "none"
+        print(f"Providers used: {used} | run `zero-search providers` to inspect optional providers")
         print(f"{'='*60}\n")
 
         if answer.sources:

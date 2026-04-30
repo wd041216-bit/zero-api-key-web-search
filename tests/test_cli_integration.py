@@ -56,6 +56,20 @@ class TestCliIntegration(unittest.TestCase):
         self.assertGreaterEqual(len(payload["sources"]), 2)
         self.assertEqual(payload["metadata"]["providers_used"], ["ddgs"])
 
+    def test_search_web_providers_cli(self):
+        result = subprocess.run(
+            [sys.executable, "-m", "zero_api_key_web_search.search_web", "providers", "--json"],
+            capture_output=True,
+            text=True,
+            check=True,
+            env=self._env_with_fake_ddgs(),
+        )
+        payload = json.loads(result.stdout)
+        names = [item["name"] for item in payload["providers"]]
+        self.assertIn("ddgs", names)
+        self.assertIn("searxng", names)
+        self.assertIn("brightdata", names)
+
     def test_verify_claim_json_cli(self):
         result = subprocess.run(
             [sys.executable, "-m", "zero_api_key_web_search.verify_claim", "python release status", "--json"],

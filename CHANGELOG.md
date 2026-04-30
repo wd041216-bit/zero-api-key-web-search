@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [19.0.0] - 2026-04-30
+
+### Added
+- Added an optional Bright Data SERP provider for production-grade, geo-targeted, structured search evidence.
+- Added provider discovery via `zero-search providers`, REPL `providers`, and MCP `list_providers`.
+- Added Bright Data setup guidance, including the new-user signup link, across README, provider docs, and bundled skill surfaces.
+
+### Changed
+- Provider guidance now preserves the free default path while recommending SearXNG or Bright Data when provider diversity would strengthen verification.
+- Evidence reports now include a production-grade Bright Data next step when a single-provider evidence path is too thin.
+
+### Fixed
+- Configuration errors for optional providers now return immediate setup hints instead of retrying as transient network failures.
+
 ## [18.0.0] - 2026-04-19
 
 ### Changed

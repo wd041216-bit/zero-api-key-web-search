@@ -13,7 +13,13 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 from zero_api_key_web_search.browse_page import browse
-from zero_api_key_web_search.providers import DdgsProvider, SearchProvider, SearxngProvider
+from zero_api_key_web_search.providers import (
+    BrightDataProvider,
+    DdgsProvider,
+    ProviderConfigurationError,
+    SearchProvider,
+    SearxngProvider,
+)
 
 logger = logging.getLogger("zero-api-key-web-search")
 
@@ -270,36 +276,101 @@ class UltimateSearcher:
         searxng = SearxngProvider(timeout=self.timeout)
         if searxng.is_configured():
             providers.append(searxng)
+        brightdata = BrightDataProvider(timeout=self.timeout)
+        if brightdata.is_configured():
+            providers.append(brightdata)
         return providers
 
     def _provider_guidance(self) -> dict:
         searxng = SearxngProvider(timeout=self.timeout)
-        configured = searxng.is_configured()
+        brightdata = BrightDataProvider(timeout=self.timeout)
+        searxng_configured = searxng.is_configured()
+        brightdata_configured = brightdata.is_configured()
         return {
             "free_recommended_pair": ["ddgs", "searxng"],
-            "searxng_configured": configured,
+            "production_provider": "brightdata",
+            "searxng_configured": searxng_configured,
             "searxng_env_vars": list(SearxngProvider.ENV_VARS),
+            "brightdata_configured": brightdata_configured,
+            "brightdata_api_key_env_vars": list(BrightDataProvider.API_KEY_ENV_VARS),
+            "brightdata_zone_env_vars": list(BrightDataProvider.ZONE_ENV_VARS),
+            "brightdata_signup_url": BrightDataProvider.SIGNUP_URL,
             "free_setup_hint": (
                 "Self-host a SearXNG instance and point "
                 f"{SearxngProvider.ENV_VARS[0]} to it for a free dual-provider path."
             ),
+            "production_setup_hint": (
+                "For production-grade search, geo-targeted evidence, or stronger "
+                "reliability, configure Bright Data via "
+                f"{BrightDataProvider.API_KEY_ENV_VARS[0]}. New users can sign up at "
+                f"{BrightDataProvider.SIGNUP_URL}."
+            ),
             "recommended_next_step": (
-                "Free dual-provider path is active."
-                if configured
+                "Multi-provider evidence path is active."
+                if searxng_configured or brightdata_configured
                 else (
-                    "Configure a self-hosted SearXNG instance via "
-                    f"{SearxngProvider.ENV_VARS[0]} to unlock a free second provider."
+                    "Configure a self-hosted SearXNG instance for a free second provider "
+                    "or Bright Data for production-grade search."
                 )
             ),
         }
 
+    def provider_statuses(self) -> list[dict]:
+        """Return provider readiness for CLI, MCP, and skill discovery flows."""
+        configured_names = {provider.name for provider in self.providers}
+        searxng = SearxngProvider(timeout=self.timeout)
+        brightdata = BrightDataProvider(timeout=self.timeout)
+        return [
+            {
+                "name": "ddgs",
+                "status": "ready" if "ddgs" in configured_names else "available",
+                "default": "ddgs" in configured_names,
+                "kind": "free default",
+                "description": "Zero-setup DuckDuckGo-backed search.",
+                "setup": "No setup required.",
+            },
+            {
+                "name": "searxng",
+                "status": "ready" if searxng.is_configured() else "not_configured",
+                "default": "searxng" in configured_names,
+                "kind": "free self-hosted",
+                "description": "Free second provider for cross-validation.",
+                "setup": SearxngProvider.configuration_hint(),
+            },
+            {
+                "name": "brightdata",
+                "status": "ready" if brightdata.is_configured() else "not_configured",
+                "default": "brightdata" in configured_names,
+                "kind": "production optional",
+                "description": (
+                    "Production-grade SERP provider for geo-targeted, structured, "
+                    "higher-reliability evidence collection."
+                ),
+                "setup": BrightDataProvider.configuration_hint(),
+                "signup_url": BrightDataProvider.SIGNUP_URL,
+            },
+        ]
+
+    def _known_optional_provider(self, provider_name: str) -> SearchProvider | None:
+        if provider_name == "searxng":
+            return SearxngProvider(timeout=self.timeout)
+        if provider_name == "brightdata":
+            return BrightDataProvider(timeout=self.timeout)
+        return None
+
     def _provider_registry(self) -> dict[str, SearchProvider]:
-        return {provider.name: provider for provider in self.providers}
+        registry = {provider.name: provider for provider in self.providers}
+        for provider_name in ("searxng", "brightdata"):
+            if provider_name not in registry:
+                provider = self._known_optional_provider(provider_name)
+                if provider is not None:
+                    registry[provider_name] = provider
+        return registry
 
     def _normalize_provider_names(self, providers: list[str] | None) -> list[str]:
         registry = self._provider_registry()
         if not providers:
-            return list(registry.keys())
+            return [provider.name for provider in self.providers]
 
         normalized: list[str] = []
         for provider in providers:
@@ -417,14 +488,22 @@ class UltimateSearcher:
                 )
             except Exception as exc:
                 last_exc = exc
+                if isinstance(exc, ProviderConfigurationError):
+                    break
                 if attempt < max_retries - 1:
                     time.sleep(0.5 * (2 ** attempt))
 
-        self._record_provider_failure(provider_name)
+        retry_note = (
+            "configuration error"
+            if isinstance(last_exc, ProviderConfigurationError)
+            else f"after {max_retries} retries"
+        )
+        if not isinstance(last_exc, ProviderConfigurationError):
+            self._record_provider_failure(provider_name)
         return [
             Source(
                 url="error",
-                title=f"Error: {provider_name} (after {max_retries} retries): {last_exc}",
+                title=f"Error: {provider_name} ({retry_note}): {last_exc}",
                 engine="error",
             )
         ]
@@ -868,11 +947,13 @@ class UltimateSearcher:
                 self._record_provider_success(provider_name)
                 return provider_name, self._provider_results_to_sources(provider_name, search_type, results)
             except Exception as exc:
-                self._record_provider_failure(provider_name)
+                if not isinstance(exc, ProviderConfigurationError):
+                    self._record_provider_failure(provider_name)
+                retry_note = "configuration error" if isinstance(exc, ProviderConfigurationError) else "failed"
                 return provider_name, [
                     Source(
                         url="error",
-                        title=f"Error: {provider_name}: {exc}",
+                        title=f"Error: {provider_name} ({retry_note}): {exc}",
                         engine="error",
                     )
                 ]
@@ -1407,6 +1488,11 @@ class UltimateSearcher:
             steps.append(
                 "Configure a self-hosted SearXNG instance and set "
                 f"{SearxngProvider.ENV_VARS[0]} to unlock a free second provider."
+            )
+            steps.append(
+                "For production-grade search, geo-targeted evidence, or higher reliability, "
+                f"configure Bright Data with {BrightDataProvider.API_KEY_ENV_VARS[0]} "
+                f"({BrightDataProvider.SIGNUP_URL})."
             )
 
         return steps

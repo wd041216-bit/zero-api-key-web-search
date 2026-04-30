@@ -7,7 +7,7 @@ import os
 import urllib.request
 from urllib.parse import quote_plus
 
-from zero_api_key_web_search.providers.base import ProviderResult
+from zero_api_key_web_search.providers.base import ProviderConfigurationError, ProviderResult
 
 
 class SearxngProvider:
@@ -56,7 +56,7 @@ class SearxngProvider:
         **kwargs,
     ) -> list[ProviderResult]:
         if not self.base_url:
-            raise RuntimeError(self.configuration_hint())
+            raise ProviderConfigurationError(self.configuration_hint())
 
         categories_map = {
             "text": "general",

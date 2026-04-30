@@ -13,7 +13,10 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
     async def test_list_tools(self):
         tools = await list_tools()
         names = {tool.name for tool in tools}
-        self.assertEqual(names, {"search_web", "browse_page", "verify_claim", "evidence_report"})
+        self.assertEqual(
+            names,
+            {"list_providers", "search_web", "browse_page", "verify_claim", "evidence_report"},
+        )
 
     async def test_call_tool_search_web(self):
         fake_answer = Answer(

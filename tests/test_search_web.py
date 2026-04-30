@@ -3,12 +3,14 @@ import json
 import os
 import sys
 import unittest
+import urllib.request
 from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from zero_api_key_web_search.providers.base import ProviderResult
+from zero_api_key_web_search.providers.brightdata import BrightDataProvider
 from zero_api_key_web_search.search_web import Answer, Source, UltimateSearcher
 
 
@@ -22,6 +24,20 @@ class FakeProvider:
         if self._error is not None:
             raise self._error
         return list(self._results)
+
+
+class FakeHttpResponse:
+    def __init__(self, payload):
+        self.payload = payload
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+    def read(self):
+        return json.dumps(self.payload).encode("utf-8")
 
 
 class TestSourceDataclass(unittest.TestCase):
@@ -147,6 +163,17 @@ class TestUltimateSearcher(unittest.TestCase):
             providers = [provider.name for provider in self.searcher._default_providers()]
         self.assertEqual(providers, ["ddgs", "searxng"])
 
+    def test_default_providers_detects_brightdata_env(self):
+        with patch.dict(os.environ, {"ZERO_SEARCH_BRIGHTDATA_API_KEY": "test-key"}, clear=True):
+            providers = [provider.name for provider in self.searcher._default_providers()]
+        self.assertEqual(providers, ["ddgs", "brightdata"])
+
+    def test_provider_statuses_include_brightdata_signup(self):
+        statuses = {item["name"]: item for item in self.searcher.provider_statuses()}
+        self.assertIn("brightdata", statuses)
+        self.assertEqual(statuses["brightdata"]["status"], "not_configured")
+        self.assertEqual(statuses["brightdata"]["signup_url"], BrightDataProvider.SIGNUP_URL)
+
     def test_search_metadata_includes_free_provider_guidance(self):
         searcher = UltimateSearcher(
             timeout=5,
@@ -166,8 +193,11 @@ class TestUltimateSearcher(unittest.TestCase):
         result = searcher.search("python release", search_type="text")
         guidance = result.metadata["provider_guidance"]
         self.assertEqual(guidance["free_recommended_pair"], ["ddgs", "searxng"])
+        self.assertEqual(guidance["production_provider"], "brightdata")
         self.assertIn("ZERO_SEARCH_SEARXNG_URL", guidance["free_setup_hint"])
+        self.assertIn("ZERO_SEARCH_BRIGHTDATA_API_KEY", guidance["production_setup_hint"])
         self.assertFalse(guidance["searxng_configured"])
+        self.assertFalse(guidance["brightdata_configured"])
 
     def test_search_metadata_marks_free_dual_provider_active(self):
         searcher = UltimateSearcher(
@@ -189,7 +219,48 @@ class TestUltimateSearcher(unittest.TestCase):
             result = searcher.search("python release", search_type="text")
         guidance = result.metadata["provider_guidance"]
         self.assertTrue(guidance["searxng_configured"])
-        self.assertEqual(guidance["recommended_next_step"], "Free dual-provider path is active.")
+        self.assertEqual(guidance["recommended_next_step"], "Multi-provider evidence path is active.")
+
+    def test_explicit_unconfigured_brightdata_returns_configuration_error(self):
+        searcher = UltimateSearcher(timeout=5, providers=[FakeProvider("ddgs", [])])
+        result = searcher.search("python release", providers=["brightdata"])
+        self.assertEqual(result.sources, [])
+        self.assertTrue(
+            any("ZERO_SEARCH_BRIGHTDATA_API_KEY" in error for error in result.metadata["errors"])
+        )
+
+    def test_brightdata_provider_normalizes_serp_results(self):
+        captured = {}
+
+        def fake_urlopen(request: urllib.request.Request, timeout: int):
+            captured["timeout"] = timeout
+            captured["body"] = json.loads(request.data.decode("utf-8"))
+            captured["auth"] = request.headers["Authorization"]
+            return FakeHttpResponse(
+                {
+                    "general": {"search_engine": "google"},
+                    "organic": [
+                        {
+                            "title": "Bright Data result",
+                            "link": "https://example.com/bright",
+                            "description": "Structured SERP snippet.",
+                            "date": "2026-04-01",
+                        }
+                    ],
+                }
+            )
+
+        provider = BrightDataProvider(timeout=7, api_key="test-key", zone="web_search")
+        with patch("urllib.request.urlopen", side_effect=fake_urlopen):
+            results = provider.search("ai agents", "news", region="us-en", max_results=3)
+
+        self.assertEqual(captured["timeout"], 7)
+        self.assertEqual(captured["auth"], "Bearer test-key")
+        self.assertEqual(captured["body"]["zone"], "web_search")
+        self.assertEqual(captured["body"]["country"], "us")
+        self.assertIn("tbm=nws", captured["body"]["url"])
+        self.assertEqual(results[0].url, "https://example.com/bright")
+        self.assertEqual(results[0].metadata["provider"], "brightdata")
 
     def test_search_rejects_unknown_provider(self):
         with self.assertRaises(ValueError):

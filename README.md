@@ -1,12 +1,12 @@
 <div align="center">
   <h1>Zero-API-Key Web Search</h1>
   <p><strong>Free web search, browsing & claim verification for AI agents.</strong></p>
-  <p><em>No API keys. No accounts. No limits. 100% free.</em></p>
+  <p><em>No API keys by default. Free locally, production-grade when you opt in.</em></p>
 
   [![PyPI](https://img.shields.io/pypi/v/zero-api-key-web-search?label=pypi)](https://pypi.org/project/zero-api-key-web-search/)
   [![Python](https://img.shields.io/pypi/pyversions/zero-api-key-web-search)](https://python.org)
   [![MCP](https://img.shields.io/badge/MCP-Ready-0f766e.svg)](https://modelcontextprotocol.io/)
-  [![Tests](https://img.shields.io/badge/tests-86%20passing-22c55e.svg)](./tests)
+  [![Tests](https://img.shields.io/badge/tests-91%20passing-22c55e.svg)](./tests)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 </div>
 
@@ -14,9 +14,10 @@
 
 ## What is this?
 
-A single `pip install` gives your AI agent live web search, full-page reading, and evidence-aware claim verification — all without any API key, account, or paid service.
+A single `pip install` gives your AI agent live web search, full-page reading, and evidence-aware claim verification — all without any API key, account, or paid service by default.
 
 - **Search**: Live results from DuckDuckGo (free) + optional SearXNG (self-hosted, free)
+- **Providers**: Discover free and production providers with `zero-search providers`
 - **Browse**: Extract clean text from any URL, stripping boilerplate automatically
 - **Verify**: Classify claims as supported / contested / likely false with evidence scores
 - **Report**: Generate citation-ready evidence reports with rationale and next steps
@@ -28,6 +29,9 @@ pip install zero-api-key-web-search
 
 # Search the web
 zero-search "Python 3.13 release" --json
+
+# Inspect provider options
+zero-search providers
 
 # Read a page
 zero-browse "https://docs.python.org/3/whatsnew/" --json
@@ -54,8 +58,8 @@ Legacy CLI aliases (`search-web`, `browse-page`, `verify-claim`, `evidence-repor
 | Supporting vs. conflicting evidence | ❌ | ✅ |
 | Citation-ready evidence reports | ❌ | ✅ |
 | Dual-provider cross-validation | ❌ | ✅ |
-| API key required | Often | **Never** |
-| Cost | Sometimes | **Free** |
+| API key required | Often | **Never by default** |
+| Cost | Sometimes | **Free by default** |
 
 ## MCP server
 
@@ -71,7 +75,7 @@ Works with Claude Code, Cursor, Copilot, and any MCP-compatible agent:
 }
 ```
 
-Four tools exposed: `search_web`, `browse_page`, `verify_claim`, `evidence_report`.
+Five tools exposed: `list_providers`, `search_web`, `browse_page`, `verify_claim`, `evidence_report`.
 
 ## Platform support
 
@@ -128,6 +132,30 @@ docker compose -f docker-compose.searxng.yml up -d
 
 Full guide: [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md).
 
+## Optional Bright Data provider
+
+The default path stays free and zero-key. For production agents that need higher reliability, structured SERP data, geo-targeted results, or stronger cross-provider verification, enable the optional Bright Data provider.
+
+```bash
+export ZERO_SEARCH_BRIGHTDATA_API_KEY="..."
+# Optional if your Bright Data SERP zone is not named web_search:
+export ZERO_SEARCH_BRIGHTDATA_ZONE="web_search"
+
+zero-search providers
+zero-search "AI regulation news" --provider brightdata --type news --region us-en --json
+zero-report "Tesla Q1 2026 deliveries" \
+  --claim "Tesla deliveries increased year over year" \
+  --provider ddgs --provider brightdata --deep --json
+```
+
+New Bright Data users can sign up here: <https://get.brightdata.com/h21j9xz4uxgd>.
+
+| Provider | Best for |
+| --- | --- |
+| `ddgs` | zero-setup local search |
+| `searxng` | free self-hosted cross-validation |
+| `brightdata` | production-grade, geo-targeted, structured SERP evidence |
+
 ## Evidence report example
 
 ```json
@@ -160,6 +188,7 @@ zero_api_key_web_search/
     base.py            # SearchProvider protocol (sync + async)
     ddgs.py            # DuckDuckGo provider
     searxng.py         # SearXNG provider
+    brightdata.py      # Optional Bright Data SERP provider
   skills/
     SKILL.md           # Bundled OpenClaw skill
 ```
@@ -185,7 +214,7 @@ Python 3.10+ required. No API keys, no accounts, no configuration needed.
 
 ```bash
 pip install -e ".[dev]"
-python -m pytest tests/ -x           # 86 tests
+python -m pytest tests/ -q           # 91 tests
 ruff check zero_api_key_web_search/ tests/
 pyright zero_api_key_web_search/     # 0 errors
 coverage report --fail-under=80       # 85% coverage

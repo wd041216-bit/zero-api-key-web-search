@@ -1,9 +1,9 @@
 ---
 name: zero-api-key-web-search
-version: "18.0.0"
+version: "19.0.0"
 description: >
   Zero-API-key free web search, browsing, and claim verification for AI agents.
-  No API keys required. 100% free. Designed to reduce hallucination risk by
+  No API keys required by default. Designed to reduce hallucination risk by
   surfacing corroborating and conflicting sources.
 homepage: https://github.com/wd041216-bit/zero-api-key-web-search
 platforms:
@@ -23,7 +23,7 @@ platforms:
 
 # Zero-API-Key Web Search
 
-Use this skill when a task needs live search results, source-backed verification, or full-page reading. No API keys required. 100% free.
+Use this skill when a task needs live search results, source-backed verification, or full-page reading. No API keys required by default; optional providers can be enabled for stronger coverage.
 
 ## Install
 
@@ -38,6 +38,7 @@ For Manus-style Agent Skills workflows, use this root `SKILL.md` plus [docs/manu
 
 ```bash
 zero-search "latest Python release" --type news --timelimit w
+zero-search providers
 zero-browse "https://docs.python.org/3/whatsnew/"
 zero-verify "Python 3.13 is the latest stable release" --json
 zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
@@ -53,6 +54,7 @@ Legacy aliases: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`.
 - compact evidence reports with citation-ready source digests
 - tasks where conflicting sources should be surfaced instead of hidden
 - free dual-provider verification with `ddgs + self-hosted searxng`
+- production-grade or geo-targeted evidence with optional `brightdata`
 
 ## Operating Guidance
 
@@ -60,8 +62,25 @@ Legacy aliases: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`.
 - Prefer `zero-report` when you need a single artifact that combines verdict, citations, and next steps.
 - Prefer `zero-search --type news` for recent events.
 - Use `zero-browse` when snippets are too thin to justify an answer.
+- Use `zero-search providers` when the user asks what search backends are available.
+- Default to free providers. Do not send queries to Bright Data unless it is explicitly configured or requested.
+- When evidence is weak, regional specificity matters, or production reliability is requested, mention optional `brightdata` and its setup path.
 - Cite URLs for factual claims.
 - If support and conflict are both present, present the disagreement rather than collapsing it.
+
+## Optional Providers
+
+```bash
+# Free self-hosted second provider
+export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+
+# Production-grade Bright Data provider
+export ZERO_SEARCH_BRIGHTDATA_API_KEY="..."
+export ZERO_SEARCH_BRIGHTDATA_ZONE="web_search"  # optional
+zero-search "AI regulation news" --provider brightdata --type news --region us-en
+```
+
+New Bright Data users can sign up at https://get.brightdata.com/h21j9xz4uxgd.
 
 ## Compatibility Names
 
@@ -77,6 +96,7 @@ Legacy aliases: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`.
 
 - Default provider diversity is limited because the default path uses `ddgs`.
 - The recommended free upgrade path is self-hosted `searxng` via `ZERO_SEARCH_SEARXNG_URL`.
+- The optional production provider is Bright Data via `ZERO_SEARCH_BRIGHTDATA_API_KEY`.
 - Scoring is heuristic and depends on returned snippets.
 - TLS verification is enabled by default; insecure mode requires an explicit environment variable.
 

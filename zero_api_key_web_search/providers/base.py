@@ -45,3 +45,7 @@ class SearchProvider(Protocol):
         """Async variant of search. Defaults to running sync search in a thread."""
         import asyncio
         return await asyncio.to_thread(self.search, query, search_type, timelimit, region, max_results, **kwargs)
+
+
+class ProviderConfigurationError(RuntimeError):
+    """Raised when a provider is requested but missing required configuration."""
