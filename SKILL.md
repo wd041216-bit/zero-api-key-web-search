@@ -1,6 +1,6 @@
 ---
 name: zero-api-key-web-search
-version: "20.0.0"
+version: "21.0.0"
 description: >
   Search infrastructure for AI agents. Free by default, MCP-ready,
   LLM-context aware, and designed to surface corroborating and conflicting sources.
