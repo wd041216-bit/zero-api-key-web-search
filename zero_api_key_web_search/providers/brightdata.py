@@ -1,8 +1,13 @@
 """Bright Data SERP API search provider.
 
-Uses Bright Data's Super Proxy with brd_json=1 for structured SERP results.
+Professional-grade search provider backed by Bright Data. Supports multi-engine
+SERP (Google, Bing, DuckDuckGo, Yandex, Baidu, Yahoo, Naver), LLM-friendly
+markdown output, AI Overviews, mobile device results, and geo-targeting across
+195 countries. Requires a Bright Data account — sign up with 5000 free credits:
+https://get.brightdata.com/h21j9xz4uxgd
+
+Uses the Super Proxy endpoint with brd_json=1 for structured JSON results.
 Falls back to HTML parsing when structured results are unavailable.
-Supports multiple search engines, geo-targeting, and search types.
 """
 
 from __future__ import annotations
@@ -16,11 +21,29 @@ from urllib.parse import urlencode
 from zero_api_key_web_search.providers.base import ProviderConfigurationError, ProviderResult
 
 
-class BrightDataProvider:
-    """Optional production-grade provider backed by Bright Data SERP API.
+ENGINE_MAP = {
+    "google": "https://www.google.com/search",
+    "bing": "https://www.bing.com/search",
+    "duckduckgo": "https://duckduckgo.com/",
+    "yandex": "https://yandex.com/search/",
+    "baidu": "https://www.baidu.com/s",
+    "yahoo": "https://search.yahoo.com/search",
+    "naver": "https://search.naver.com/search.naver",
+}
 
-    Uses the Super Proxy endpoint with brd_json=1 to get structured JSON results.
-    Automatically falls back to HTML parsing when structured results are unavailable.
+
+class BrightDataProvider:
+    """Professional-grade search provider backed by Bright Data SERP API.
+
+    Supports 7 search engines (Google, Bing, DuckDuckGo, Yandex, Baidu, Yahoo, Naver),
+    structured JSON results, LLM-friendly markdown output, AI Overviews, mobile
+    device emulation, and geo-targeting across 195 countries.
+
+    Uses the Super Proxy endpoint with brd_json=1 for parsed JSON results.
+    Automatically falls back to HTML parsing when structured data is unavailable.
+
+    Requires a Bright Data account. Sign up with 5000 free credits:
+    https://get.brightdata.com/h21j9xz4uxgd
     """
 
     name = "brightdata"
@@ -37,7 +60,10 @@ class BrightDataProvider:
         "BRIGHT_DATA_SERP_ZONE",
     )
     COUNTRY_ENV_VAR = "ZERO_SEARCH_BRIGHTDATA_COUNTRY"
+    ENGINE_ENV_VAR = "ZERO_SEARCH_BRIGHTDATA_ENGINE"
     DEFAULT_ZONE = "serp_api1"
+    DEFAULT_ENGINE = "google"
+    SUPPORTED_ENGINES = tuple(ENGINE_MAP.keys())
 
     def __init__(
         self,
@@ -95,24 +121,56 @@ class BrightDataProvider:
                 return part
         return ""
 
-    def _search_url(self, query: str, search_type: str, region: str) -> str:
+    def _search_url(self, query: str, search_type: str, region: str, engine: str = "google") -> str:
         country = self._region_to_country(region)
-        params = {"q": query, "brd_json": "1"}
-        if country:
-            params["gl"] = country
-            params["hl"] = region.split("-")[0] if "-" in region else "en"
+        engine = engine if engine in ENGINE_MAP else self.DEFAULT_ENGINE
+        base_url = ENGINE_MAP[engine]
 
-        tbm_by_type = {
-            "news": "nws",
-            "images": "isch",
-            "videos": "vid",
-            "books": "bks",
-        }
-        tbm = tbm_by_type.get(search_type)
-        if tbm:
-            params["tbm"] = tbm
+        if engine == "google":
+            params = {"q": query, "brd_json": "1"}
+            if country:
+                params["gl"] = country
+                params["hl"] = region.split("-")[0] if "-" in region else "en"
+            tbm_by_type = {"news": "nws", "images": "isch", "videos": "vid", "books": "bks"}
+            tbm = tbm_by_type.get(search_type)
+            if tbm:
+                params["tbm"] = tbm
 
-        return "https://www.google.com/search?" + urlencode(params)
+        elif engine == "bing":
+            params = {"q": query, "brd_json": "1"}
+            if country:
+                params["cc"] = country
+                params["setlang"] = region.split("-")[0] if "-" in region else "en"
+
+        elif engine == "duckduckgo":
+            params = {"q": query, "brd_json": "1"}
+            if country:
+                params["kl"] = region.lower()
+
+        elif engine == "yandex":
+            params = {"text": query, "brd_json": "1"}
+            if country:
+                params["lr"] = country
+
+        elif engine == "baidu":
+            params = {"wd": query, "brd_json": "1"}
+            if country:
+                params["rsv_srlang"] = region.split("-")[0] if "-" in region else "en"
+
+        elif engine == "yahoo":
+            params = {"p": query, "brd_json": "1"}
+            if country:
+                params["vc"] = country
+
+        elif engine == "naver":
+            params = {"query": query, "brd_json": "1"}
+            if country:
+                params["where"] = "nexearch"
+
+        else:
+            params = {"q": query, "brd_json": "1"}
+
+        return base_url + "?" + urlencode(params)
 
     def _request_payload(
         self,
@@ -121,15 +179,18 @@ class BrightDataProvider:
         region: str,
         **kwargs,
     ) -> dict:
+        engine = kwargs.get("engine", self.DEFAULT_ENGINE)
         payload = {
             "zone": self.zone,
-            "url": self._search_url(query, search_type, region),
+            "url": self._search_url(query, search_type, region, engine=engine),
             "format": "json",
             "method": "GET",
         }
         country = self._region_to_country(region)
         if country:
             payload["country"] = country
+        if kwargs.get("data_format") == "markdown":
+            payload["data_format"] = "markdown"
         return payload
 
     def _extract_result_url(self, result: dict) -> str:
@@ -227,12 +288,15 @@ class BrightDataProvider:
         if not self.api_key:
             raise ProviderConfigurationError(self.configuration_hint())
 
+        engine = kwargs.get("engine", os.getenv(self.ENGINE_ENV_VAR, self.DEFAULT_ENGINE))
+
         request_body = json.dumps(
             self._request_payload(
                 query=query,
                 search_type=search_type,
                 region=region,
-                **kwargs,
+                engine=engine,
+                **{k: v for k, v in kwargs.items() if k != "engine"},
             )
         ).encode("utf-8")
         request = urllib.request.Request(
@@ -243,7 +307,7 @@ class BrightDataProvider:
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "zero-api-key-web-search/22.0.0",
+                "User-Agent": "zero-api-key-web-search/23.0.0",
             },
         )
 
@@ -256,8 +320,31 @@ class BrightDataProvider:
 
         payload = json.loads(response_text)
 
+        # Check for markdown data_format response
+        if kwargs.get("data_format") == "markdown":
+            markdown_content = ""
+            if isinstance(payload.get("body"), str):
+                markdown_content = payload["body"]
+            elif isinstance(response_text, str):
+                markdown_content = response_text
+
+            if markdown_content:
+                return [
+                    ProviderResult(
+                        url=self._search_url(query, search_type, region, engine=engine),
+                        title=f"Search results: {query} (via {engine})",
+                        snippet=markdown_content[:5000],
+                        date="",
+                        metadata={
+                            "provider": "brightdata",
+                            "zone": self.zone,
+                            "search_engine": engine,
+                            "format": "markdown",
+                        },
+                    )
+                ]
+
         # Try structured SERP results first (brd_json=1 format)
-        # The body field is a JSON string containing parsed SERP data
         serp_data = None
         if isinstance(payload.get("body"), str) and payload["body"].startswith("{"):
             try:
@@ -267,7 +354,6 @@ class BrightDataProvider:
         elif isinstance(payload.get("body"), dict):
             serp_data = payload["body"]
 
-        # Also check top-level for direct SERP API response (no wrapping)
         if serp_data is None and "organic" in payload:
             serp_data = payload
 
@@ -292,13 +378,13 @@ class BrightDataProvider:
                             metadata={
                                 "provider": "brightdata",
                                 "zone": self.zone,
-                                "search_engine": general.get("search_engine"),
+                                "search_engine": engine,
                             },
                         ),
                     )
                 return results
 
-        # Fallback: parse HTML response (when brd_json is not available)
+        # Fallback: parse HTML response
         html_body = ""
         if isinstance(payload.get("body"), str) and not payload["body"].startswith("{"):
             html_body = payload["body"]

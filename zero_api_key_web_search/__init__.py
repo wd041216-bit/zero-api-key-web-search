@@ -10,12 +10,13 @@ from zero_api_key_web_search.core import (
     UltimateSearcher,
     VerificationResult,
 )
-from zero_api_key_web_search.providers import DdgsProvider, SearxngProvider
+from zero_api_key_web_search.providers import BrightDataProvider, DdgsProvider, SearxngProvider, WebUnlockerProvider
 
-__version__ = "22.1.0"
+__version__ = "23.0.0"
 
 __all__ = [
     "Answer",
+    "BrightDataProvider",
     "CrossValidatedSearcher",
     "DdgsProvider",
     "EvidenceReportResult",
@@ -25,4 +26,5 @@ __all__ = [
     "SubClaimResult",
     "UltimateSearcher",
     "VerificationResult",
+    "WebUnlockerProvider",
 ]

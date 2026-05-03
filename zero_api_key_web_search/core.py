@@ -22,6 +22,7 @@ from zero_api_key_web_search.providers import (
     ProviderConfigurationError,
     SearchProvider,
     SearxngProvider,
+    WebUnlockerProvider,
 )
 
 logger = logging.getLogger("zero-api-key-web-search")
@@ -278,6 +279,7 @@ PROVIDER_PROFILES = {
     "default": ["ddgs"],
     "free-verified": ["ddgs", "searxng"],
     "production": ["brightdata"],
+    "production-unlock": ["brightdata", "web_unlocker"],
     "max-evidence": ["ddgs", "searxng", "brightdata"],
 }
 
@@ -388,6 +390,13 @@ class UltimateSearcher:
                     "geo-targeting, and structured SERP data."
                 ),
             },
+            "production-unlock": {
+                "providers": ["brightdata", "web_unlocker"],
+                "description": (
+                    "Production-grade search with Web Unlocker for accessing "
+                    "blocked, CAPTCHA-protected, and geo-restricted pages."
+                ),
+            },
             "max-evidence": {
                 "providers": ["ddgs", "searxng", "brightdata"],
                 "description": "Maximum provider diversity across free and production backends.",
@@ -410,6 +419,7 @@ class UltimateSearcher:
         configured_names = {provider.name for provider in self.providers}
         searxng = SearxngProvider(timeout=self.timeout)
         brightdata = BrightDataProvider(timeout=self.timeout)
+        web_unlocker = WebUnlockerProvider(timeout=self.timeout)
         return [
             {
                 "name": "ddgs",
@@ -433,11 +443,24 @@ class UltimateSearcher:
                 "default": "brightdata" in configured_names,
                 "kind": "production optional",
                 "description": (
-                    "Production-grade SERP provider for geo-targeted, structured, "
-                    "higher-reliability evidence collection."
+                    "Professional-grade search across 7 engines (Google, Bing, DuckDuckGo, "
+                    "Yandex, Baidu, Yahoo, Naver) with structured results, LLM-friendly "
+                    "markdown, AI Overviews, mobile results, and geo-targeting for 195 countries."
                 ),
                 "setup": BrightDataProvider.configuration_hint(),
                 "signup_url": BrightDataProvider.SIGNUP_URL,
+            },
+            {
+                "name": "web_unlocker",
+                "status": "ready" if web_unlocker.is_configured() else "not_configured",
+                "default": "web_unlocker" in configured_names,
+                "kind": "production optional",
+                "description": (
+                    "Access blocked, CAPTCHA-protected, or geo-restricted pages. "
+                    "Auto-handles browser fingerprinting, IP rotation, and JavaScript rendering."
+                ),
+                "setup": WebUnlockerProvider.configuration_hint(),
+                "signup_url": WebUnlockerProvider.SIGNUP_URL,
             },
         ]
 
@@ -457,11 +480,13 @@ class UltimateSearcher:
             return SearxngProvider(timeout=self.timeout)
         if provider_name == "brightdata":
             return BrightDataProvider(timeout=self.timeout)
+        if provider_name == "web_unlocker":
+            return WebUnlockerProvider(timeout=self.timeout)
         return None
 
     def _provider_registry(self) -> dict[str, SearchProvider]:
         registry = {provider.name: provider for provider in self.providers}
-        for provider_name in ("searxng", "brightdata"):
+        for provider_name in ("searxng", "brightdata", "web_unlocker"):
             if provider_name not in registry:
                 provider = self._known_optional_provider(provider_name)
                 if provider is not None:

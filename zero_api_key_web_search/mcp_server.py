@@ -80,12 +80,17 @@ async def list_tools() -> list[Tool]:
                     },
                     "profile": {
                         "type": "string",
-                        "enum": ["free", "default", "free-verified", "production", "max-evidence"],
+                        "enum": ["free", "default", "free-verified", "production", "production-unlock", "max-evidence"],
                         "description": "Provider profile to use when providers is not supplied."
                     },
                     "goggles": {
                         "type": "string",
                         "description": "Built-in goggles preset for reranking/filtering, e.g. docs-first or research."
+                    },
+                    "engine": {
+                        "type": "string",
+                        "enum": ["google", "bing", "duckduckgo", "yandex", "baidu", "yahoo", "naver"],
+                        "description": "Search engine for Bright Data SERP (default: google). Only used when Bright Data is active."
                     }
                 },
                 "required": ["query"]
@@ -120,12 +125,17 @@ async def list_tools() -> list[Tool]:
                     },
                     "profile": {
                         "type": "string",
-                        "enum": ["free", "default", "free-verified", "production", "max-evidence"],
+                        "enum": ["free", "default", "free-verified", "production", "production-unlock", "max-evidence"],
                         "description": "Provider profile.",
                     },
                     "goggles": {
                         "type": "string",
                         "description": "Built-in goggles preset, e.g. docs-first, research, or news-balanced.",
+                    },
+                    "engine": {
+                        "type": "string",
+                        "enum": ["google", "bing", "duckduckgo", "yandex", "baidu", "yahoo", "naver"],
+                        "description": "Search engine for Bright Data SERP (default: google). Only used when Bright Data is active."
                     },
                     "max_sources": {
                         "type": "integer",
@@ -169,6 +179,12 @@ async def list_tools() -> list[Tool]:
                     "prompt": {
                         "type": "string",
                         "description": "Optional extraction hint describing what information to focus on. The agent's LLM uses this to prioritize relevant content."
+                    },
+                    "use_unlocker": {
+                        "type": "string",
+                        "enum": ["auto", "always", "never"],
+                        "description": "Web Unlocker mode: 'auto' (default) retries blocked pages via Bright Data, 'always' always uses Web Unlocker, 'never' disables it.",
+                        "default": "auto"
                     }
                 },
                 "required": ["url"]
@@ -204,7 +220,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "profile": {
                         "type": "string",
-                        "enum": ["free", "default", "free-verified", "production", "max-evidence"],
+                        "enum": ["free", "default", "free-verified", "production", "production-unlock", "max-evidence"],
                         "description": "Provider profile to use when providers is not supplied."
                     },
                     "goggles": {
@@ -262,7 +278,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "profile": {
                         "type": "string",
-                        "enum": ["free", "default", "free-verified", "production", "max-evidence"],
+                        "enum": ["free", "default", "free-verified", "production", "production-unlock", "max-evidence"],
                         "description": "Provider profile to use when providers is not supplied."
                     },
                     "goggles": {
@@ -315,7 +331,11 @@ async def list_tools() -> list[Tool]:
                     },
                     "test_brightdata_zone": {
                         "type": "string",
-                        "description": "Bright Data zone name (default: serp_api1)."
+                        "description": "Bright Data SERP zone name (default: serp_api1)."
+                    },
+                    "test_brightdata_unlocker_zone": {
+                        "type": "string",
+                        "description": "Optional Bright Data Web Unlocker zone name to test (uses the same API key)."
                     },
                     "test_searxng_url": {
                         "type": "string",
@@ -365,10 +385,15 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             providers = arguments.get("providers")
             profile = arguments.get("profile")
             goggles = arguments.get("goggles")
+            engine = arguments.get("engine")
             if timelimit == "":
                 timelimit = None
 
-            logger.info(f"Executing search_web: query='{query}', type='{search_type}', region='{region}'")
+            logger.info(f"Executing search_web: query='{query}', type='{search_type}', region='{region}', engine='{engine}'")
+
+            extra_kwargs = {}
+            if engine:
+                extra_kwargs["engine"] = engine
 
             answer = searcher.search(
                 query=query,
@@ -378,6 +403,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 providers=providers,
                 profile=profile,
                 goggles=goggles,
+                **extra_kwargs,
             )
 
             # Format the output for the LLM
@@ -426,16 +452,20 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             max_chars = arguments.get("max_chars", 50000)
             format_type = arguments.get("format", "markdown")
             prompt = arguments.get("prompt")
+            use_unlocker_str = arguments.get("use_unlocker", "auto")
+            use_unlocker = {"auto": None, "always": True, "never": False}.get(use_unlocker_str)
 
-            logger.info(f"Executing browse_page: url='{url}' format='{format_type}'")
+            logger.info(f"Executing browse_page: url='{url}' format='{format_type}' use_unlocker='{use_unlocker_str}'")
 
-            result = browse(url, max_chars=max_chars, format=format_type, prompt=prompt)
+            result = browse(url, max_chars=max_chars, format=format_type, prompt=prompt, use_unlocker=use_unlocker)
 
             if result["status"] == "success":
                 result_text = f"Title: {result['title']}\n"
                 result_text += f"URL: {result['url']}\n"
                 if result.get("from_cache"):
                     result_text += "(from cache)\n"
+                if result.get("via_unlocker"):
+                    result_text += "(via Bright Data Web Unlocker)\n"
                 result_text += f"\nContent:\n{result['content']}\n"
                 if result.get('truncated'):
                     result_text += f"\n{result.get('truncation_marker', '')}"
@@ -611,7 +641,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             return [TextContent(type="text", text="Cache cleared successfully.")]
 
         elif name == "setup_providers":
-            from zero_api_key_web_search.provider_setup import _test_brightdata, _test_searxng
+            from zero_api_key_web_search.provider_setup import _test_brightdata, _test_searxng, _test_web_unlocker
 
             result_text = "Provider Status\n" + "=" * 50 + "\n\n"
 
@@ -654,6 +684,21 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                     result_text += f"\nTo enable, set: ZERO_SEARCH_SEARXNG_URL={sx_url}\n"
                 else:
                     result_text += f"❌ {sx_result['error']}\n"
+
+            # Test Web Unlocker zone if provided
+            unlocker_zone = arguments.get("test_brightdata_unlocker_zone")
+            if unlocker_zone and bd_key:
+                result_text += f"\n\nWeb Unlocker Test (zone: {unlocker_zone})\n" + "-" * 40 + "\n"
+                unlocker_result = _test_web_unlocker(bd_key, unlocker_zone)
+                if unlocker_result["success"]:
+                    result_text += f"✅ Web Unlocker working! Fetched {unlocker_result['content_length']} chars.\n"
+                    result_text += f"Sample title: {unlocker_result.get('sample_title', '')}\n"
+                    result_text += f"\nTo set as default, set: ZERO_SEARCH_BRIGHTDATA_UNLOCKER_ZONE={unlocker_zone}\n"
+                else:
+                    result_text += f"❌ {unlocker_result['error']}\n"
+                    if unlocker_result.get("needs_zone"):
+                        result_text += f"\nCreate zone '{unlocker_zone}' in Bright Data Dashboard:\n"
+                        result_text += "  Proxies → Add new zone → Web Unlocker → name it '{unlocker_zone}'\n"
 
             # Recommendations
             guidance = searcher._provider_guidance()

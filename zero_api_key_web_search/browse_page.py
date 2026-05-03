@@ -269,8 +269,59 @@ def _extract_pdf_text(raw: bytes) -> str:
         return ""
 
 
+def _try_web_unlocker(url: str, max_chars: int, format: str) -> dict | None:
+    """Attempt to fetch a URL via Bright Data Web Unlocker.
+
+    Returns None if Web Unlocker is not configured or fails silently.
+    """
+    try:
+        from zero_api_key_web_search.providers.web_unlocker import WebUnlockerProvider
+    except ImportError:
+        return None
+
+    provider = WebUnlockerProvider()
+    if not provider.is_configured():
+        return None
+
+    data_format = "markdown" if format == "markdown" else "raw"
+    try:
+        result = provider.unlock(url, data_format=data_format)
+    except Exception as e:
+        logger.info("web_unlocker_fallback_failed: url=%r error=%s", url, e)
+        return None
+
+    if result.get("status") != "success":
+        logger.info("web_unlocker_fallback_failed: url=%r status=%s", url, result.get("status"))
+        return None
+
+    content = result.get("content", "")
+    markdown_content = result.get("markdown", content)
+    text_content = result.get("text", content)
+    title = result.get("title", "")
+
+    output = markdown_content if format == "markdown" else text_content
+    is_truncated = len(output) > max_chars
+    truncated_output = output[:max_chars]
+    if is_truncated:
+        truncated_output += f"\n[Content truncated at {max_chars} chars. Total length: {len(output)}.]"
+
+    return {
+        "status": "success",
+        "url": url,
+        "title": title,
+        "content": truncated_output,
+        "markdown": markdown_content[:max_chars],
+        "text": text_content[:max_chars],
+        "truncated": is_truncated,
+        "total_length": len(output),
+        "format": format,
+        "via_unlocker": True,
+        "insecure_ssl": insecure_ssl_enabled(),
+    }
+
+
 def browse(url: str, max_chars: int = 50000, format: str = "markdown",
-           prompt: str | None = None) -> dict:
+           prompt: str | None = None, use_unlocker: bool | None = None) -> dict:
     """Fetch a URL and return its extracted content.
 
     Args:
@@ -279,6 +330,10 @@ def browse(url: str, max_chars: int = 50000, format: str = "markdown",
         format: Output format — 'markdown' (default) or 'text'.
         prompt: Optional extraction hint for the calling agent. When provided,
             included in the response as prompt_hint for the agent's LLM to focus on.
+        use_unlocker: Web Unlocker mode for blocked/geo-restricted pages.
+            None (default): auto — use Web Unlocker when direct fetch fails with 403/429.
+            True: always use Web Unlocker.
+            False: never use Web Unlocker.
 
     Returns:
         Dict with:
@@ -291,7 +346,8 @@ def browse(url: str, max_chars: int = 50000, format: str = "markdown",
             - truncated: Whether content was truncated
             - total_length: Full content length
             - format: The format used
-            - prompt_hint: The prompt, if provided (for the calling agent to focus on)
+            - prompt_hint: The prompt, if provided
+            - via_unlocker: True if content was fetched via Web Unlocker
             - insecure_ssl: Whether insecure SSL was enabled
     """
     # Domain safety check
@@ -304,9 +360,16 @@ def browse(url: str, max_chars: int = 50000, format: str = "markdown",
             "reason": reason,
         }
 
+    # Web Unlocker: when use_unlocker=True, skip direct fetch and go straight to unlocker
+    if use_unlocker is True:
+        unlocker_result = _try_web_unlocker(url, max_chars, format)
+        if unlocker_result is not None:
+            return unlocker_result
+        # Fall through to direct fetch if unlocker fails
+
     # Check cache
     cache = get_cache()
-    cache_key = f"browse:{url}:{format}"
+    cache_key = f"browse:{url}:{format}:u={use_unlocker}"
     cached = cache.get(cache_key)
     if cached is not None:
         cached_text = cached[0]
@@ -441,6 +504,12 @@ def browse(url: str, max_chars: int = 50000, format: str = "markdown",
 
     except urllib.error.HTTPError as e:
         logger.error("browse_http_error: url=%r code=%s", url, e.code)
+        # Auto-fallback to Web Unlocker for 403/429 (blocked/CAPTCHA/geo-restricted)
+        unlocker_auto = os.getenv("ZERO_SEARCH_BRIGHTDATA_UNLOCKER_AUTO", "1").strip() not in ("0", "false", "no", "disabled")
+        if use_unlocker is not False and unlocker_auto and e.code in (403, 429):
+            unlocker_result = _try_web_unlocker(url, max_chars, format)
+            if unlocker_result is not None:
+                return unlocker_result
         return {
             "status": "error",
             "url": url,
