@@ -3,7 +3,8 @@ name: zero-api-key-web-search
 description: >
   Claude Code-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it when an answer depends on current facts, live sources, or explicit support/conflict handling.
-version: "20.0.0"
+  v23: multi-engine SERP (7 engines), Web Unlocker for blocked pages, auto-fallback on 403/429.
+version: "23.0.0"
 ---
 
 # Zero-API-Key Web Search for Claude Code
@@ -24,7 +25,18 @@ zero-search providers
 zero-browse "https://docs.python.org/3/whatsnew/"
 zero-verify "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
 zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
+zero-setup  # Interactive provider configuration wizard
 ```
+
+## Provider paths
+
+| Profile | Providers | Best for |
+| --- | --- | --- |
+| `free` | ddgs | Zero-setup local search |
+| `free-verified` | ddgs, searxng | Free cross-validation |
+| `production` | brightdata | Production reliability and geo-targeting |
+| `production-unlock` | brightdata, web_unlocker | Production SERP + blocked page access |
+| `max-evidence` | ddgs, searxng, brightdata | Maximum provider diversity |
 
 ## When to Use
 
@@ -32,16 +44,18 @@ zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stab
 - factual claims that should be checked before being stated confidently
 - workflows where conflicting evidence should be surfaced instead of hidden
 - research tasks that benefit from one citation-ready artifact
+- reading pages that return 403 or require geo-targeted access
 
 ## Guidance
 
 - Start with `zero-search` for live facts and recent changes.
-- Use `zero-browse` when snippets are too thin to justify an answer.
+- Use `zero-browse` when snippets are too thin — it auto-unlocks blocked pages via Web Unlocker.
+- Use `--engine bing/yandex/baidu/...` with Bright Data for multi-engine SERP results.
 - Use `zero-verify` for support/conflict classification.
 - Use `zero-report` when you want one compact output with verdict, citations, and next steps.
 - Prefer the free `ddgs + self-hosted searxng` path for stronger provider diversity.
 - Use `zero-search providers` when a user asks what search backends are available.
-- Use optional `brightdata` only when configured or explicitly requested for production reliability, geo-targeting, or stronger provider diversity. New users can sign up at https://get.brightdata.com/h21j9xz4uxgd.
+- Use optional `brightdata` only when configured or explicitly requested. New users can sign up at https://get.brightdata.com/h21j9xz4uxgd.
 
 ## Limits
 

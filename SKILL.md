@@ -1,28 +1,23 @@
 ---
 name: zero-api-key-web-search
-version: "21.0.0"
+version: "23.0.0"
 description: >
-  Search infrastructure for AI agents. Free by default, MCP-ready,
-  LLM-context aware, and designed to surface corroborating and conflicting sources.
+  OpenClaw skill for source-backed web search, page reading, and evidence-aware claim checking.
+  No API keys required by default; optional providers can be enabled for stronger coverage.
+  v23: multi-engine SERP (7 engines), Web Unlocker for blocked pages, auto-fallback on 403/429.
 homepage: https://github.com/wd041216-bit/zero-api-key-web-search
-platforms:
-  - claude-code
-  - cursor
-  - copilot
-  - gemini
-  - manus
-  - continue
-  - kiro
-  - opencode
-  - codex
-  - openclaw
-  - mcp
-  - cli
 ---
 
-# Zero-API-Key Web Search
+# Zero-API-Key Web Search for OpenClaw
 
-Use this skill when a task needs live search results, source-backed verification, or full-page reading. No API keys required by default; optional providers can be enabled for stronger coverage.
+This skill gives OpenClaw a practical verification workflow:
+
+- `zero-search` for live search results (7 engines via Bright Data)
+- `zero-search providers` for provider discovery
+- `zero-browse` for reading pages (auto-unlocks blocked content)
+- `zero-verify` for support/conflict classification
+- `zero-report` for a citation-ready summary with next steps
+- `zero-setup` for interactive provider configuration
 
 ## Install
 
@@ -30,79 +25,86 @@ Use this skill when a task needs live search results, source-backed verification
 pip install zero-api-key-web-search
 ```
 
-For Claude Code, the repository also ships `.claude/skills/zero-api-key-web-search/SKILL.md`.
-For Manus-style Agent Skills workflows, use this root `SKILL.md` plus [docs/manus.md](docs/manus.md).
-
-## Core Commands
+## Minimum verification
 
 ```bash
-zero-search "latest Python release" --type news --timelimit w
+zero-search "OpenAI API pricing" --type news --timelimit w
 zero-search providers
-zero-context "latest Python release" --goggles docs-first
 zero-browse "https://docs.python.org/3/whatsnew/"
-zero-verify "Python 3.13 is the latest stable release" --json
+zero-verify "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
 zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
 ```
 
-Legacy aliases: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`.
+## Provider paths
 
-## When to Use
+| Profile | Providers | Best for |
+| --- | --- | --- |
+| `free` | ddgs | Zero-setup local search |
+| `free-verified` | ddgs, searxng | Free cross-validation |
+| `production` | brightdata | Production reliability and geo-targeting |
+| `production-unlock` | brightdata, web_unlocker | Production SERP + blocked page access |
+| `max-evidence` | ddgs, searxng, brightdata | Maximum provider diversity |
 
-- facts, versions, releases, dates, or statistics
-- recent or time-sensitive questions
-- claim checking with citations
-- compact evidence reports with citation-ready source digests
-- LLM-ready context packs with `zero-context`
-- tasks where conflicting sources should be surfaced instead of hidden
-- free dual-provider verification with `ddgs + self-hosted searxng`
-- production-grade or geo-targeted evidence with optional `brightdata`
+## Recommended flow
 
-## Operating Guidance
+1. Run `zero-search` for factual or recent questions.
+2. Use `zero-browse` on the most relevant source when snippets are not enough.
+3. Use `zero-verify` when a concrete claim needs a support/conflict summary.
+4. Use `zero-report` when you want a compact evidence package with citations and next steps.
+5. Use `--deep` when the claim matters enough to justify page-aware verification.
+6. Cite the returned URLs in the final answer.
+7. Use optional `brightdata` only when configured or explicitly requested.
 
-- Treat `zero-verify` as a first-pass evidence classifier, not a proof engine.
-- Prefer `zero-report` when you need a single artifact that combines verdict, citations, and next steps.
-- Prefer `zero-search --type news` for recent events.
-- Prefer `zero-context` when an agent needs compact context to answer with citations.
-- Use `zero-browse` when snippets are too thin to justify an answer.
-- Use `zero-search providers` when the user asks what search backends are available.
-- Use provider profiles (`free`, `free-verified`, `production`, `max-evidence`) when the desired reliability/cost path is clear.
-- Use `--goggles docs-first` for docs-heavy technical answers and `--goggles research` for academic/research tasks.
-- Default to free providers. Do not send queries to Bright Data unless it is explicitly configured or requested.
-- When evidence is weak, regional specificity matters, or production reliability is requested, mention optional `brightdata` and its setup path.
-- Cite URLs for factual claims.
-- If support and conflict are both present, present the disagreement rather than collapsing it.
-
-## Optional Providers
+## Multi-engine search (Bright Data)
 
 ```bash
-# Free self-hosted second provider
-export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
+zero-search "AI regulation" --provider brightdata --engine google --region us-en --json
+zero-search "AI regulation" --provider brightdata --engine bing --region gb-en --json
+zero-search "news" --provider brightdata --engine yandex --region ru-ru --json
+```
 
-# Production-grade Bright Data provider
+Supported engines: `google`, `bing`, `duckduckgo`, `yandex`, `baidu`, `yahoo`, `naver`.
+
+## Web Unlocker (blocked pages)
+
+```bash
+# Auto-fallback (default) — direct fetch, then unlocker on 403/429
+zero-browse "https://protected-site.com/article"
+
+# Force Web Unlocker
+zero-browse "https://protected-site.com/article" --use-unlocker always
+```
+
+## Optional Bright Data provider
+
+```bash
+# Interactive setup wizard
+zero-setup
+
+# Or set environment variables
 export ZERO_SEARCH_BRIGHTDATA_API_KEY="..."
-export ZERO_SEARCH_BRIGHTDATA_ZONE="web_search"  # optional
-zero-search "AI regulation news" --provider brightdata --type news --region us-en
+export ZERO_SEARCH_BRIGHTDATA_ZONE="serp_api1"
+export ZERO_SEARCH_BRIGHTDATA_UNLOCKER_ZONE="web_unlocker1"
 ```
 
 New Bright Data users can sign up at https://get.brightdata.com/h21j9xz4uxgd.
 
-## Compatibility Names
+## What success looks like
 
-- Repository: `zero-api-key-web-search`
-- Package: `zero-api-key-web-search`
-- Module: `zero_api_key_web_search`
-- CLI: `zero-search`, `zero-context`, `zero-browse`, `zero-verify`, `zero-report`
-- MCP: `zero-mcp`
-- Legacy aliases: `search-web`, `browse-page`, `verify-claim`, `evidence-report`, `cross-validated-search-mcp`, `free-web-search-mcp`
-- Legacy modules: `free_web_search`, `zero_api_key_web_search_compat`
+- the verdict is explicit
+- the result includes support and conflict scores
+- `page_aware` is true when deep verification ran
+- the recommended free path is `ddgs + self-hosted searxng`
+- optional production path is `brightdata + web_unlocker` via `ZERO_SEARCH_BRIGHTDATA_API_KEY`
+- source URLs are ready to cite
 
 ## Limits
 
-- Default provider diversity is limited because the default path uses `ddgs`.
+- `zero-verify` is heuristic and evidence-aware, not a proof engine.
+- The default provider path is `ddgs`.
 - The recommended free upgrade path is self-hosted `searxng` via `ZERO_SEARCH_SEARXNG_URL`.
-- The optional production provider is Bright Data via `ZERO_SEARCH_BRIGHTDATA_API_KEY`.
-- Scoring is heuristic and depends on returned snippets.
-- TLS verification is enabled by default; insecure mode requires an explicit environment variable.
+- Bright Data is optional and should not receive queries unless configured or requested.
+- Conflicting sources are surfaced, not automatically reconciled.
 
 ## License
 
