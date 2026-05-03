@@ -1,7 +1,7 @@
-# Maturity Report: web-search-infra
+# Maturity Report: agent-search-infrastructure
 
-**Domain**: web-search-infra
-**Iteration**: 13 / 10
+**Domain**: agent-search-infrastructure
+**Iteration**: 14 / 10
 **Status**: scored_converged
 
 ## Score Summary
@@ -13,6 +13,12 @@
 | Thickness | 25 | 25 |
 | Effectiveness | 25 | 25 |
 | **Total** | **100** | **100** |
+
+## Coverage Axes (14/14)
+
+web-search, mcp-integration, claim-verification, evidence-reports, llm-context, provider-diversity, source-quality, freshness-scoring, response-caching, markdown-extraction, redirect-safety, domain-filtering, multi-agent-integration, pdf-extraction
+
+See [docs/v22-features.md](docs/v22-features.md) for axis-to-implementation traceability.
 
 ## Expert Council
 
