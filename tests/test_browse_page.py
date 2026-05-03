@@ -1,6 +1,7 @@
 """Unit tests for zero_api_key_web_search.browse_page module."""
 import sys
 import unittest
+import urllib.error
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -12,22 +13,23 @@ from zero_api_key_web_search.browse_page import browse, extract_text
 class TestBrowsePage(unittest.TestCase):
     """Tests for the browse() function."""
 
-    @patch("zero_api_key_web_search.browse_page.urllib.request.urlopen")
-    def test_browse_returns_success_payload(self, mock_urlopen):
-        """browse() should return a success payload for a valid URL."""
+    def _make_mock_opener(self, html_bytes, headers=None):
+        """Create a mock opener that returns the given HTML."""
         mock_response = MagicMock()
-        mock_response.read.return_value = b"""
-        <html>
-          <head><title>Test Page</title></head>
-          <body>
-            <p>Hello, this is a test page with some content.</p>
-          </body>
-        </html>
-        """
-        mock_response.headers = {}
+        mock_response.read.return_value = html_bytes
+        mock_response.headers = headers or {"Content-Type": "text/html"}
         mock_response.__enter__ = MagicMock(return_value=mock_response)
         mock_response.__exit__ = MagicMock(return_value=False)
-        mock_urlopen.return_value = mock_response
+        mock_opener = MagicMock()
+        mock_opener.open.return_value = mock_response
+        return mock_opener
+
+    @patch("zero_api_key_web_search.browse_page.urllib.request.build_opener")
+    def test_browse_returns_success_payload(self, mock_build_opener):
+        """browse() should return a success payload for a valid URL."""
+        html = b"""<html><head><title>Test Page</title></head>
+        <body><p>Hello, this is a test page with some content.</p></body></html>"""
+        mock_build_opener.return_value = self._make_mock_opener(html)
 
         result = browse("https://example.com")
         self.assertIsInstance(result, dict)
@@ -36,10 +38,12 @@ class TestBrowsePage(unittest.TestCase):
         self.assertIn("Hello, this is a test page", result["content"])
         self.assertIn("insecure_ssl", result)
 
-    @patch("zero_api_key_web_search.browse_page.urllib.request.urlopen")
-    def test_browse_handles_network_error(self, mock_urlopen):
+    @patch("zero_api_key_web_search.browse_page.urllib.request.build_opener")
+    def test_browse_handles_network_error(self, mock_build_opener):
         """browse() should return an error payload on network failures."""
-        mock_urlopen.side_effect = Exception("Connection refused")
+        mock_opener = MagicMock()
+        mock_opener.open.side_effect = urllib.error.URLError("Connection refused")
+        mock_build_opener.return_value = mock_opener
         result = browse("https://nonexistent.example.com")
         self.assertIsInstance(result, dict)
         self.assertEqual(result["status"], "error")
@@ -52,19 +56,15 @@ class TestBrowsePage(unittest.TestCase):
         self.assertIsInstance(result, dict)
         self.assertEqual(result["status"], "error")
 
-    @patch("zero_api_key_web_search.browse_page.urllib.request.urlopen")
-    def test_browse_truncates_content(self, mock_urlopen):
+    @patch("zero_api_key_web_search.browse_page.urllib.request.build_opener")
+    def test_browse_truncates_content(self, mock_build_opener):
         """browse() should truncate long content while reporting the full length."""
-        mock_response = MagicMock()
-        mock_response.read.return_value = (
-            "<html><head><title>Fixture</title></head><body>"
-            + ("A" * 120)
-            + "</body></html>"
-        ).encode("utf-8")
-        mock_response.headers = {}
-        mock_response.__enter__ = MagicMock(return_value=mock_response)
-        mock_response.__exit__ = MagicMock(return_value=False)
-        mock_urlopen.return_value = mock_response
+        html = (
+            b"<html><head><title>Fixture</title></head><body>"
+            + b"A" * 120
+            + b"</body></html>"
+        )
+        mock_build_opener.return_value = self._make_mock_opener(html)
 
         result = browse("https://example.com/long", max_chars=40)
 

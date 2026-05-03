@@ -298,6 +298,31 @@ async def list_tools() -> list[Tool]:
                 "type": "object",
                 "properties": {}
             }
+        ),
+        Tool(
+            name="setup_providers",
+            description=(
+                "Check provider status and get setup instructions. Shows which providers are configured, "
+                "how to set up Bright Data (production) and SearXNG (free), and validates API keys. "
+                "Use this when you need to configure or troubleshoot search providers."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "test_brightdata_key": {
+                        "type": "string",
+                        "description": "Optional Bright Data API key to test."
+                    },
+                    "test_brightdata_zone": {
+                        "type": "string",
+                        "description": "Bright Data zone name (default: serp_api1)."
+                    },
+                    "test_searxng_url": {
+                        "type": "string",
+                        "description": "Optional SearXNG instance URL to test."
+                    }
+                }
+            }
         )
     ]
 
@@ -584,6 +609,58 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         elif name == "clear_cache":
             clear_cache()
             return [TextContent(type="text", text="Cache cleared successfully.")]
+
+        elif name == "setup_providers":
+            from zero_api_key_web_search.provider_setup import _test_brightdata, _test_searxng
+
+            result_text = "Provider Status\n" + "=" * 50 + "\n\n"
+
+            # Show current status
+            for item in searcher.provider_statuses():
+                icon = "✅" if item["status"] == "ready" else "⚪"
+                result_text += f"{icon} {item['name']}: {item['status']} ({item['kind']})\n"
+                result_text += f"   {item['description']}\n"
+                if item["status"] != "ready":
+                    result_text += f"   Setup: {item.get('setup', '')}\n"
+                if "signup_url" in item:
+                    result_text += f"   Sign up: {item['signup_url']}\n"
+
+            current = ", ".join(provider.name for provider in searcher.providers)
+            result_text += f"\nActive providers: {current}\n"
+
+            # Test Bright Data key if provided
+            bd_key = arguments.get("test_brightdata_key")
+            if bd_key:
+                bd_zone = arguments.get("test_brightdata_zone", "serp_api1")
+                result_text += f"\n\nBright Data Test (zone: {bd_zone})\n" + "-" * 40 + "\n"
+                bd_result = _test_brightdata(bd_key, bd_zone)
+                if bd_result["success"]:
+                    result_text += f"✅ Working! Got {bd_result['result_count']} results.\n"
+                    result_text += f"Sample: {bd_result.get('sample_title', '')}\n"
+                    result_text += f"\nTo enable, set: ZERO_SEARCH_BRIGHTDATA_API_KEY={bd_key}\n"
+                else:
+                    result_text += f"❌ {bd_result['error']}\n"
+                    if bd_result.get("needs_zone"):
+                        result_text += f"\nCreate zone '{bd_zone}' in Bright Data Dashboard:\n"
+                        result_text += "  Proxies → Add new zone → SERP API → name it '{bd_zone}'\n"
+
+            # Test SearXNG URL if provided
+            sx_url = arguments.get("test_searxng_url")
+            if sx_url:
+                result_text += f"\n\nSearXNG Test ({sx_url})\n" + "-" * 40 + "\n"
+                sx_result = _test_searxng(sx_url)
+                if sx_result["success"]:
+                    result_text += f"✅ Working! Got {sx_result['result_count']} results.\n"
+                    result_text += f"\nTo enable, set: ZERO_SEARCH_SEARXNG_URL={sx_url}\n"
+                else:
+                    result_text += f"❌ {sx_result['error']}\n"
+
+            # Recommendations
+            guidance = searcher._provider_guidance()
+            result_text += f"\n\nRecommendation: {guidance.get('recommended_next_step', '')}\n"
+            result_text += f"\nFree credits signup: {guidance.get('brightdata_signup_url', '')}\n"
+
+            return [TextContent(type="text", text=result_text)]
 
         else:
             raise ValueError(f"Unknown tool: {name}")

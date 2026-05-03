@@ -1,4 +1,9 @@
-"""Bright Data SERP API search provider."""
+"""Bright Data SERP API search provider.
+
+Uses Bright Data's Super Proxy with brd_json=1 for structured SERP results.
+Falls back to HTML parsing when structured results are unavailable.
+Supports multiple search engines, geo-targeting, and search types.
+"""
 
 from __future__ import annotations
 
@@ -12,7 +17,11 @@ from zero_api_key_web_search.providers.base import ProviderConfigurationError, P
 
 
 class BrightDataProvider:
-    """Optional production-grade provider backed by Bright Data SERP API."""
+    """Optional production-grade provider backed by Bright Data SERP API.
+
+    Uses the Super Proxy endpoint with brd_json=1 to get structured JSON results.
+    Automatically falls back to HTML parsing when structured results are unavailable.
+    """
 
     name = "brightdata"
     SIGNUP_URL = "https://get.brightdata.com/h21j9xz4uxgd"
@@ -28,7 +37,7 @@ class BrightDataProvider:
         "BRIGHT_DATA_SERP_ZONE",
     )
     COUNTRY_ENV_VAR = "ZERO_SEARCH_BRIGHTDATA_COUNTRY"
-    DEFAULT_ZONE = "web_search"
+    DEFAULT_ZONE = "serp_api1"
 
     def __init__(
         self,
@@ -88,7 +97,7 @@ class BrightDataProvider:
 
     def _search_url(self, query: str, search_type: str, region: str) -> str:
         country = self._region_to_country(region)
-        params = {"q": query}
+        params = {"q": query, "brd_json": "1"}
         if country:
             params["gl"] = country
             params["hl"] = region.split("-")[0] if "-" in region else "en"
@@ -121,9 +130,6 @@ class BrightDataProvider:
         country = self._region_to_country(region)
         if country:
             payload["country"] = country
-        data_format = kwargs.get("data_format")
-        if data_format:
-            payload["data_format"] = data_format
         return payload
 
     def _extract_result_url(self, result: dict) -> str:
@@ -145,6 +151,69 @@ class BrightDataProvider:
         if not candidates and isinstance(payload.get("body"), dict):
             return self._extract_results(payload["body"], max_results)
         return candidates[:max_results]
+
+    def _parse_html_results(self, html: str, max_results: int) -> list[ProviderResult]:
+        """Parse Google HTML search results using BeautifulSoup."""
+        try:
+            from bs4 import BeautifulSoup
+        except ImportError:
+            return []
+
+        soup = BeautifulSoup(html, "lxml")
+        results: list[ProviderResult] = []
+
+        for container in soup.select("div.tF2Cxc")[:max_results]:
+            title_tag = container.select_one("h3")
+            link_tag = container.select_one("a[href]")
+            snippet_tag = container.select_one("div.VwiC3b, div.IsZvec")
+
+            if not link_tag:
+                continue
+
+            url = link_tag.get("href", "")
+            if not url or url.startswith("/search"):
+                continue
+
+            title = title_tag.get_text(strip=True) if title_tag else ""
+            snippet = snippet_tag.get_text(strip=True) if snippet_tag else ""
+
+            results.append(
+                ProviderResult(
+                    url=url,
+                    title=title,
+                    snippet=snippet,
+                    date="",
+                    metadata={"provider": "brightdata", "zone": self.zone},
+                )
+            )
+
+        if not results:
+            for h3 in soup.select("h3")[:max_results]:
+                parent_a = h3.find_parent("a", href=True)
+                if not parent_a:
+                    continue
+                url = parent_a.get("href", "")
+                if not url or url.startswith("/search"):
+                    continue
+                title = h3.get_text(strip=True)
+                snippet = ""
+                snippet_parent = h3.find_parent(["div", "li"])
+                if snippet_parent:
+                    snippet_tag = snippet_parent.select_one("div.VwiC3b, div.IsZvec, span.aCOpRe")
+                    if snippet_tag:
+                        snippet = snippet_tag.get_text(strip=True)
+
+                results.append(
+                    ProviderResult(
+                        url=url,
+                        title=title,
+                        snippet=snippet,
+                        date="",
+                        metadata={"provider": "brightdata", "zone": self.zone},
+                    )
+                )
+
+        return results
 
     def search(
         self,
@@ -174,7 +243,7 @@ class BrightDataProvider:
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "zero-api-key-web-search/1.0.0",
+                "User-Agent": "zero-api-key-web-search/22.0.0",
             },
         )
 
@@ -186,28 +255,60 @@ class BrightDataProvider:
             raise RuntimeError(f"Bright Data request failed: HTTP {exc.code} {detail}") from exc
 
         payload = json.loads(response_text)
-        general = payload.get("general", {})
-        if not isinstance(general, dict):
-            general = {}
-        results: list[ProviderResult] = []
-        for result in self._extract_results(payload, max_results=max_results):
-            url = self._extract_result_url(result)
-            if not url:
-                continue
-            results.append(
-                ProviderResult(
-                    url=url,
-                    title=result.get("title", result.get("name", "")),
-                    snippet=result.get("description", result.get("snippet", "")),
-                    date=result.get("date", result.get("published", "")),
-                    metadata={
-                        "provider": "brightdata",
-                        "zone": self.zone,
-                        "search_engine": general.get("search_engine"),
-                    },
-                )
-            )
-        return results
+
+        # Try structured SERP results first (brd_json=1 format)
+        # The body field is a JSON string containing parsed SERP data
+        serp_data = None
+        if isinstance(payload.get("body"), str) and payload["body"].startswith("{"):
+            try:
+                serp_data = json.loads(payload["body"])
+            except (json.JSONDecodeError, TypeError):
+                pass
+        elif isinstance(payload.get("body"), dict):
+            serp_data = payload["body"]
+
+        # Also check top-level for direct SERP API response (no wrapping)
+        if serp_data is None and "organic" in payload:
+            serp_data = payload
+
+        if serp_data:
+            general = serp_data.get("general", {})
+            if not isinstance(general, dict):
+                general = {}
+            json_results = self._extract_results(serp_data, max_results=max_results)
+
+            if json_results:
+                results: list[ProviderResult] = []
+                for result in json_results:
+                    url = self._extract_result_url(result)
+                    if not url:
+                        continue
+                    results.append(
+                        ProviderResult(
+                            url=url,
+                            title=result.get("title", result.get("name", "")),
+                            snippet=result.get("description", result.get("snippet", "")),
+                            date=result.get("date", result.get("published", "")),
+                            metadata={
+                                "provider": "brightdata",
+                                "zone": self.zone,
+                                "search_engine": general.get("search_engine"),
+                            },
+                        ),
+                    )
+                return results
+
+        # Fallback: parse HTML response (when brd_json is not available)
+        html_body = ""
+        if isinstance(payload.get("body"), str) and not payload["body"].startswith("{"):
+            html_body = payload["body"]
+        elif isinstance(response_text, str) and "<!doctype" in response_text.lower():
+            html_body = response_text
+
+        if html_body:
+            return self._parse_html_results(html_body, max_results)
+
+        return []
 
     async def asearch(
         self,

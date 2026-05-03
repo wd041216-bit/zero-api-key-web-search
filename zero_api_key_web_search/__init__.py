@@ -12,7 +12,7 @@ from zero_api_key_web_search.core import (
 )
 from zero_api_key_web_search.providers import DdgsProvider, SearxngProvider
 
-__version__ = "22.0.0"
+__version__ = "22.1.0"
 
 __all__ = [
     "Answer",

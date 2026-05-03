@@ -332,7 +332,7 @@
     }
   ],
   "created_at": "2026-04-17T02:43:30Z",
-  "updated_at": "2026-04-30T23:42:11Z",
+  "updated_at": "2026-05-03T01:21:49Z",
   "scoring_history_refs": [
     "scoring_reports/web-search-infra_2026-04-30_23-22-27.json",
     "scoring_reports/web-search-infra_2026-04-30_23-30-49.json",
@@ -340,6 +340,8 @@
     "scoring_reports/web-search-infra_2026-04-30_23-38-34.json",
     "scoring_reports/web-search-infra_2026-04-30_23-39-23.json",
     "scoring_reports/web-search-infra_2026-04-30_23-41-12.json",
-    "scoring_reports/web-search-infra_2026-04-30_23-42-11.json"
+    "scoring_reports/web-search-infra_2026-04-30_23-42-11.json",
+    "scoring_reports/agent-search-infrastructure_2026-05-03_01-16-57.json",
+    "scoring_reports/agent-search-infrastructure_2026-05-03_01-21-49.json"
   ]
 }

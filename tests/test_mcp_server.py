@@ -15,7 +15,16 @@ class TestMcpServer(unittest.IsolatedAsyncioTestCase):
         names = {tool.name for tool in tools}
         self.assertEqual(
             names,
-            {"list_providers", "search_web", "llm_context", "browse_page", "verify_claim", "evidence_report"},
+            {
+                "list_providers",
+                "search_web",
+                "llm_context",
+                "browse_page",
+                "verify_claim",
+                "evidence_report",
+                "clear_cache",
+                "setup_providers",
+            },
         )
 
     async def test_call_tool_search_web(self):

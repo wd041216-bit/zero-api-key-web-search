@@ -1,7 +1,8 @@
 {
   "version": "expert_forum_index_v1",
-  "generated_at": "2026-04-30T23:19:29Z",
+  "generated_at": "2026-05-03T01:16:13Z",
   "domains": [
+    "agent-search-infrastructure",
     "cross-validated-search",
     "web-search-infra"
   ],

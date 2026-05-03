@@ -1,0 +1,15 @@
+{
+  "domain": "agent-search-infrastructure",
+  "council_id": "cross-validated-search-main-council",
+  "iteration": 14,
+  "last_score": {
+    "total": 97,
+    "breadth": 22,
+    "depth": 25,
+    "thickness": 25,
+    "effectiveness": 25
+  },
+  "target_repo": "/tmp/zero-api-key-web-search",
+  "build_command": "auto-detect",
+  "generated_at": "2026-05-03T01:18:47Z"
+}
