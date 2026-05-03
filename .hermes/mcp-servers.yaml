@@ -1,0 +1,9 @@
+# Hermes MCP Server Configuration for zero-api-key-web-search
+# Add this to your ~/.hermes/config.yaml under mcp_servers:
+
+mcp_servers:
+  zero-search:
+    command: "zero-mcp"
+    args: []
+    enabled: true
+    timeout: 120

@@ -13,6 +13,7 @@ from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool
 
 from zero_api_key_web_search.browse_page import browse
+from zero_api_key_web_search.cache import get_cache, clear_cache
 from zero_api_key_web_search.core import UltimateSearcher
 
 # Configure logging
@@ -143,8 +144,9 @@ async def list_tools() -> list[Tool]:
         Tool(
             name="browse_page",
             description=(
-                "Fetch and extract pure text content from a specific URL."
-                " Use this to read the full content of a page found via search_web."
+                "Fetch and extract content from a URL. Returns Markdown by default (use format='text' for plain text)."
+                " Supports caching, cross-host redirect detection, domain filtering, and PDF extraction."
+                " Use the prompt parameter to specify what information you want from the page."
             ),
             inputSchema={
                 "type": "object",
@@ -155,8 +157,18 @@ async def list_tools() -> list[Tool]:
                     },
                     "max_chars": {
                         "type": "integer",
-                        "description": "Maximum number of characters to extract. Default is 10000.",
-                        "default": 10000
+                        "description": "Maximum number of characters to extract. Default is 50000.",
+                        "default": 50000
+                    },
+                    "format": {
+                        "type": "string",
+                        "enum": ["markdown", "text"],
+                        "description": "Output format: 'markdown' (default) preserves headings, lists, code blocks; 'text' returns plain text.",
+                        "default": "markdown"
+                    },
+                    "prompt": {
+                        "type": "string",
+                        "description": "Optional extraction hint describing what information to focus on. The agent's LLM uses this to prioritize relevant content."
                     }
                 },
                 "required": ["url"]
@@ -278,6 +290,14 @@ async def list_tools() -> list[Tool]:
                 },
                 "required": ["query"]
             }
+        ),
+        Tool(
+            name="clear_cache",
+            description="Clear the response cache. Use this when you need fresh results instead of cached data.",
+            inputSchema={
+                "type": "object",
+                "properties": {}
+            }
         )
     ]
 
@@ -308,6 +328,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             result_text += "\nGoggles presets:\n"
             for goggles_name, item in goggles.items():
                 result_text += f"- {goggles_name}: {item['description']}\n"
+            cache_stats = get_cache().stats()
+            result_text += f"\nCache: {cache_stats['entries']} entries, {cache_stats['size_bytes'] // 1024}KB / {cache_stats['max_bytes'] // 1024 // 1024}MB | hits={cache_stats['hits']} misses={cache_stats['misses']} evictions={cache_stats['evictions']}\n"
             return [TextContent(type="text", text=result_text)]
 
         if name == "search_web":
@@ -376,18 +398,34 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 
         elif name == "browse_page":
             url = arguments.get("url", "")
-            max_chars = arguments.get("max_chars", 10000)
+            max_chars = arguments.get("max_chars", 50000)
+            format_type = arguments.get("format", "markdown")
+            prompt = arguments.get("prompt")
 
-            logger.info(f"Executing browse_page: url='{url}'")
+            logger.info(f"Executing browse_page: url='{url}' format='{format_type}'")
 
-            result = browse(url, max_chars=max_chars)
+            result = browse(url, max_chars=max_chars, format=format_type, prompt=prompt)
 
             if result["status"] == "success":
                 result_text = f"Title: {result['title']}\n"
-                result_text += f"URL: {result['url']}\n\n"
-                result_text += f"Content:\n{result['content']}\n"
+                result_text += f"URL: {result['url']}\n"
+                if result.get("from_cache"):
+                    result_text += "(from cache)\n"
+                result_text += f"\nContent:\n{result['content']}\n"
                 if result.get('truncated'):
-                    result_text += f"\n... [Content truncated. Total length: {result['total_length']} chars]"
+                    result_text += f"\n{result.get('truncation_marker', '')}"
+                if result.get("prompt_hint"):
+                    result_text += f"\n\n[Extraction focus: {result['prompt_hint']}]"
+            elif result["status"] == "redirect":
+                result_text = (
+                    f"Cross-host redirect detected:\n"
+                    f"  Original URL: {result['original_url']}\n"
+                    f"  Redirect URL: {result['redirect_url']}\n"
+                    f"  Status code: {result['status_code']}\n"
+                    f"To follow this redirect, browse the redirect URL directly."
+                )
+            elif result["status"] == "blocked":
+                result_text = f"Domain blocked: {result['domain']} — {result['reason']}"
             else:
                 result_text = f"Error fetching {url}: {result.get('error', 'Unknown error')}"
 
@@ -542,6 +580,10 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                     result_text += f"- {step}\n"
 
             return [TextContent(type="text", text=result_text)]
+
+        elif name == "clear_cache":
+            clear_cache()
+            return [TextContent(type="text", text="Cache cleared successfully.")]
 
         else:
             raise ValueError(f"Unknown tool: {name}")

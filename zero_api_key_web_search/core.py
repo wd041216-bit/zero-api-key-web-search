@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 from zero_api_key_web_search.browse_page import browse
+from zero_api_key_web_search.cache import get_cache
 from zero_api_key_web_search.providers import (
     BrightDataProvider,
     DdgsProvider,
@@ -774,6 +775,16 @@ class UltimateSearcher:
         successful_providers: list[str] = []
 
         def _call_provider(provider_name: str) -> tuple[str, list[Source]]:
+            # Check cache first
+            cache = get_cache()
+            cache_key = cache._make_search_key(query, provider_name, search_type, region, timelimit)
+            cached = cache.get(cache_key)
+            if cached is not None:
+                import json as _json
+                cached_data = _json.loads(cached[0])
+                results = [Source(**s) for s in cached_data]
+                return provider_name, results
+
             results = self._search_provider(
                 provider_name=provider_name,
                 query=query,
@@ -783,6 +794,14 @@ class UltimateSearcher:
                 max_results=max_results,
                 **kwargs,
             )
+            # Cache successful results
+            if any(r.url != "error" for r in results):
+                cache.put(cache_key, json.dumps([{
+                    "url": r.url, "title": r.title, "snippet": r.snippet,
+                    "rank": r.rank, "engine": r.engine, "cross_validated": r.cross_validated,
+                    "date": r.date, "extra": r.extra,
+                } for r in results]), "application/json")
+
             return provider_name, results
 
         if len(selected_providers) > 1:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "zero-api-key-web-search"
-version = "21.0.0"
+version = "22.0.0"
 description = "Search infrastructure for AI agents: free by default, MCP-ready, LLM-context aware, and production-grade when needed."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -31,6 +31,7 @@ dependencies = [
   "lxml>=4.6.0",
   "ddgs>=0.1.0",
   "mcp>=1.1.2",
+  "markdownify>=0.13.1",
 ]
 
 [project.urls]
@@ -56,6 +57,9 @@ cross-validated-search-mcp = "zero_api_key_web_search.mcp_server:run"
 free-web-search-mcp = "zero_api_key_web_search_compat.mcp_server:run"
 
 [project.optional-dependencies]
+pdf = [
+  "pypdf>=4.0.0",
+]
 dev = [
   "build>=1.2.2",
   "twine>=6.1.0",

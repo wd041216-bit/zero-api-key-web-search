@@ -2,18 +2,34 @@
 """Zero-API-Key Web Search - Web Page Browser and Text Extractor.
 
 Fetches a URL, handles gzip/deflate decompression, and extracts readable
-text content using BeautifulSoup (with a regex fallback).
+content from HTML pages using BeautifulSoup (with regex fallback).
+
+Supports:
+  - HTML-to-Markdown conversion (via markdownify) and plain-text extraction
+  - Prompt-based extraction hints for calling agents
+  - LRU response cache with 15-minute TTL
+  - Cross-host redirect blocking (same-host redirects allowed, max 10 hops)
+  - Domain allowlist/blocklist via environment variables
+  - Basic PDF text extraction (optional, requires pypdf)
+  - Configurable content size limits with truncation markers
 
 Entry point:
-    browse-page <url> [--max-chars N] [--json]
+    browse-page <url> [--max-chars N] [--format text|markdown] [--json]
 """
+
 import argparse
 import gzip
 import json
 import logging
+import os
 import re
+import urllib.error
 import urllib.request
+import zlib
+from http.client import HTTPResponse
+from urllib.parse import urlparse
 
+from zero_api_key_web_search.cache import get_cache
 from zero_api_key_web_search.transport import build_ssl_context, insecure_ssl_enabled
 
 logger = logging.getLogger("zero-api-key-web-search")
@@ -23,13 +39,94 @@ MAIN_CONTENT_ROLES = {"main", "article", "content", "main-content"}
 BOILERPLATE_TAGS = {"nav", "header", "footer", "aside", "form", "noscript"}
 BOILERPLATE_ROLES = {"navigation", "banner", "contentinfo", "complementary", "search"}
 
+MAX_REDIRECT_HOPS = 10
+
+# --- Domain safety ---
+
+_BLOCKED_DOMAINS: list[str] | None = None
+_ALLOWED_DOMAINS: list[str] | None = None
+
+
+def _load_domain_lists() -> None:
+    global _BLOCKED_DOMAINS, _ALLOWED_DOMAINS
+    block_str = os.getenv("ZERO_SEARCH_BLOCK_DOMAINS", "").strip()
+    allow_str = os.getenv("ZERO_SEARCH_ALLOW_DOMAINS", "").strip()
+    _BLOCKED_DOMAINS = [d.strip().lower() for d in block_str.split(",") if d.strip()] if block_str else []
+    _ALLOWED_DOMAINS = [d.strip().lower() for d in allow_str.split(",") if d.strip()] if allow_str else []
+
+
+def _check_domain_allowed(url: str) -> tuple[bool, str]:
+    """Check whether a URL's domain is allowed. Returns (allowed, reason)."""
+    global _BLOCKED_DOMAINS, _ALLOWED_DOMAINS
+    if _BLOCKED_DOMAINS is None:
+        _load_domain_lists()
+
+    hostname = urlparse(url).hostname or ""
+
+    if _ALLOWED_DOMAINS:
+        for allowed in _ALLOWED_DOMAINS:
+            if hostname == allowed or hostname.endswith("." + allowed):
+                break
+        else:
+            return False, f"Domain {hostname} not in allowlist"
+
+    if _BLOCKED_DOMAINS:
+        for blocked in _BLOCKED_DOMAINS:
+            if hostname == blocked or hostname.endswith("." + blocked):
+                return False, f"Domain {hostname} in blocklist"
+
+    return True, ""
+
+
+# --- Redirect handling ---
+
+
+def _is_same_host(original: str, redirect: str) -> bool:
+    """Whether two URLs share the same host, allowing www prefix differences."""
+    o = urlparse(original)
+    r = urlparse(redirect)
+    if o.scheme != r.scheme:
+        return False
+    if o.port != r.port:
+        return False
+    # Allow www.example.com <-> example.com
+    o_host = (o.hostname or "").lstrip("www.")
+    r_host = (r.hostname or "").lstrip("www.")
+    return o_host == r_host
+
+
+class _SafeRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Follow same-host redirects only; block cross-host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if not _is_same_host(req.full_url, newurl):
+            # Store the redirect info for the caller to handle
+            raise _CrossHostRedirect(req.full_url, newurl, code)
+        if self.max_redirects <= 0:
+            raise urllib.error.HTTPError(req.full_url, code, "Too many redirects", headers, fp)
+        self.max_redirects -= 1
+        new_req = urllib.request.Request(newurl, headers=req.headers)
+        return new_req
+
+
+class _CrossHostRedirect(Exception):
+    """Raised when a redirect goes to a different host."""
+
+    def __init__(self, original_url: str, redirect_url: str, status_code: int):
+        self.original_url = original_url
+        self.redirect_url = redirect_url
+        self.status_code = status_code
+        super().__init__(f"Cross-host redirect: {original_url} -> {redirect_url} ({status_code})")
+
+
+# --- Content extraction ---
+
 
 def _score_candidate(element) -> float:
     """Score an element's likelihood of being main content."""
     tag = element.name
     score = 0.0
 
-    # Semantic HTML5 main content tags
     if tag == "main":
         score += 50
     elif tag == "article":
@@ -37,12 +134,10 @@ def _score_candidate(element) -> float:
     elif tag == "section":
         score += 10
 
-    # ARIA / role attribute
     role = element.get("role", "")
     if role in MAIN_CONTENT_ROLES:
         score += 30
 
-    # ID/class heuristics
     identifiers = " ".join([
         element.get("id", ""),
         " ".join(element.get("class", []) if hasattr(element.get("class", ""), "__iter__") else []),
@@ -59,11 +154,9 @@ def _score_candidate(element) -> float:
         if word in identifiers:
             score -= 15
 
-    # Text density: longer text blocks are more likely main content
     text = element.get_text(strip=True)
     score += min(len(text) / 50, 30)
 
-    # Link density: high link ratio suggests nav/sidebar
     links = element.find_all("a")
     link_text = sum(len(a.get_text(strip=True)) for a in links)
     if len(text) > 0:
@@ -73,7 +166,6 @@ def _score_candidate(element) -> float:
         elif link_ratio > 0.25:
             score -= 10
 
-    # Penalize boilerplate tags
     if tag in BOILERPLATE_TAGS:
         score -= 30
     if element.get("role", "") in BOILERPLATE_ROLES:
@@ -84,7 +176,6 @@ def _score_candidate(element) -> float:
 
 def _find_main_content(soup):
     """Find the element most likely to contain main content."""
-    # Remove boilerplate tags before scoring
     for tag in soup.find_all(BOILERPLATE_TAGS):
         tag.decompose()
     for tag in soup.find_all(attrs={"role": lambda v: v in BOILERPLATE_ROLES if v else False}):
@@ -100,50 +191,24 @@ def _find_main_content(soup):
     return soup
 
 
-def extract_text(html: str):
-    """Extract the title and readable text content from an HTML string.
-
-    Uses a readability-style heuristic to find the main content area,
-    then extracts clean text from it. Falls back to full-page text if
-    no main content candidate is found.
-
-    Uses BeautifulSoup with lxml if available; falls back to regex otherwise.
-
-    Args:
-        html: Raw HTML string to parse.
-
-    Returns:
-        A tuple of (title, text) where title is the page title (or
-        'Unknown Title' if not found) and text is the cleaned body text
-        with excess whitespace collapsed.
-    """
+def extract_text(html: str) -> tuple[str, str]:
+    """Extract title and plain text from HTML. Returns (title, text)."""
     try:
         from bs4 import BeautifulSoup
-
         soup = BeautifulSoup(html, "lxml")
-
-        # Remove tags that never contain useful content
         for tag in soup(["script", "style", "noscript", "iframe", "svg", "canvas", "form"]):
             tag.decompose()
-
-        title = "Unknown Title"
-        if soup.title:
-            title = soup.title.get_text(strip=True) or "Unknown Title"
-
-        # Find main content using readability heuristic
+        title = soup.title.get_text(strip=True) if soup.title else "Unknown Title"
         main = _find_main_content(soup)
         text = main.get_text(separator=" ", strip=True)
         text = re.sub(r"\s+", " ", text)
-
         return title, text
     except ImportError:
-        # Regex fallback when BeautifulSoup is not installed
         title_match = re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.DOTALL)
         title = "Unknown Title"
         if title_match:
             title = re.sub(r"<[^>]+>", "", title_match.group(1)).strip()
             title = re.sub(r"\s+", " ", title)
-
         text = re.sub(r"<script[^>]*>.*?</script>", " ", html, flags=re.DOTALL | re.I)
         text = re.sub(r"<style[^>]*>.*?</style>", " ", text, flags=re.DOTALL | re.I)
         text = re.sub(r"<[^>]+>", " ", text)
@@ -151,31 +216,123 @@ def extract_text(html: str):
         return title, text
 
 
-def browse(url: str, max_chars: int = 10000) -> dict:
-    """Fetch a URL and return its extracted text content.
+def extract_markdown(html: str) -> tuple[str, str]:
+    """Extract title and Markdown-formatted content from HTML. Returns (title, markdown)."""
+    try:
+        from markdownify import MarkdownConverter
+    except ImportError:
+        logger.warning("markdownify not installed, falling back to plain text extraction")
+        return extract_text(html)
 
-    Handles gzip and deflate content encoding automatically.
-    Truncates the output to max_chars characters.
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html, "lxml")
+
+    # Remove non-content tags
+    for tag in soup(["script", "style", "noscript", "iframe", "svg", "canvas", "form"]):
+        tag.decompose()
+
+    title = soup.title.get_text(strip=True) if soup.title else "Unknown Title"
+
+    # Find main content
+    main = _find_main_content(soup)
+
+    # Convert to Markdown
+    md = MarkdownConverter(
+        heading_style="atx",
+        bullets="-",
+        code_language="",
+    ).convert_soup(main)
+
+    # Clean up excessive whitespace
+    md = re.sub(r"\n{3,}", "\n\n", md)
+    md = md.strip()
+
+    return title, md
+
+
+def _extract_pdf_text(raw: bytes) -> str:
+    """Try to extract text from PDF bytes. Returns empty string if pypdf unavailable."""
+    try:
+        from io import BytesIO
+        from pypdf import PdfReader
+        reader = PdfReader(BytesIO(raw))
+        pages = []
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                pages.append(text)
+        return "\n\n".join(pages)
+    except ImportError:
+        return ""
+    except Exception as e:
+        logger.warning("PDF extraction failed: %s", e)
+        return ""
+
+
+def browse(url: str, max_chars: int = 50000, format: str = "markdown",
+           prompt: str | None = None) -> dict:
+    """Fetch a URL and return its extracted content.
 
     Args:
-        url: The URL to fetch and extract text from.
-        max_chars: Maximum number of characters to return in the content
-            field (default: 10000). The full length is always reported.
+        url: The URL to fetch and extract content from.
+        max_chars: Maximum characters in the content field (default: 50000).
+        format: Output format — 'markdown' (default) or 'text'.
+        prompt: Optional extraction hint for the calling agent. When provided,
+            included in the response as prompt_hint for the agent's LLM to focus on.
 
     Returns:
-        A dict with the following keys on success:
-            - status (str): 'success'
-            - url (str): The requested URL.
-            - title (str): The page title.
-            - content (str): Extracted text, truncated to max_chars.
-            - truncated (bool): True if the content was truncated.
-            - total_length (int): Full length of the extracted text.
-
-        On error, returns:
-            - status (str): 'error'
-            - url (str): The requested URL.
-            - error (str): The error message.
+        Dict with:
+            - status: 'success', 'redirect', 'blocked', or 'error'
+            - url: The requested URL
+            - title: Page title (on success)
+            - content: Extracted content (markdown or text, truncated to max_chars)
+            - markdown: Markdown-formatted content (always included on success)
+            - text: Plain text content (always included on success)
+            - truncated: Whether content was truncated
+            - total_length: Full content length
+            - format: The format used
+            - prompt_hint: The prompt, if provided (for the calling agent to focus on)
+            - insecure_ssl: Whether insecure SSL was enabled
     """
+    # Domain safety check
+    allowed, reason = _check_domain_allowed(url)
+    if not allowed:
+        return {
+            "status": "blocked",
+            "url": url,
+            "domain": urlparse(url).hostname or "",
+            "reason": reason,
+        }
+
+    # Check cache
+    cache = get_cache()
+    cache_key = f"browse:{url}:{format}"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        cached_text = cached[0]
+        # Return cached result (still apply truncation)
+        content = cached_text[:max_chars]
+        is_truncated = len(cached_text) > max_chars
+        result = {
+            "status": "success",
+            "url": url,
+            "title": "(from cache)",
+            "content": content,
+            "truncated": is_truncated,
+            "total_length": len(cached_text),
+            "format": format,
+            "insecure_ssl": insecure_ssl_enabled(),
+            "from_cache": True,
+        }
+        if format == "markdown" or format == "text":
+            result["markdown"] = content
+            result["text"] = content
+        if prompt:
+            result["prompt_hint"] = prompt
+        if is_truncated:
+            result["truncation_marker"] = f"[Content truncated at {max_chars} chars. Total length: {len(cached_text)}.]"
+        return result
+
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -189,33 +346,107 @@ def browse(url: str, max_chars: int = 10000) -> dict:
     context = build_ssl_context()
 
     try:
-        logger.info("browse: url=%r max_chars=%d", url, max_chars)
+        logger.info("browse: url=%r max_chars=%d format=%s", url, max_chars, format)
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=15, context=context) as r:
-            raw = r.read()
-            encoding = r.headers.get("Content-Encoding", "")
+        redirect_handler = _SafeRedirectHandler()
+        redirect_handler.max_redirects = MAX_REDIRECT_HOPS
+        opener = urllib.request.build_opener(redirect_handler, urllib.request.HTTPSHandler(context=context))
 
-            if encoding == "gzip":
-                html = gzip.decompress(raw).decode("utf-8", errors="ignore")
-            elif encoding == "deflate":
-                import zlib
-                html = zlib.decompress(raw).decode("utf-8", errors="ignore")
-            else:
-                html = raw.decode("utf-8", errors="ignore")
-
-            title, text = extract_text(html)
-            content = text[:max_chars]
-            is_truncated = len(text) > max_chars
-
+        try:
+            r: HTTPResponse = opener.open(req, timeout=15)
+        except _CrossHostRedirect as e:
             return {
-                "status": "success",
-                "url": url,
-                "title": title,
-                "content": content,
-                "truncated": is_truncated,
-                "total_length": len(text),
-                "insecure_ssl": insecure_ssl_enabled(),
+                "status": "redirect",
+                "original_url": e.original_url,
+                "redirect_url": e.redirect_url,
+                "status_code": e.status_code,
             }
+
+        raw = r.read()
+        content_type = r.headers.get("Content-Type", "")
+        encoding = r.headers.get("Content-Encoding", "")
+
+        # Decompress
+        if encoding == "gzip":
+            html = gzip.decompress(raw).decode("utf-8", errors="ignore")
+        elif encoding == "deflate":
+            html = zlib.decompress(raw).decode("utf-8", errors="ignore")
+        else:
+            html = raw.decode("utf-8", errors="ignore")
+
+        # Handle PDF
+        if "application/pdf" in content_type:
+            pdf_text = _extract_pdf_text(raw)
+            if pdf_text:
+                title = "PDF Document"
+                text = pdf_text
+                md = pdf_text
+            else:
+                return {
+                    "status": "success",
+                    "url": url,
+                    "title": "PDF Document",
+                    "content": "[PDF content — install pypdf for text extraction: pip install zero-api-key-web-search[pdf]]",
+                    "markdown": "[PDF content — install pypdf for text extraction: pip install zero-api-key-web-search[pdf]]",
+                    "text": "[PDF content — install pypdf for text extraction: pip install zero-api-key-web-search[pdf]]",
+                    "truncated": False,
+                    "total_length": 0,
+                    "format": format,
+                    "insecure_ssl": insecure_ssl_enabled(),
+                }
+
+        # Handle non-HTML content types
+        elif "text/html" not in content_type and "application/xhtml" not in content_type:
+            # For plain text, JSON, etc. — return as-is
+            title = urlparse(url).path.split("/")[-1] or "Document"
+            text = html[:max_chars]
+            md = html[:max_chars]
+        else:
+            # HTML — extract content
+            title, text = extract_text(html)
+            _, md = extract_markdown(html)
+
+        # Select output format
+        if format == "text":
+            output = text
+        else:
+            output = md
+
+        # Truncation
+        is_truncated = len(output) > max_chars
+        content = output[:max_chars]
+
+        result = {
+            "status": "success",
+            "url": url,
+            "title": title,
+            "content": content,
+            "truncated": is_truncated,
+            "total_length": len(output),
+            "format": format,
+            "markdown": md,
+            "text": text,
+            "insecure_ssl": insecure_ssl_enabled(),
+        }
+
+        if is_truncated:
+            result["truncation_marker"] = f"[Content truncated at {max_chars} chars. Total length: {len(output)}.]"
+        if prompt:
+            result["prompt_hint"] = prompt
+
+        # Cache the full content (not truncated)
+        cache.put(cache_key, output, f"text/{format}")
+
+        return result
+
+    except urllib.error.HTTPError as e:
+        logger.error("browse_http_error: url=%r code=%s", url, e.code)
+        return {
+            "status": "error",
+            "url": url,
+            "error": f"HTTP {e.code}: {e.reason}",
+            "insecure_ssl": insecure_ssl_enabled(),
+        }
     except Exception as e:
         logger.error("browse_error: url=%r error=%s", url, e)
         return {
@@ -233,16 +464,22 @@ def main():
         epilog=(
             "Examples:\n"
             "  browse-page https://example.com\n"
-            "  browse-page https://example.com --max-chars 5000 --json"
+            "  browse-page https://example.com --max-chars 5000 --format markdown --json"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("url", help="URL to fetch and extract text from")
+    parser.add_argument("url", help="URL to fetch and extract content from")
     parser.add_argument(
         "--max-chars",
         type=int,
-        default=10000,
-        help="Maximum characters to return (default: 10000)",
+        default=50000,
+        help="Maximum characters to return (default: 50000)",
+    )
+    parser.add_argument(
+        "--format",
+        choices=["text", "markdown"],
+        default="markdown",
+        help="Output format (default: markdown)",
     )
     parser.add_argument(
         "--json",
@@ -251,22 +488,24 @@ def main():
     )
 
     args = parser.parse_args()
-    result = browse(args.url, args.max_chars)
+    result = browse(args.url, max_chars=args.max_chars, format=args.format)
 
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         if result["status"] == "success":
-            print(f"\n📄 {result['title']}")
-            print(f"🔗 {result['url']}")
+            print(f"\n{result['title']}")
+            print(f"{result['url']}")
             print(f"{'='*60}\n")
             print(result["content"])
-            if result["truncated"]:
-                print(
-                    f"\n... [Truncated. Total length: {result['total_length']} chars]"
-                )
+            if result.get("truncated"):
+                print(f"\n{result.get('truncation_marker', '')}")
+        elif result["status"] == "redirect":
+            print(f"Cross-host redirect: {result['original_url']} -> {result['redirect_url']} ({result['status_code']})")
+        elif result["status"] == "blocked":
+            print(f"Domain blocked: {result['domain']} ({result['reason']})")
         else:
-            print(f"❌ Error browsing {result['url']}: {result['error']}")
+            print(f"Error browsing {result['url']}: {result['error']}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,15 @@
+mcpServers:
+  zero-search:
+    name: "Zero-API-Key Web Search"
+    shortName: "zsearch"
+    command: "zero-mcp"
+    args: []
+
+agents:
+  researcher:
+    name: Research Agent
+    mcpServers: zero-search
+    tools:
+      - zero-search
+    permissions:
+      '*': allow

@@ -1,0 +1,11 @@
+name: zero-api-key-web-search
+version: 1.0.0
+description: Free web search with evidence verification and source citations for AI agents
+provides_tools:
+  - search_web
+  - browse_page
+  - verify_claim
+  - evidence_report
+  - llm_context
+  - list_providers
+  - clear_cache
