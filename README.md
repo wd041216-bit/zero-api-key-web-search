@@ -3,8 +3,8 @@
   <p><strong>Search infrastructure for AI agents.</strong></p>
   <p><em>Free by default. MCP-ready. LLM-context aware. Production-grade when you opt in.</em></p>
 
-  [![PyPI](https://img.shields.io/pypi/v/zero-api-key-web-search?label=pypi&cache=20260502)](https://pypi.org/project/zero-api-key-web-search/)
-  [![Python](https://img.shields.io/pypi/pyversions/zero-api-key-web-search?cache=20260502)](https://python.org)
+  [![PyPI](https://img.shields.io/pypi/v/zero-api-key-web-search?label=pypi&cache=20260503)](https://pypi.org/project/zero-api-key-web-search/)
+  [![Python](https://img.shields.io/pypi/pyversions/zero-api-key-web-search?cache=20260503)](https://python.org)
   [![MCP](https://img.shields.io/badge/MCP-Ready-0f766e.svg)](https://modelcontextprotocol.io/)
   [![Tests](https://img.shields.io/badge/tests-98%20passing-22c55e.svg)](./tests)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
