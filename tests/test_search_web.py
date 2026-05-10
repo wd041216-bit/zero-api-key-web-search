@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from zero_api_key_web_search.providers.base import ProviderResult
 from zero_api_key_web_search.providers.brightdata import BrightDataProvider
+from zero_api_key_web_search.providers.tavily import TavilyProvider
 from zero_api_key_web_search.search_web import Answer, Source, UltimateSearcher
 
 
@@ -265,11 +266,22 @@ class TestUltimateSearcher(unittest.TestCase):
             providers = [provider.name for provider in self.searcher._default_providers()]
         self.assertEqual(providers, ["ddgs", "brightdata"])
 
+    def test_default_providers_detects_tavily_env(self):
+        with patch.dict(os.environ, {"ZERO_SEARCH_TAVILY_API_KEY": "test-key"}, clear=True):
+            providers = [provider.name for provider in self.searcher._default_providers()]
+        self.assertEqual(providers, ["ddgs", "tavily"])
+
     def test_provider_statuses_include_brightdata_signup(self):
         statuses = {item["name"]: item for item in self.searcher.provider_statuses()}
         self.assertIn("brightdata", statuses)
         self.assertEqual(statuses["brightdata"]["status"], "not_configured")
         self.assertEqual(statuses["brightdata"]["signup_url"], BrightDataProvider.SIGNUP_URL)
+
+    def test_provider_statuses_include_tavily_setup(self):
+        statuses = {item["name"]: item for item in self.searcher.provider_statuses()}
+        self.assertIn("tavily", statuses)
+        self.assertEqual(statuses["tavily"]["status"], "not_configured")
+        self.assertIn("ZERO_SEARCH_TAVILY_API_KEY", statuses["tavily"]["setup"])
 
     def test_search_metadata_includes_free_provider_guidance(self):
         searcher = UltimateSearcher(
@@ -291,10 +303,13 @@ class TestUltimateSearcher(unittest.TestCase):
         guidance = result.metadata["provider_guidance"]
         self.assertEqual(guidance["free_recommended_pair"], ["ddgs", "searxng"])
         self.assertEqual(guidance["production_provider"], "brightdata")
+        self.assertEqual(guidance["optional_provider"], "tavily")
         self.assertIn("ZERO_SEARCH_SEARXNG_URL", guidance["free_setup_hint"])
         self.assertIn("ZERO_SEARCH_BRIGHTDATA_API_KEY", guidance["production_setup_hint"])
+        self.assertIn("ZERO_SEARCH_TAVILY_API_KEY", guidance["tavily_setup_hint"])
         self.assertFalse(guidance["searxng_configured"])
         self.assertFalse(guidance["brightdata_configured"])
+        self.assertFalse(guidance["tavily_configured"])
 
     def test_search_metadata_marks_free_dual_provider_active(self):
         searcher = UltimateSearcher(
@@ -325,6 +340,51 @@ class TestUltimateSearcher(unittest.TestCase):
         self.assertTrue(
             any("ZERO_SEARCH_BRIGHTDATA_API_KEY" in error for error in result.metadata["errors"])
         )
+
+    def test_explicit_unconfigured_tavily_returns_configuration_error(self):
+        searcher = UltimateSearcher(timeout=5, providers=[FakeProvider("ddgs", [])])
+        with patch.dict(os.environ, {}, clear=True):
+            result = searcher.search("python release", providers=["tavily"])
+        self.assertEqual(result.sources, [])
+        self.assertTrue(any("ZERO_SEARCH_TAVILY_API_KEY" in error for error in result.metadata["errors"]))
+
+    def test_tavily_provider_normalizes_results(self):
+        captured = {}
+
+        class FakeTavilyClient:
+            def __init__(self, api_key):
+                captured["api_key"] = api_key
+
+            def search(self, **payload):
+                captured["payload"] = payload
+                return {
+                    "results": [
+                        {
+                            "url": "https://example.com/tavily",
+                            "title": "Tavily result",
+                            "content": "Tavily snippet.",
+                            "score": 0.91,
+                            "published_date": "2026-04-01",
+                        }
+                    ]
+                }
+
+        fake_module = type("FakeTavilyModule", (), {"TavilyClient": FakeTavilyClient})
+        with patch.dict(sys.modules, {"tavily": fake_module}):
+            provider = TavilyProvider(timeout=7, api_key="test-key")
+            results = provider.search("ai agents", "news", timelimit="w", max_results=3)
+
+        self.assertEqual(captured["api_key"], "test-key")
+        self.assertEqual(captured["payload"]["topic"], "news")
+        self.assertEqual(captured["payload"]["time_range"], "week")
+        self.assertEqual(captured["payload"]["max_results"], 3)
+        self.assertEqual(results[0].url, "https://example.com/tavily")
+        self.assertEqual(results[0].metadata["provider"], "tavily")
+        self.assertEqual(results[0].metadata["score"], 0.91)
+
+    def test_tavily_provider_skips_unsupported_search_types(self):
+        provider = TavilyProvider(api_key="test-key")
+        self.assertEqual(provider.search("ai agents", "images"), [])
 
     def test_brightdata_provider_normalizes_serp_results(self):
         captured = {}

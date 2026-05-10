@@ -61,6 +61,9 @@ free-web-search-mcp = "zero_api_key_web_search_compat.mcp_server:run"
 pdf = [
   "pypdf>=4.0.0",
 ]
+tavily = [
+  "tavily-python>=0.5.0",
+]
 dev = [
   "build>=1.2.2",
   "twine>=6.1.0",
