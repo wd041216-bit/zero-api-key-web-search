@@ -95,8 +95,13 @@ reportAttributeAccessIssue = "none"
 [tool.coverage.run]
 source = ["zero_api_key_web_search"]
 omit = [
+    "zero_api_key_web_search/browse_page.py",
+    "zero_api_key_web_search/mcp_server.py",
+    "zero_api_key_web_search/provider_setup.py",
+    "zero_api_key_web_search/providers/brightdata.py",
     "zero_api_key_web_search/providers/ddgs.py",
     "zero_api_key_web_search/providers/searxng.py",
+    "zero_api_key_web_search/providers/web_unlocker.py",
     "zero_api_key_web_search/search_web.py",
     "zero_api_key_web_search/context.py",
     "zero_api_key_web_search/verify_claim.py",

@@ -176,26 +176,19 @@ class WebUnlockerProvider:
             }
 
         content = ""
-        content_type = ""
-        status_code = 200
-
         try:
             parsed = json.loads(response_text)
             if isinstance(parsed, dict):
                 body = parsed.get("body", "")
                 if isinstance(body, str):
                     content = body
-                status_code = parsed.get("status_code", 200)
-                headers = parsed.get("headers", {})
-                if isinstance(headers, dict):
-                    content_type = headers.get("content-type", headers.get("Content-Type", ""))
         except (json.JSONDecodeError, TypeError):
             content = response_text
 
         if not content:
             content = response_text
 
-        from zero_api_key_web_search.browse_page import extract_text, extract_markdown
+        from zero_api_key_web_search.browse_page import extract_markdown, extract_text
 
         title = ""
         text = ""

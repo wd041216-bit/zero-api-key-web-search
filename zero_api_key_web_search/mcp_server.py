@@ -13,7 +13,7 @@ from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool
 
 from zero_api_key_web_search.browse_page import browse
-from zero_api_key_web_search.cache import get_cache, clear_cache
+from zero_api_key_web_search.cache import clear_cache, get_cache
 from zero_api_key_web_search.core import UltimateSearcher
 
 # Configure logging
@@ -90,7 +90,10 @@ async def list_tools() -> list[Tool]:
                     "engine": {
                         "type": "string",
                         "enum": ["google", "bing", "duckduckgo", "yandex", "baidu", "yahoo", "naver"],
-                        "description": "Search engine for Bright Data SERP (default: google). Only used when Bright Data is active."
+                        "description": (
+                            "Search engine for Bright Data SERP (default: google). "
+                            "Only used when Bright Data is active."
+                        )
                     }
                 },
                 "required": ["query"]
@@ -135,7 +138,10 @@ async def list_tools() -> list[Tool]:
                     "engine": {
                         "type": "string",
                         "enum": ["google", "bing", "duckduckgo", "yandex", "baidu", "yahoo", "naver"],
-                        "description": "Search engine for Bright Data SERP (default: google). Only used when Bright Data is active."
+                        "description": (
+                            "Search engine for Bright Data SERP (default: google). "
+                            "Only used when Bright Data is active."
+                        )
                     },
                     "max_sources": {
                         "type": "integer",
@@ -173,17 +179,26 @@ async def list_tools() -> list[Tool]:
                     "format": {
                         "type": "string",
                         "enum": ["markdown", "text"],
-                        "description": "Output format: 'markdown' (default) preserves headings, lists, code blocks; 'text' returns plain text.",
+                        "description": (
+                            "Output format: 'markdown' (default) preserves headings, lists, "
+                            "code blocks; 'text' returns plain text."
+                        ),
                         "default": "markdown"
                     },
                     "prompt": {
                         "type": "string",
-                        "description": "Optional extraction hint describing what information to focus on. The agent's LLM uses this to prioritize relevant content."
+                        "description": (
+                            "Optional extraction hint describing what information to focus on. "
+                            "The agent's LLM uses this to prioritize relevant content."
+                        )
                     },
                     "use_unlocker": {
                         "type": "string",
                         "enum": ["auto", "always", "never"],
-                        "description": "Web Unlocker mode: 'auto' (default) retries blocked pages via Bright Data, 'always' always uses Web Unlocker, 'never' disables it.",
+                        "description": (
+                            "Web Unlocker mode: 'auto' (default) retries blocked pages via Bright Data, "
+                            "'always' always uses Web Unlocker, 'never' disables it."
+                        ),
                         "default": "auto"
                     }
                 },
@@ -374,7 +389,13 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             for goggles_name, item in goggles.items():
                 result_text += f"- {goggles_name}: {item['description']}\n"
             cache_stats = get_cache().stats()
-            result_text += f"\nCache: {cache_stats['entries']} entries, {cache_stats['size_bytes'] // 1024}KB / {cache_stats['max_bytes'] // 1024 // 1024}MB | hits={cache_stats['hits']} misses={cache_stats['misses']} evictions={cache_stats['evictions']}\n"
+            result_text += (
+                f"\nCache: {cache_stats['entries']} entries, "
+                f"{cache_stats['size_bytes'] // 1024}KB / "
+                f"{cache_stats['max_bytes'] // 1024 // 1024}MB | "
+                f"hits={cache_stats['hits']} misses={cache_stats['misses']} "
+                f"evictions={cache_stats['evictions']}\n"
+            )
             return [TextContent(type="text", text=result_text)]
 
         if name == "search_web":
@@ -389,7 +410,13 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             if timelimit == "":
                 timelimit = None
 
-            logger.info(f"Executing search_web: query='{query}', type='{search_type}', region='{region}', engine='{engine}'")
+            logger.info(
+                "Executing search_web: query=%r, type=%r, region=%r, engine=%r",
+                query,
+                search_type,
+                region,
+                engine,
+            )
 
             extra_kwargs = {}
             if engine:

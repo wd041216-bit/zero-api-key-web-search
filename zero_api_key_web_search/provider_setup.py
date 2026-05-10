@@ -15,7 +15,6 @@ from pathlib import Path
 from zero_api_key_web_search.core import UltimateSearcher
 from zero_api_key_web_search.providers import BrightDataProvider, SearxngProvider, WebUnlockerProvider
 
-
 BRIGHTDATA_SIGNUP_URL = "https://get.brightdata.com/h21j9xz4uxgd"
 
 
@@ -39,7 +38,10 @@ def _test_brightdata(api_key: str, zone: str = "serp_api1") -> dict:
         if "zone" in error_msg.lower() and "not found" in error_msg.lower():
             return {
                 "success": False,
-                "error": f"Zone '{zone}' not found. Create it in Bright Data Dashboard: Proxies → Add new zone → SERP API → name it '{zone}'",
+                "error": (
+                    f"Zone '{zone}' not found. Create it in Bright Data Dashboard: "
+                    f"Proxies -> Add new zone -> SERP API -> name it '{zone}'"
+                ),
                 "needs_zone": True,
             }
         return {"success": False, "error": error_msg}
@@ -174,7 +176,7 @@ def run_interactive_setup(write_env: bool = True) -> None:
             print(f"  ❌ {result['error']}")
             if result.get("needs_zone"):
                 print(f"\n  📝 To fix: In Bright Data Dashboard → Proxies → Add new zone → SERP API → name it '{zone}'")
-                print(f"     Then re-run this setup wizard.")
+                print("     Then re-run this setup wizard.")
             retry = input("  Try again with a different key/zone? (y/n): ").strip().lower()
             if retry == "y":
                 bd_key2 = input("  API key: ").strip()
@@ -214,7 +216,7 @@ def run_interactive_setup(write_env: bool = True) -> None:
         print("  Access blocked, CAPTCHA-protected, or geo-restricted pages.")
         print("  Uses the same Bright Data API key as SERP.")
 
-        unlocker_zone = input(f"\n  Enter your Web Unlocker zone name [web_unlocker1]: ").strip() or "web_unlocker1"
+        unlocker_zone = input("\n  Enter your Web Unlocker zone name [web_unlocker1]: ").strip() or "web_unlocker1"
         print(f"\n  Testing Web Unlocker (zone: {unlocker_zone})...")
         result = _test_web_unlocker(bd_key, unlocker_zone)
         if result["success"]:
@@ -224,7 +226,7 @@ def run_interactive_setup(write_env: bool = True) -> None:
         else:
             print(f"  ❌ {result['error']}")
             if result.get("needs_zone"):
-                print(f"  📝 Create a Web Unlocker zone in Bright Data Dashboard:")
+                print("  📝 Create a Web Unlocker zone in Bright Data Dashboard:")
                 print(f"     Proxies → Add new zone → Web Unlocker → name it '{unlocker_zone}'")
 
     # Save
@@ -289,7 +291,11 @@ def main():
     parser.add_argument("--test-brightdata", metavar="API_KEY", help="Test a Bright Data API key")
     parser.add_argument("--zone", default="serp_api1", help="Bright Data SERP zone name (default: serp_api1)")
     parser.add_argument("--test-brightdata-unlocker", metavar="API_KEY", help="Test Bright Data Web Unlocker")
-    parser.add_argument("--unlocker-zone", default="web_unlocker1", help="Web Unlocker zone name (default: web_unlocker1)")
+    parser.add_argument(
+        "--unlocker-zone",
+        default="web_unlocker1",
+        help="Web Unlocker zone name (default: web_unlocker1)",
+    )
     parser.add_argument("--test-searxng", metavar="URL", help="Test a SearXNG instance URL")
     parser.add_argument("--no-env", action="store_true", help="Don't write .env file, print export commands instead")
 
@@ -318,7 +324,10 @@ def main():
         else:
             print(f"❌ Web Unlocker test failed: {result['error']}")
             if result.get("needs_zone"):
-                print(f"   Create zone '{args.unlocker_zone}' in Bright Data Dashboard → Proxies → Add new zone → Web Unlocker")
+                print(
+                    f"   Create zone '{args.unlocker_zone}' in Bright Data Dashboard "
+                    "-> Proxies -> Add new zone -> Web Unlocker"
+                )
         return
 
     if args.test_searxng:

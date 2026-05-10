@@ -279,7 +279,7 @@ PROVIDER_PROFILES = {
     "default": ["ddgs"],
     "free-verified": ["ddgs", "searxng"],
     "production": ["brightdata"],
-    "production-unlock": ["brightdata", "web_unlocker"],
+    "production-unlock": ["brightdata"],
     "max-evidence": ["ddgs", "searxng", "brightdata"],
 }
 
@@ -480,13 +480,11 @@ class UltimateSearcher:
             return SearxngProvider(timeout=self.timeout)
         if provider_name == "brightdata":
             return BrightDataProvider(timeout=self.timeout)
-        if provider_name == "web_unlocker":
-            return WebUnlockerProvider(timeout=self.timeout)
         return None
 
     def _provider_registry(self) -> dict[str, SearchProvider]:
         registry = {provider.name: provider for provider in self.providers}
-        for provider_name in ("searxng", "brightdata", "web_unlocker"):
+        for provider_name in ("searxng", "brightdata"):
             if provider_name not in registry:
                 provider = self._known_optional_provider(provider_name)
                 if provider is not None:

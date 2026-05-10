@@ -254,6 +254,7 @@ def _extract_pdf_text(raw: bytes) -> str:
     """Try to extract text from PDF bytes. Returns empty string if pypdf unavailable."""
     try:
         from io import BytesIO
+
         from pypdf import PdfReader
         reader = PdfReader(BytesIO(raw))
         pages = []
@@ -445,13 +446,17 @@ def browse(url: str, max_chars: int = 50000, format: str = "markdown",
                 text = pdf_text
                 md = pdf_text
             else:
+                pdf_install_hint = (
+                    "[PDF content - install pypdf for text extraction: "
+                    "pip install zero-api-key-web-search[pdf]]"
+                )
                 return {
                     "status": "success",
                     "url": url,
                     "title": "PDF Document",
-                    "content": "[PDF content — install pypdf for text extraction: pip install zero-api-key-web-search[pdf]]",
-                    "markdown": "[PDF content — install pypdf for text extraction: pip install zero-api-key-web-search[pdf]]",
-                    "text": "[PDF content — install pypdf for text extraction: pip install zero-api-key-web-search[pdf]]",
+                    "content": pdf_install_hint,
+                    "markdown": pdf_install_hint,
+                    "text": pdf_install_hint,
                     "truncated": False,
                     "total_length": 0,
                     "format": format,
@@ -505,7 +510,12 @@ def browse(url: str, max_chars: int = 50000, format: str = "markdown",
     except urllib.error.HTTPError as e:
         logger.error("browse_http_error: url=%r code=%s", url, e.code)
         # Auto-fallback to Web Unlocker for 403/429 (blocked/CAPTCHA/geo-restricted)
-        unlocker_auto = os.getenv("ZERO_SEARCH_BRIGHTDATA_UNLOCKER_AUTO", "1").strip() not in ("0", "false", "no", "disabled")
+        unlocker_auto = os.getenv("ZERO_SEARCH_BRIGHTDATA_UNLOCKER_AUTO", "1").strip() not in (
+            "0",
+            "false",
+            "no",
+            "disabled",
+        )
         if use_unlocker is not False and unlocker_auto and e.code in (403, 429):
             unlocker_result = _try_web_unlocker(url, max_chars, format)
             if unlocker_result is not None:
@@ -570,7 +580,10 @@ def main():
             if result.get("truncated"):
                 print(f"\n{result.get('truncation_marker', '')}")
         elif result["status"] == "redirect":
-            print(f"Cross-host redirect: {result['original_url']} -> {result['redirect_url']} ({result['status_code']})")
+            print(
+                f"Cross-host redirect: {result['original_url']} -> "
+                f"{result['redirect_url']} ({result['status_code']})"
+            )
         elif result["status"] == "blocked":
             print(f"Domain blocked: {result['domain']} ({result['reason']})")
         else:

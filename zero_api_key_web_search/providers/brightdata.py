@@ -20,7 +20,6 @@ from urllib.parse import urlencode
 
 from zero_api_key_web_search.providers.base import ProviderConfigurationError, ProviderResult
 
-
 ENGINE_MAP = {
     "google": "https://www.google.com/search",
     "bing": "https://www.bing.com/search",
@@ -232,6 +231,8 @@ class BrightDataProvider:
                 continue
 
             url = link_tag.get("href", "")
+            if not isinstance(url, str):
+                continue
             if not url or url.startswith("/search"):
                 continue
 
@@ -254,6 +255,8 @@ class BrightDataProvider:
                 if not parent_a:
                     continue
                 url = parent_a.get("href", "")
+                if not isinstance(url, str):
+                    continue
                 if not url or url.startswith("/search"):
                     continue
                 title = h3.get_text(strip=True)
