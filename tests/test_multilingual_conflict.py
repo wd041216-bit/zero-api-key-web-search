@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 
-from zerosieve.core import CONFLICT_MARKERS, Source, UltimateSearcher
+from zero_api_key_web_search.core import CONFLICT_MARKERS, Source, UltimateSearcher
 
 
 class TestMultilingualConflictMarkers(unittest.TestCase):

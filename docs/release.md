@@ -45,7 +45,7 @@ Check these files before release:
 - `README.md`
 - `GEMINI.md`
 - `SKILL.md`
-- `zerosieve/skills/SKILL.md`
+- `zero_api_key_web_search/skills/SKILL.md`
 - `.gemini/SKILL.md`
 - `.claude-plugin/SKILL.md`
 - `.codex/SKILL.md`
@@ -55,9 +55,9 @@ Check these files before release:
 
 Keep these names consistent:
 
-- repository: `zerosieve`
-- package: `zerosieve`
-- module: `zerosieve`
+- repository: `zero_api_key_web_search`
+- package: `zero_api_key_web_search`
+- module: `zero_api_key_web_search`
 - CLI: `zero-search`, `zero-browse`, `zero-verify`, `zero-report`
 - MCP: `zero-mcp`
 

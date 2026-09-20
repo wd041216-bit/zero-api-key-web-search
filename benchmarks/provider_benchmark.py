@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Provider performance benchmark for zerosieve.
+"""Provider performance benchmark for zero_api_key_web_search.
 
 Compares DDGS-only, Bright Data, and cross-validated search performance.
 Outputs a Markdown table with response times, result counts, and quality metrics.
@@ -19,8 +19,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from zerosieve.core import UltimateSearcher
-from zerosieve.providers import BrightDataProvider
+from zero_api_key_web_search.core import UltimateSearcher
+from zero_api_key_web_search.providers import BrightDataProvider
 
 
 QUERIES = [

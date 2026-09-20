@@ -1,4 +1,4 @@
-"""Tool schemas for zerosieve Hermes plugin.
+"""Tool schemas for zero_api_key_web_search Hermes plugin.
 
 These schemas describe the tools available via the MCP server.
 Hermes uses these for tool discovery when the MCP server is not reachable.

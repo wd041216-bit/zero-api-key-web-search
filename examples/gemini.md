@@ -3,7 +3,7 @@
 Install the package:
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 Use it for factual or recent queries:

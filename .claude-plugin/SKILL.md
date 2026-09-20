@@ -1,5 +1,5 @@
 ---
-name: zerosieve
+name: zero_api_key_web_search
 description: >
   Claude Code-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it when an answer depends on current facts, live sources, or explicit support/conflict handling.
@@ -14,7 +14,7 @@ Use this skill when Claude Code needs current information, supporting citations,
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Core Commands

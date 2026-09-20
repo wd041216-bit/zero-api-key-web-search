@@ -12,9 +12,9 @@ import types
 import unittest
 from unittest.mock import patch
 
-from zerosieve import laya_filter
-from zerosieve.core import Answer, Source, UltimateSearcher
-from zerosieve.laya_filter import (
+from zero_api_key_web_search import laya_filter
+from zero_api_key_web_search.core import Answer, Source, UltimateSearcher
+from zero_api_key_web_search.laya_filter import (
     LayaBackend,
     LayaUnavailableError,
     blend_strength,

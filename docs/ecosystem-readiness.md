@@ -19,9 +19,9 @@ It is not just a search wrapper because it combines:
 
 | Surface | Name |
 | --- | --- |
-| Repository | `zerosieve` |
-| PyPI package | `zerosieve` |
-| Python module | `zerosieve` |
+| Repository | `zero_api_key_web_search` |
+| PyPI package | `zero_api_key_web_search` |
+| Python module | `zero_api_key_web_search` |
 | CLI | `zero-search`, `zero-browse`, `zero-verify`, `zero-report` |
 | MCP server | `zero-mcp` |
 
@@ -36,7 +36,7 @@ It is not just a search wrapper because it combines:
 ## Minimum verification flow
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 zero-search "Python 3.13 release" --json
 zero-verify "Python 3.13 is the latest stable release" --deep --max-pages 2 --json
 zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --deep --json
@@ -48,7 +48,7 @@ zero-mcp
 | Platform | Entry |
 | --- | --- |
 | Gemini | [GEMINI.md](../GEMINI.md), [`.gemini/SKILL.md`](../.gemini/SKILL.md) |
-| OpenClaw | [`zerosieve/skills/SKILL.md`](../zerosieve/skills/SKILL.md) |
+| OpenClaw | [`zero_api_key_web_search/skills/SKILL.md`](../zero_api_key_web_search/skills/SKILL.md) |
 | Codex | [`.codex/SKILL.md`](../.codex/SKILL.md) |
 | Claude Code | [`.claude-plugin/SKILL.md`](../.claude-plugin/SKILL.md) |
 | Copilot | [`.github/copilot/instructions.md`](../.github/copilot/instructions.md) |

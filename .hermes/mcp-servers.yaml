@@ -1,8 +1,8 @@
-# Hermes MCP Server Configuration for zerosieve
+# Hermes MCP Server Configuration for zero_api_key_web_search
 # Add this to your ~/.hermes/config.yaml under mcp_servers:
 
 mcp_servers:
-  zerosieve:
+  zero_api_key_web_search:
     command: "zs-mcp"
     args: []
     enabled: true

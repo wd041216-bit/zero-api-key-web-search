@@ -64,7 +64,7 @@ Then configure your MCP client with:
 ```json
 {
   "mcpServers": {
-    "zerosieve": {
+    "zero_api_key_web_search": {
       "command": "zero-mcp"
     }
   }

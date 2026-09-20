@@ -1,6 +1,6 @@
 # External Threads
 
-This page tracks the active ecosystem threads that matter for `zerosieve`.
+This page tracks the active ecosystem threads that matter for `zero_api_key_web_search`.
 
 | Priority | Thread | Current state | Latest meaningful human feedback | Next action |
 | --- | --- | --- | --- | --- |

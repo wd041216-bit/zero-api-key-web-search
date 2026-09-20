@@ -5,7 +5,7 @@ Use Zero-API-Key Web Search when Copilot needs live search results, source-backe
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Commands

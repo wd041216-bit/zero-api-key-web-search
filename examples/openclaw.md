@@ -3,10 +3,10 @@
 Install the package:
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
-The OpenClaw entry point is bundled at `zerosieve/skills/SKILL.md`.
+The OpenClaw entry point is bundled at `zero_api_key_web_search/skills/SKILL.md`.
 
 Minimal flow:
 

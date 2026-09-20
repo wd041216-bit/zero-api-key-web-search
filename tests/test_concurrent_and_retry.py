@@ -5,8 +5,8 @@ from __future__ import annotations
 import asyncio
 import unittest
 
-from zerosieve.core import UltimateSearcher
-from zerosieve.providers.base import ProviderResult
+from zero_api_key_web_search.core import UltimateSearcher
+from zero_api_key_web_search.providers.base import ProviderResult
 
 
 class FakeProvider:

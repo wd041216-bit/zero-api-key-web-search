@@ -21,15 +21,15 @@ By participating in this project, you agree to maintain a respectful and inclusi
 Before contributing, please:
 
 1. Read the [README.md](README.md) to understand the project's purpose and architecture.
-2. Check the [open issues](https://github.com/wd041216-bit/zerosieve/issues) to see if your idea or bug has already been reported.
+2. Check the [open issues](https://github.com/wd041216-bit/zero_api_key_web_search/issues) to see if your idea or bug has already been reported.
 3. For significant changes, open an issue first to discuss the proposed change before submitting a PR.
 
 ## Development Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/wd041216-bit/zerosieve.git
-cd zerosieve
+git clone https://github.com/wd041216-bit/zero_api_key_web_search.git
+cd zero_api_key_web_search
 
 # Create a virtual environment
 python3 -m venv .venv

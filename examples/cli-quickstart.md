@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Search the web

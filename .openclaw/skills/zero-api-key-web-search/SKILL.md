@@ -1,11 +1,11 @@
 ---
-name: zerosieve
+name: zero_api_key_web_search
 version: "23.0.0"
 description: >
   OpenClaw skill for source-backed web search, page reading, and evidence-aware claim checking.
   No API keys required by default; optional providers can be enabled for stronger coverage.
   v23: multi-engine SERP (7 engines), Web Unlocker for blocked pages, auto-fallback on 403/429.
-homepage: https://github.com/wd041216-bit/zerosieve
+homepage: https://github.com/wd041216-bit/zero_api_key_web_search
 ---
 
 # Zero-API-Key Web Search for OpenClaw
@@ -22,7 +22,7 @@ This skill gives OpenClaw a practical verification workflow:
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Minimum verification

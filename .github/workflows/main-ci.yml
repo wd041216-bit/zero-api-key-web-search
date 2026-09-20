@@ -27,18 +27,18 @@ jobs:
     - name: Lint with ruff
       run: |
         pip install ruff
-        ruff check zerosieve/ tests/
+        ruff check zero_api_key_web_search/ tests/
 
     - name: Type check with pyright
       run: |
         pip install pyright
-        pyright zerosieve/
+        pyright zero_api_key_web_search/
 
     - name: Run unit tests with coverage
       run: |
         pip install coverage
         coverage run -m unittest discover -s tests -v
-        coverage report --fail-under=80 --include="zerosieve/*"
+        coverage report --fail-under=80 --include="zero_api_key_web_search/*"
 
     - name: Run benchmark regression
       run: |

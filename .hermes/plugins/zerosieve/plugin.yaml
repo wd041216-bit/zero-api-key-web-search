@@ -1,4 +1,4 @@
-name: zerosieve
+name: zero_api_key_web_search
 version: 1.0.0
 description: Free web search with evidence verification and source citations for AI agents
 provides_tools:

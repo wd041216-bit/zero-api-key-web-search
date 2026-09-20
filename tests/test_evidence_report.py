@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from zerosieve.core import Answer, Source, UltimateSearcher
+from zero_api_key_web_search.core import Answer, Source, UltimateSearcher
 
 
 class TestEvidenceReport(unittest.TestCase):

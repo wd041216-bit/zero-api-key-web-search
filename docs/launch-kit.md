@@ -8,7 +8,7 @@ Search infrastructure for AI agents: free by default, MCP-ready, LLM-context awa
 
 ## Short Post
 
-I built `zerosieve`: a local search and evidence layer for AI agents.
+I built `zero_api_key_web_search`: a local search and evidence layer for AI agents.
 
 - `zero-context` returns citation-ready context for LLMs
 - `zero-verify` checks claims as supported, contested, or under-evidenced
@@ -17,11 +17,11 @@ I built `zerosieve`: a local search and evidence layer for AI agents.
 - optional SearXNG and Bright Data providers for stronger coverage
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 zero-context "FastAPI lifespan docs" --goggles docs-first
 ```
 
-GitHub: https://github.com/wd041216-bit/zerosieve
+GitHub: https://github.com/wd041216-bit/zero_api_key_web_search
 
 ## Hacker News / Reddit Title Ideas
 

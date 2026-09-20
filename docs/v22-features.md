@@ -12,7 +12,7 @@ Multi-provider web search via DuckDuckGo (free), SearXNG (self-hosted), and Brig
 
 ### 2. mcp-integration
 Full MCP server exposure via stdio, with 7 tools (search_web, browse_page, verify_claim, evidence_report, llm_context, list_providers, clear_cache).
-- `zerosieve/mcp_server.py`
+- `zero_api_key_web_search/mcp_server.py`
 - Entry points: `zero-mcp`, `cross-validated-search-mcp`, `free-web-search-mcp`
 - Compatible with Claude Code, Cursor, Codex, Continue, OpenClaw, Hermes, Nanobot
 
@@ -54,7 +54,7 @@ Time-decay scoring in 30-day buckets, date parsing across multiple formats, fres
 
 ### 9. response-caching (NEW v22.0.0)
 LRU response cache with 15-minute TTL, 50MB size cap, lazy eviction, and hit/miss/eviction statistics.
-- `zerosieve/cache.py` — `ResponseCache` class
+- `zero_api_key_web_search/cache.py` — `ResponseCache` class
 - Cache keys for browse (URL-based) and search (query+params hash)
 - `clear_cache` MCP tool for manual invalidation
 - Cache stats exposed via `list_providers`
@@ -83,9 +83,9 @@ Configurable domain allowlist and blocklist via environment variables.
 
 ### 13. multi-agent-integration (NEW v22.0.0)
 First-class configuration for Hermes Agent, OpenClaw, and Nanobot frameworks.
-- `.hermes/plugins/zerosieve/` — Hermes plugin with schema definitions
+- `.hermes/plugins/zero_api_key_web_search/` — Hermes plugin with schema definitions
 - `.hermes/mcp-servers.yaml` — Hermes MCP server config
-- `.openclaw/skills/zerosieve/SKILL.md` — OpenClaw skill with YAML frontmatter
+- `.openclaw/skills/zero_api_key_web_search/SKILL.md` — OpenClaw skill with YAML frontmatter
 - `.openclaw/openclaw.json` — OpenClaw MCP server config
 - `.nanobot/nanobot.yaml` — Nanobot MCP server config + agent definition
 - `.nanobot/agents/researcher.md` — Nanobot research agent with system prompt
@@ -93,7 +93,7 @@ First-class configuration for Hermes Agent, OpenClaw, and Nanobot frameworks.
 
 ### 14. pdf-extraction (NEW v22.0.0)
 Optional PDF text extraction via pypdf, with graceful fallback when not installed.
-- Optional dependency: `pip install zerosieve[pdf]`
+- Optional dependency: `pip install zero_api_key_web_search[pdf]`
 - `_extract_pdf_text()` in `browse_page.py`
 - Detects `application/pdf` content type
 - Returns install instruction message when pypdf is unavailable

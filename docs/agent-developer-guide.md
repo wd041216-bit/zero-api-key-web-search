@@ -7,14 +7,14 @@ Use it when an agent needs current information, citations, page text, provider-a
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 Node-based agent toolchains can use the npm wrapper:
 
 ```bash
-npm install -g zerosieve
-npx zerosieve zero-context "FastAPI lifespan docs" --goggles docs-first
+npm install -g zero_api_key_web_search
+npx zero_api_key_web_search zero-context "FastAPI lifespan docs" --goggles docs-first
 ```
 
 ## Choose the Right Command
@@ -33,7 +33,7 @@ npx zerosieve zero-context "FastAPI lifespan docs" --goggles docs-first
 ```json
 {
   "mcpServers": {
-    "zerosieve": {
+    "zero_api_key_web_search": {
       "command": "zero-mcp"
     }
   }
@@ -45,9 +45,9 @@ For npm/npx launchers:
 ```json
 {
   "mcpServers": {
-    "zerosieve": {
+    "zero_api_key_web_search": {
       "command": "npx",
-      "args": ["zerosieve", "zero-mcp"]
+      "args": ["zero_api_key_web_search", "zero-mcp"]
     }
   }
 }

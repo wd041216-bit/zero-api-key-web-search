@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 
-from zerosieve.core import UltimateSearcher
+from zero_api_key_web_search.core import UltimateSearcher
 
 
 class TestClaimDecomposition(unittest.TestCase):
@@ -61,7 +61,7 @@ class TestClaimDecomposition(unittest.TestCase):
     def test_sub_claims_in_verification_result(self):
         from unittest.mock import patch
 
-        from zerosieve.core import Source
+        from zero_api_key_web_search.core import Source
 
         fake_sources = [
             Source(

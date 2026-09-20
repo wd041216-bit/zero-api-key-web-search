@@ -5,7 +5,7 @@ Use Zero-API-Key Web Search when you need accurate, verified information.
 ## Installation
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Commands

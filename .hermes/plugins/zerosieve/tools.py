@@ -1,4 +1,4 @@
-"""Hermes tool handlers for zerosieve.
+"""Hermes tool handlers for zero_api_key_web_search.
 
 Delegates all calls to the MCP server via the hermes MCP integration.
 When running through Hermes, tools are auto-discovered from the MCP server
@@ -13,7 +13,7 @@ def search_web(args: dict, **kwargs) -> str:
     """Search the web. Delegates to MCP server."""
     # When running through Hermes MCP, tools are auto-discovered.
     # This handler is a fallback for direct plugin invocation.
-    from zerosieve.core import UltimateSearcher
+    from zero_api_key_web_search.core import UltimateSearcher
     searcher = UltimateSearcher()
     answer = searcher.search(
         query=args["query"],
@@ -33,7 +33,7 @@ def search_web(args: dict, **kwargs) -> str:
 
 def browse_page(args: dict, **kwargs) -> str:
     """Browse a page. Delegates to MCP server."""
-    from zerosieve.browse_page import browse
+    from zero_api_key_web_search.browse_page import browse
     result = browse(
         url=args["url"],
         max_chars=args.get("max_chars", 50000),
@@ -45,7 +45,7 @@ def browse_page(args: dict, **kwargs) -> str:
 
 def verify_claim(args: dict, **kwargs) -> str:
     """Verify a claim. Delegates to MCP server."""
-    from zerosieve.core import UltimateSearcher
+    from zero_api_key_web_search.core import UltimateSearcher
     searcher = UltimateSearcher()
     v = searcher.verify_claim(
         claim=args["claim"],

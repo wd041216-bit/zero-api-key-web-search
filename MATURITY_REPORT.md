@@ -40,13 +40,13 @@ See [docs/v22-features.md](docs/v22-features.md) for axis-to-implementation trac
 | 3 | 83 | 20 | 20 | 22 | 21 | Added Soria Parra, sub-claim queries, readability heuristic, CI linting |
 | 4 | 88 | 21 | 21 | 23 | 23 | Coverage enforcement, circuit breaker, baseline heuristics |
 | 5 | 92 | 22 | 22 | 24 | 24 | Structured logging, Soria Parra deepening |
-| 7 | 72 | 17 | 21 | 19 | 15 | score /tmp/zerosieve |
-| 8 | 86 | 21 | 23 | 21 | 21 | score /tmp/zerosieve |
-| 9 | 86 | 21 | 23 | 21 | 21 | score /tmp/zerosieve |
-| 10 | 93 | 22 | 25 | 23 | 23 | score /tmp/zerosieve |
-| 11 | 90 | 21 | 21 | 25 | 23 | score /tmp/zerosieve |
-| 12 | 97 | 22 | 25 | 25 | 25 | score /tmp/zerosieve |
-| 13 | 100 | 25 | 25 | 25 | 25 | score /tmp/zerosieve |
+| 7 | 72 | 17 | 21 | 19 | 15 | score /tmp/zero_api_key_web_search |
+| 8 | 86 | 21 | 23 | 21 | 21 | score /tmp/zero_api_key_web_search |
+| 9 | 86 | 21 | 23 | 21 | 21 | score /tmp/zero_api_key_web_search |
+| 10 | 93 | 22 | 25 | 23 | 23 | score /tmp/zero_api_key_web_search |
+| 11 | 90 | 21 | 21 | 25 | 23 | score /tmp/zero_api_key_web_search |
+| 12 | 97 | 22 | 25 | 25 | 25 | score /tmp/zero_api_key_web_search |
+| 13 | 100 | 25 | 25 | 25 | 25 | score /tmp/zero_api_key_web_search |
 
 ## Recommendations
 

@@ -5,7 +5,7 @@ Use Zero-API-Key Web Search when Gemini needs live search results, source-backed
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Minimum verification

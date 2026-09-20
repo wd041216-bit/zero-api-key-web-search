@@ -1,19 +1,19 @@
 # Changelog
 
-## 1.0.0 — ZeroSieve
+## 1.0.0 — Zero-API-Key Web Search
 
 Rebrand of `zero-api-key-web-search` with an optional neural sieve.
 
-- **Added**: Laya integration (`zerosieve.laya_filter`) — relevance sieving of
+- **Added**: Laya integration (`zero_api_key_web_search.laya_filter`) — relevance sieving of
   search results and probabilistic stance verification, backed by the local
   Apache-2.0 Laya decision model (`convaiinnovations/laya`). Falls back to the
   lexical `evidence-aware-heuristic-v3` verifier whenever Laya is unavailable.
 - **Added**: `--laya`, `--laya-model`, `--laya-subfolder`, `--laya-device`,
   `--laya-threshold` CLI flags; `laya` / `laya_threshold` parameters on the
   `search_web`, `llm_context`, `verify_claim`, `evidence_report` MCP tools.
-- **Added**: `laya` optional dependency extra; `zerosieve_compat` shim package
+- **Added**: `laya` optional dependency extra; `zero_api_key_web_search_compat` shim package
   for legacy import paths and `python -m` entry points.
-- **Changed**: package renamed to `zerosieve`; CLI commands renamed to `zs-*`
+- **Changed**: package renamed to `zero_api_key_web_search`; CLI commands renamed to `zs-*`
   with `zero-*` aliases retained; `mcp` pinned to `>=1.1.2,<2` (SDK 2.x
   changes the Server decorator API).
 - 111 tests passing; verified end-to-end against the real checkpoint on
@@ -67,25 +67,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [18.0.0] - 2026-04-19
 
 ### Changed
-- Renamed the public GitHub repository target to `zerosieve`.
+- Renamed the public GitHub repository target to `zero_api_key_web_search`.
 - Unified skill and package metadata at version `18.0.0` for the Clawhub release.
 - Updated Docker, Gemini, and platform skill references to the canonical `zero-*` commands and package name.
 
 ### Fixed
 - Replaced remaining visible `Cross-Validated Search` branding in docs, source text, and SVG assets with `Zero-API-Key Web Search`.
-- Fixed the Docker image to copy the active `zerosieve` packages and start `zero-mcp`.
+- Fixed the Docker image to copy the active `zero_api_key_web_search` packages and start `zero-mcp`.
 
 ## [16.0.0] - 2026-03-24
 
 ### Changed
-- Renamed the canonical PyPI package to `zerosieve` and the canonical Python module to `zerosieve`.
+- Renamed the canonical PyPI package to `zero_api_key_web_search` and the canonical Python module to `zero_api_key_web_search`.
 - Kept `free_web_search` imports and `free-web-search-mcp` available as compatibility aliases for existing integrations.
 - Switched packaging, Docker, CI, and platform docs to point at the canonical v16 names.
 
 ### Fixed
 - Aligned README, contributing docs, and bundled skill docs with the current published package and CLI surface.
 - Corrected the repository license wording to match the actual `LICENSE` file.
-- Updated the test suite to validate the active `zerosieve.search_web` and `browse_page` implementations.
+- Updated the test suite to validate the active `zero_api_key_web_search.search_web` and `browse_page` implementations.
 - Updated CI to fail on real test regressions instead of continuing after errors.
 - Consolidated search logic into a shared core to reduce drift between `search_web.py` and `search.py`.
 - Switched TLS handling to secure-by-default with explicit opt-in insecure mode for constrained environments.
@@ -116,11 +116,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Universal IDE Support**: Now works with 10+ platforms out of the box
   - Claude Code: `.claude-plugin/SKILL.md` with UserPromptSubmit hooks
-  - Cursor: `.cursor/rules/zerosieve.md`
+  - Cursor: `.cursor/rules/zero_api_key_web_search.md`
   - GitHub Copilot: `.github/copilot/instructions.md`
   - Gemini CLI: `.gemini/SKILL.md`
-  - Continue: `.continue/skills/zerosieve/SKILL.md`
-  - Kiro: `.kiro/steering/zerosieve.md`
+  - Continue: `.continue/skills/zero_api_key_web_search/SKILL.md`
+  - Kiro: `.kiro/steering/zero_api_key_web_search.md`
   - OpenCode: `.opencode/instructions.md`
   - Codex: `.codex/SKILL.md`
   - OpenClaw: `free_web_search/skills/SKILL.md` (existing)
@@ -149,7 +149,7 @@ To enable IDE-specific features:
 ## [14.0.0] - 2026-03-19
 
 ### Changed
-- Repository branding shifted toward **Zero-API-Key Web Search** and the GitHub repository moved to `wd041216-bit/zerosieve`.
+- Repository branding shifted toward **Zero-API-Key Web Search** and the GitHub repository moved to `wd041216-bit/zero_api_key_web_search`.
 - The published compatibility surface remained stable:
   - package: `free-web-search-ultimate`
   - CLI: `search-web`, `browse-page`

@@ -1,6 +1,6 @@
 # npm Package
 
-`zerosieve` on npm is a thin Node.js wrapper around the Python package of the same name.
+`zero_api_key_web_search` on npm is a thin Node.js wrapper around the Python package of the same name.
 
 It exists so agent developers can use npm/npx workflows for the CLI and MCP server without maintaining a separate JavaScript implementation.
 
@@ -9,21 +9,21 @@ It exists so agent developers can use npm/npx workflows for the CLI and MCP serv
 Install the Python runtime package first:
 
 ```bash
-python -m pip install zerosieve==21.0.0
+python -m pip install zero_api_key_web_search==21.0.0
 ```
 
 Then install the npm wrapper globally:
 
 ```bash
-npm install -g zerosieve
+npm install -g zero_api_key_web_search
 ```
 
 You can also use it with `npx`:
 
 ```bash
-npx zerosieve zero-context "Python release" --goggles docs-first
-npx zerosieve zero-search "AI regulation news" --type news
-npx zerosieve zero-mcp
+npx zero_api_key_web_search zero-context "Python release" --goggles docs-first
+npx zero_api_key_web_search zero-search "AI regulation news" --type news
+npx zero_api_key_web_search zero-mcp
 ```
 
 ## Commands
@@ -44,7 +44,7 @@ The npm package exposes the same command names as the Python package:
 ```json
 {
   "mcpServers": {
-    "zerosieve": {
+    "zero_api_key_web_search": {
       "command": "zero-mcp"
     }
   }
@@ -56,9 +56,9 @@ If your MCP client launches through npm instead of global bins:
 ```json
 {
   "mcpServers": {
-    "zerosieve": {
+    "zero_api_key_web_search": {
       "command": "npx",
-      "args": ["zerosieve", "zero-mcp"]
+      "args": ["zero_api_key_web_search", "zero-mcp"]
     }
   }
 }
@@ -73,7 +73,7 @@ That keeps installation transparent, avoids cross-language supply-chain surprise
 If the Python package is missing, the wrapper prints:
 
 ```bash
-python -m pip install zerosieve==21.0.0
+python -m pip install zero_api_key_web_search==21.0.0
 ```
 
 ## Publishing Notes

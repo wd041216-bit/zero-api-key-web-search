@@ -7,7 +7,7 @@ import ssl
 import unittest
 from unittest.mock import patch
 
-from zerosieve.transport import build_ssl_context, insecure_ssl_enabled
+from zero_api_key_web_search.transport import build_ssl_context, insecure_ssl_enabled
 
 
 class TestTransport(unittest.TestCase):

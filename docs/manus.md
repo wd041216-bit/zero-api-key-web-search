@@ -1,11 +1,11 @@
 # Manus Setup
 
-`zerosieve` is compatible with Manus-style Agent Skills and CLI-first workflows.
+`zero_api_key_web_search` is compatible with Manus-style Agent Skills and CLI-first workflows.
 
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Skill surface

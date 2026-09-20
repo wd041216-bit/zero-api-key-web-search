@@ -44,7 +44,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_search_web_json_cli(self):
         result = subprocess.run(
-            [sys.executable, "-m", "zerosieve.search_web", "python release", "--json"],
+            [sys.executable, "-m", "zero_api_key_web_search.search_web", "python release", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -58,7 +58,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_search_web_providers_cli(self):
         result = subprocess.run(
-            [sys.executable, "-m", "zerosieve.search_web", "providers", "--json"],
+            [sys.executable, "-m", "zero_api_key_web_search.search_web", "providers", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -77,7 +77,7 @@ class TestCliIntegration(unittest.TestCase):
             [
                 sys.executable,
                 "-m",
-                "zerosieve.context",
+                "zero_api_key_web_search.context",
                 "python release",
                 "--goggles",
                 "docs-first",
@@ -95,7 +95,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_verify_claim_json_cli(self):
         result = subprocess.run(
-            [sys.executable, "-m", "zerosieve.verify_claim", "python release status", "--json"],
+            [sys.executable, "-m", "zero_api_key_web_search.verify_claim", "python release status", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -113,7 +113,7 @@ class TestCliIntegration(unittest.TestCase):
 
     def test_legacy_verify_claim_module_alias(self):
         result = subprocess.run(
-            [sys.executable, "-m", "zerosieve_compat.verify_claim", "python release status", "--json"],
+            [sys.executable, "-m", "zero_api_key_web_search_compat.verify_claim", "python release status", "--json"],
             capture_output=True,
             text=True,
             check=True,
@@ -128,7 +128,7 @@ class TestCliIntegration(unittest.TestCase):
             [
                 sys.executable,
                 "-m",
-                "zerosieve.evidence_report",
+                "zero_api_key_web_search.evidence_report",
                 "python release status",
                 "--json",
             ],
@@ -159,7 +159,7 @@ class TestCliIntegration(unittest.TestCase):
                     [
                         sys.executable,
                         "-m",
-                        "zerosieve.browse_page",
+                        "zero_api_key_web_search.browse_page",
                         f"http://127.0.0.1:{port}/index.html",
                         "--json",
                     ],
@@ -202,7 +202,7 @@ class TestCliIntegration(unittest.TestCase):
                     [
                         sys.executable,
                         "-m",
-                        "zerosieve.search_web",
+                        "zero_api_key_web_search.search_web",
                         "release signal",
                         "--provider",
                         "searxng",
@@ -260,7 +260,7 @@ class TestCliIntegration(unittest.TestCase):
                     [
                         sys.executable,
                         "-m",
-                        "zerosieve.verify_claim",
+                        "zero_api_key_web_search.verify_claim",
                         "Python 3.13 is the latest stable release",
                         "--provider",
                         "searxng",
@@ -325,7 +325,7 @@ class TestCliIntegration(unittest.TestCase):
                     [
                         sys.executable,
                         "-m",
-                        "zerosieve.evidence_report",
+                        "zero_api_key_web_search.evidence_report",
                         "Python 3.13 stable release",
                         "--claim",
                         "Python 3.13 is the latest stable release",

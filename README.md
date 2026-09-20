@@ -1,20 +1,21 @@
 <div align="center">
-  <h1>ZeroSieve</h1>
-  <p><strong>Zero-key web search for AI agents — with a System-1 sieve.</strong></p>
-  <p><em>Batch-filter, rerank and verify evidence locally at 100+ decisions/sec. Free by default, MCP-ready, production-grade when you opt in.</em></p>
+  <h1>Zero-API-Key Web Search</h1>
+  <p><strong>⚡ Jev-Powered ⚡ — free neural search &amp; evidence verification for AI agents.</strong></p>
+  <p><em>Zero API keys. MCP-ready. Batch-filter, rerank and verify evidence locally at 100+ decisions/sec with an open Jev-class decision model.</em></p>
 
   <br>
 
   ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
   ![MCP](https://img.shields.io/badge/MCP-Ready-0f766e.svg)
+  ![Jev](https://img.shields.io/badge/Jev--Powered-Laya%20%28open%20weights%29-8b5cf6)
   ![License](https://img.shields.io/badge/license-MIT-green.svg)
 </div>
 
 ---
 
-## Why ZeroSieve
+## Why Zero-API-Key Web Search (Jev-Powered)
 
-An agent that searches the raw web pays for everything it reads: context tokens, latency, and attention spread over SEO noise. ZeroSieve puts a **sieve between search and the agent**:
+An agent that searches the raw web pays for everything it reads: context tokens, latency, and attention spread over SEO noise. Zero-API-Key Web Search puts a **sieve between search and the agent**:
 
 1. **Search** the web with zero API keys (DuckDuckGo by default, self-hosted SearXNG for cross-validation, optional Bright Data for production SERP + Web Unlocker).
 2. **Sieve** the results through [Laya](https://huggingface.co/convaiinnovations/laya) — an open-weight (Apache-2.0), non-autoregressive *decision model* that scores every result for relevance in a **single forward pass (~35 ms on GPU, 100–330 questions/sec batched)** with calibrated probabilities. It never generates text, so there is nothing to parse and nothing to hallucinate.
@@ -33,28 +34,26 @@ Every stage degrades gracefully: no Laya installed? The pipeline falls back to t
 ## 30-Second Setup
 
 ```bash
-pip install zerosieve          # free search, no API key, no model download
+pip install zero-api-key-web-search          # free search, no API key, no model download
 
-zs-search "Python 3.13 release" --json
-zs-verify "Python 3.13 is the latest stable release" --deep --json
-zs-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --json
+zero-search "Python 3.13 release" --json
+zero-verify "Python 3.13 is the latest stable release" --deep --json
+zero-report "Python 3.13 stable release" --claim "Python 3.13 is the latest stable release" --json
 ```
-
-Legacy `zero-*` command names from the upstream project keep working.
 
 ## Add the Sieve (Optional, ~800 MB, Fully Local)
 
 ```bash
-pip install "zerosieve[laya]"   # pulls laya + torch
+pip install "zero-api-key-web-search[laya]"   # pulls laya + torch
 
 # Relevance-filter every search result before it reaches your agent
-zs-search "react state management" --laya --laya-threshold 0.6 --json
+zero-search "react state management" --laya --laya-threshold 0.6 --json
 
 # Probabilistic stance verification (laya-stance-v1 model)
-zs-verify "Python 3.13 is the latest stable release" --laya --json
+zero-verify "Python 3.13 is the latest stable release" --laya --json
 
 # Both, in the flagship evidence report
-zs-report "gpt-5 release" --claim "GPT-5 is released" --laya --deep --json
+zero-report "gpt-5 release" --claim "GPT-5 is released" --laya --deep --json
 ```
 
 On Apple Silicon it runs on MPS; on NVIDIA GPUs on CUDA; anywhere on CPU (slower but works).
@@ -78,7 +77,7 @@ The verification blend becomes `0.55 × neural stance + 0.35 × source quality +
 | `typed-decisions` | ModernBERT-large 421M | workflow-tuned decisions |
 
 ```bash
-zs-verify "..." --laya --laya-subfolder multilingual   # non-English claims
+zero-verify "..." --laya --laya-subfolder multilingual   # non-English claims
 ```
 
 ## MCP Server (8 tools)
@@ -86,8 +85,8 @@ zs-verify "..." --laya --laya-subfolder multilingual   # non-English claims
 ```json
 {
   "mcpServers": {
-    "zerosieve": {
-      "command": "zs-mcp",
+    "zero_api_key_web_search": {
+      "command": "zero-mcp",
       "args": []
     }
   }
@@ -101,7 +100,7 @@ zs-verify "..." --laya --laya-subfolder multilingual   # non-English claims
 **Path 1 — Free (zero configuration).** DuckDuckGo, no account:
 
 ```bash
-zs-search "Python 3.13 release" --json
+zero-search "Python 3.13 release" --json
 ```
 
 **Path 2 — Free cross-validated.** Self-hosted SearXNG for dual-provider corroboration (see [docs/searxng-self-hosted.md](docs/searxng-self-hosted.md)):
@@ -109,17 +108,17 @@ zs-search "Python 3.13 release" --json
 ```bash
 ./scripts/start-searxng.sh
 export ZERO_SEARCH_SEARXNG_URL="http://127.0.0.1:8080"
-zs-search "AI regulation" --profile free-verified --json
+zero-search "AI regulation" --profile free-verified --json
 ```
 
 **Path 3 — Production SERP.** [Bright Data](https://get.brightdata.com/h21j9xz4uxgd) for 7 engines (Google, Bing, DuckDuckGo, Yandex, Baidu, Yahoo, Naver), geo-targeting, structured results:
 
 ```bash
-zs-setup   # interactive wizard
-zs-search "news" --provider brightdata --engine google --type news --region us-en --json
+zero-setup   # interactive wizard
+zero-search "news" --provider brightdata --engine google --type news --region us-en --json
 ```
 
-**Path 4 — Production + Web Unlocker.** 403/429/CAPTCHA/geo-blocked pages auto-retried through the Web Unlocker on `zs-browse`.
+**Path 4 — Production + Web Unlocker.** 403/429/CAPTCHA/geo-blocked pages auto-retried through the Web Unlocker on `zero-browse`.
 
 ## Engineering
 
@@ -138,12 +137,12 @@ Read [docs/trust-model.md](docs/trust-model.md) before trusting any verdict. The
 - The lexical verifier (`evidence-aware-heuristic-v3`) is pattern-matching, not entailment — it is transparent and fast, and blind to paraphrase, negation scope, and mismatched numbers. Laya mode (`laya-stance-v1`) fixes the *class* of failure, not the *possibility* of failure.
 - **Laya ships over-confident.** Upstream measured mean ECE 0.466 → 0.081 only *after* per-domain temperature refitting. Our defaults (threshold 0.5) are reasonable, not calibrated — sweep `--laya-threshold` against a small labeled set from your domain before production use.
 - **Laya's base checkpoints are a fast base to specialise, not a zero-shot oracle** (upstream's own typed-decisions benchmark: 0.362 zero-shot vs 0.766 fine-tuned; XNLI-style tasks are much stronger). For high-stakes domains, fine-tune the open checkpoint on your workflow and drop it in via `--laya-model` / `--laya-subfolder`.
-- High-cardinality option sets (>20 options per question) are Laya's weak spot; ZeroSieve only asks 1–2-option yes/no questions per item, which stays in its comfort zone.
+- High-cardinality option sets (>20 options per question) are Laya's weak spot; Zero-API-Key Web Search only asks 1–2-option yes/no questions per item, which stays in its comfort zone.
 - Verification quality still depends on what search returns: no web footprint → `insufficient_evidence`, by design.
 
 ## Attribution
 
-ZeroSieve is built on [zero-api-key-web-search](https://github.com/wd041216-bit/zero-api-key-web-search) (MIT) by wd041216-bit — the provider abstraction, verification pipeline, MCP server and CLI surface are its work. The Laya sieve integration and rebrand are the delta. [Laya](https://huggingface.co/convaiinnovations/laya) is by Convai Innovations (Apache-2.0).
+The Jev-powered sieve integration uses [Laya](https://huggingface.co/convaiinnovations/laya) by Convai Innovations (Apache-2.0, open weights) — an open Jev-class, non-autoregressive decision model. Search providers, the verification pipeline, the MCP server and the CLI are original to this project (MIT).
 
 ## License
 

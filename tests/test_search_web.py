@@ -1,4 +1,4 @@
-"""Unit tests for zerosieve.search_web module."""
+"""Unit tests for zero_api_key_web_search.search_web module."""
 import json
 import os
 import sys
@@ -9,9 +9,9 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from zerosieve.providers.base import ProviderResult
-from zerosieve.providers.brightdata import BrightDataProvider
-from zerosieve.search_web import Answer, Source, UltimateSearcher
+from zero_api_key_web_search.providers.base import ProviderResult
+from zero_api_key_web_search.providers.brightdata import BrightDataProvider
+from zero_api_key_web_search.search_web import Answer, Source, UltimateSearcher
 
 
 class FakeProvider:

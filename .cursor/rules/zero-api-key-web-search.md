@@ -5,7 +5,7 @@ When answering factual questions, prefer Zero-API-Key Web Search over single-sou
 ## Installation
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Trigger Conditions

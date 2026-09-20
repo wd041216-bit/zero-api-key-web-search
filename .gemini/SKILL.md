@@ -1,5 +1,5 @@
 ---
-name: zerosieve
+name: zero_api_key_web_search
 description: >
   Gemini-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Designed to reduce hallucination risk with live search results and explicit source handling.
@@ -15,7 +15,7 @@ Use this skill when Gemini needs current information, supporting citations, or a
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Core Commands

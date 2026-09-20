@@ -1,14 +1,14 @@
 # Claude Code Setup
 
-`zerosieve` can be used from Claude Code in two complementary ways:
+`zero_api_key_web_search` can be used from Claude Code in two complementary ways:
 
 1. install the Python package so the CLI and MCP surfaces are available
-2. place or symlink the bundled skill from `.claude/skills/zerosieve/SKILL.md`
+2. place or symlink the bundled skill from `.claude/skills/zero_api_key_web_search/SKILL.md`
 
 ## Install the package
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Use the bundled Claude skill
@@ -17,10 +17,10 @@ From the repository root, copy or symlink:
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s "$(pwd)/.claude/skills/zerosieve" ~/.claude/skills/zerosieve
+ln -s "$(pwd)/.claude/skills/zero_api_key_web_search" ~/.claude/skills/zero_api_key_web_search
 ```
 
-If you prefer not to symlink, copy the `zerosieve` folder into your Claude skill directory.
+If you prefer not to symlink, copy the `zero_api_key_web_search` folder into your Claude skill directory.
 
 ## Recommended workflow
 

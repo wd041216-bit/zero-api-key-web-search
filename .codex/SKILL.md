@@ -1,5 +1,5 @@
 ---
-name: zerosieve
+name: zero_api_key_web_search
 description: >
   Codex-compatible skill for source-backed web search, page reading, and evidence-aware claim checking.
   Use it to verify factual answers with live results and explicit source handling.
@@ -14,7 +14,7 @@ Use this skill when Codex needs current information, supporting citations, or a 
 ## Install
 
 ```bash
-pip install zerosieve
+pip install zero_api_key_web_search
 ```
 
 ## Core Commands
