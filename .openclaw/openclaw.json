@@ -1,0 +1,10 @@
+{
+  "mcp": {
+    "servers": {
+      "zero-search": {
+        "command": "zero-mcp",
+        "args": []
+      }
+    }
+  }
+}

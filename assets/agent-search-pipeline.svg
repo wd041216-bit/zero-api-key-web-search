@@ -1,0 +1,57 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="520" rx="28" fill="#0B1220"/>
+  <rect x="28" y="28" width="1144" height="464" rx="22" fill="#101827" stroke="#273449"/>
+  <text x="72" y="82" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700">AI-agent search pipeline</text>
+  <text x="72" y="118" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="17">Free by default. Provider-aware. Evidence-aware. Ready for MCP and LLM context.</text>
+
+  <g transform="translate(72 170)">
+    <rect width="210" height="142" rx="16" fill="#182236" stroke="#334155"/>
+    <text x="24" y="42" fill="#E2E8F0" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">Agent query</text>
+    <text x="24" y="76" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="15">zero-context</text>
+    <text x="24" y="102" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="15">search_web</text>
+  </g>
+
+  <path d="M302 241H374" stroke="#38BDF8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M366 231L378 241L366 251" stroke="#38BDF8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g transform="translate(394 150)">
+    <rect width="246" height="182" rx="16" fill="#122A3A" stroke="#155E75"/>
+    <text x="24" y="42" fill="#E2E8F0" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">Provider profiles</text>
+    <rect x="24" y="68" width="86" height="28" rx="14" fill="#0EA5E9"/>
+    <text x="42" y="88" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">free</text>
+    <rect x="120" y="68" width="102" height="28" rx="14" fill="#164E63"/>
+    <text x="136" y="88" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">production</text>
+    <text x="24" y="126" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="15">ddgs + searxng</text>
+    <text x="24" y="154" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="15">optional Bright Data</text>
+  </g>
+
+  <path d="M660 241H732" stroke="#38BDF8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M724 231L736 241L724 251" stroke="#38BDF8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g transform="translate(752 150)">
+    <rect width="180" height="182" rx="16" fill="#1C2637" stroke="#475569"/>
+    <text x="24" y="42" fill="#E2E8F0" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">Evidence</text>
+    <text x="24" y="78" fill="#CBD5E1" font-family="Inter, Arial, sans-serif" font-size="15">rank</text>
+    <text x="24" y="106" fill="#CBD5E1" font-family="Inter, Arial, sans-serif" font-size="15">verify</text>
+    <text x="24" y="134" fill="#CBD5E1" font-family="Inter, Arial, sans-serif" font-size="15">surface conflict</text>
+    <text x="24" y="162" fill="#CBD5E1" font-family="Inter, Arial, sans-serif" font-size="15">cite sources</text>
+  </g>
+
+  <path d="M952 241H1024" stroke="#38BDF8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1016 231L1028 241L1016 251" stroke="#38BDF8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g transform="translate(1044 170)">
+    <rect width="84" height="142" rx="16" fill="#082F49" stroke="#0EA5E9"/>
+    <text x="24" y="46" fill="#E0F2FE" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">LLM</text>
+    <text x="20" y="80" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="14">context</text>
+    <text x="22" y="106" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="14">report</text>
+  </g>
+
+  <g transform="translate(72 372)">
+    <rect width="1056" height="66" rx="16" fill="#0F172A" stroke="#1E293B"/>
+    <text x="24" y="40" fill="#E2E8F0" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">One install path for agent developers:</text>
+    <text x="322" y="40" fill="#67E8F9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="17">pip install zero-api-key-web-search</text>
+    <text x="700" y="40" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="17">or</text>
+    <text x="732" y="40" fill="#67E8F9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="17">npx zero-api-key-web-search</text>
+  </g>
+</svg>

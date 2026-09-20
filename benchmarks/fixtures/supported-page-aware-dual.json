@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs", "searxng"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://docs.python.org/3/whatsnew/3.13.html",
+      "title": "What's New In Python 3.13",
+      "snippet": "Overview page for Python 3.13 changes and updates.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    },
+    {
+      "url": "https://www.python.org/downloads/release/python-3130/",
+      "title": "Python 3.13.0 release page",
+      "snippet": "Python.org release notes confirm Python 3.13 is still the stable supported branch.",
+      "engine": "SEARXNG-Text",
+      "date": "2026-03-19"
+    }
+  ],
+  "pages": {
+    "https://docs.python.org/3/whatsnew/3.13.html": {
+      "status": "success",
+      "url": "https://docs.python.org/3/whatsnew/3.13.html",
+      "title": "What's New In Python 3.13",
+      "content": "Official documentation says Python 3.13 is still the supported stable branch and current release line.",
+      "truncated": false,
+      "total_length": 102
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<svg width="1200" height="680" viewBox="0 0 1200 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="680" rx="28" fill="#0B1220"/>
+  <rect x="54" y="54" width="1092" height="572" rx="18" fill="#0F172A" stroke="#334155"/>
+  <circle cx="86" cy="86" r="8" fill="#EF4444"/>
+  <circle cx="112" cy="86" r="8" fill="#F59E0B"/>
+  <circle cx="138" cy="86" r="8" fill="#22C55E"/>
+  <text x="174" y="92" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="15">zero-context demo</text>
+  <text x="82" y="150" fill="#67E8F9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="20">$ zero-context "FastAPI lifespan docs" --goggles docs-first</text>
+  <text x="82" y="210" fill="#E2E8F0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="20"># Search context: FastAPI lifespan docs</text>
+  <text x="82" y="260" fill="#A7F3D0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="18">## Retrieval</text>
+  <text x="102" y="296" fill="#CBD5E1" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="17">- Providers used: ddgs</text>
+  <text x="102" y="326" fill="#CBD5E1" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="17">- Goggles: docs-first applied</text>
+  <text x="102" y="356" fill="#CBD5E1" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="17">- Confidence: MEDIUM</text>
+  <text x="82" y="410" fill="#A7F3D0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="18">## Sources</text>
+  <text x="102" y="446" fill="#F8FAFC" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="17">1. FastAPI lifespan docs</text>
+  <text x="122" y="476" fill="#94A3B8" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="16">quality=high | freshness=unknown | cite-ready URL</text>
+  <text x="102" y="524" fill="#F8FAFC" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="17">2. Application events reference</text>
+  <text x="122" y="554" fill="#94A3B8" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="16">docs-first reranked technical sources above generic pages</text>
+  <rect x="82" y="590" width="340" height="34" rx="17" fill="#082F49"/>
+  <text x="104" y="613" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">agent-ready context, not just links</text>
+</svg>

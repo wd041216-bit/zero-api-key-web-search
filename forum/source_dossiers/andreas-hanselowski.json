@@ -1,0 +1,23 @@
+{
+  "expert_id": "andreas-hanselowski",
+  "created_at": "2026-04-17T02:37:17Z",
+  "updated_at": "2026-04-17T02:37:17Z",
+  "sources": [
+    {
+      "id": "andreas-hanselowski-a-andreas-hanselowski-linkedin-profile",
+      "title": "Andreas Hanselowski - LinkedIn Profile",
+      "url": "https://www.linkedin.com/in/andreashanselowski/",
+      "tier": "A",
+      "note": "Professional profile detailing career in fact verification, neural search, and conversational AI",
+      "added_at": "2026-04-17T02:37:17Z"
+    },
+    {
+      "id": "andreas-hanselowski-b-robust-fact-verification-with-hanselowski-et-al-arxiv",
+      "title": "Robust Fact Verification with Hanselowski et al. - ArXiv",
+      "url": "https://arxiv.org/abs/1809.03364",
+      "tier": "B",
+      "note": "Key paper on fact verification with weak supervision and evidence combination strategies",
+      "added_at": "2026-04-17T02:37:17Z"
+    }
+  ]
+}

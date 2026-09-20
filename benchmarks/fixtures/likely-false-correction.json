@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://example.net/fact-check",
+      "title": "Fact check says false",
+      "snippet": "The statement is false, disputed, and contradicted by official updates.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    },
+    {
+      "url": "https://example.org/correction",
+      "title": "Correction published",
+      "snippet": "A correction explains the statement is incorrect and should not be repeated.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-19"
+    }
+  ],
+  "pages": {}
+}

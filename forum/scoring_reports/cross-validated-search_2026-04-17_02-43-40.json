@@ -1,0 +1,50 @@
+{
+  "domain": "cross-validated-search",
+  "artifact_path": "/Users/dawei/playground/cross-validated-search",
+  "iteration": 1,
+  "council_id": "cross-validated-search-main-council",
+  "axes": [
+    {
+      "axis": "breadth",
+      "score": 0,
+      "evidence": [],
+      "gaps": [
+        "No artifact evaluated yet for breadth"
+      ],
+      "expert_votes": {}
+    },
+    {
+      "axis": "depth",
+      "score": 0,
+      "evidence": [],
+      "gaps": [
+        "No artifact evaluated yet for depth"
+      ],
+      "expert_votes": {}
+    },
+    {
+      "axis": "thickness",
+      "score": 0,
+      "evidence": [],
+      "gaps": [
+        "No artifact evaluated yet for thickness"
+      ],
+      "expert_votes": {}
+    },
+    {
+      "axis": "effectiveness",
+      "score": 0,
+      "evidence": [],
+      "gaps": [
+        "No artifact evaluated yet for effectiveness"
+      ],
+      "expert_votes": {}
+    }
+  ],
+  "total": 0,
+  "verdict": "needs_work",
+  "generated_at": "2026-04-17T02:43:40Z",
+  "recommendations": [
+    "In standalone mode, scoring is a placeholder. Under SKILL mode, the maturity-scorer agent evaluates the artifact using expert lenses."
+  ]
+}

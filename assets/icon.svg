@@ -1,0 +1,47 @@
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="40" y1="32" x2="360" y2="368" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="1" stop-color="#132948"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="92" y1="76" x2="292" y2="292" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#81E6FF"/>
+      <stop offset="1" stop-color="#5B8CFF"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="210" y1="122" x2="316" y2="238" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7A7BFF"/>
+      <stop offset="1" stop-color="#A95DFF"/>
+    </linearGradient>
+    <filter id="glow" x="36" y="36" width="328" height="328" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="18" y="18" width="364" height="364" rx="40" fill="url(#bg)"/>
+  <rect x="18" y="18" width="364" height="364" rx="40" stroke="#2A4368" stroke-width="2"/>
+
+  <g opacity="0.22">
+    <path d="M232 74V128" stroke="#5B8CFF" stroke-width="3"/>
+    <path d="M232 272V326" stroke="#5B8CFF" stroke-width="3"/>
+    <path d="M158 200H104" stroke="#5B8CFF" stroke-width="3"/>
+    <path d="M360 200H306" stroke="#5B8CFF" stroke-width="3"/>
+    <path d="M286 146L324 108" stroke="#7A7BFF" stroke-width="3"/>
+    <path d="M286 254L324 292" stroke="#7A7BFF" stroke-width="3"/>
+  </g>
+
+  <g filter="url(#glow)">
+    <circle cx="150" cy="164" r="62" stroke="url(#ring)" stroke-width="16"/>
+    <circle cx="150" cy="164" r="32" fill="#B3EEFF" fill-opacity="0.28"/>
+    <path d="M190 205L234 249" stroke="url(#ring)" stroke-width="18" stroke-linecap="round"/>
+    <circle cx="260" cy="200" r="42" fill="#1B1F4D" stroke="url(#accent)" stroke-width="8"/>
+  </g>
+  <path d="M246 183H258L267 212L278 172L287 200H302" stroke="#EEE8FF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M96 306C120 284 144 272 168 272C192 272 212 284 232 304" stroke="#81E6FF" stroke-opacity="0.8" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="255" cy="308" r="9" fill="#81E6FF"/>
+  <circle cx="283" cy="308" r="9" fill="#7A7BFF"/>
+  <circle cx="311" cy="308" r="9" fill="#A95DFF"/>
+</svg>

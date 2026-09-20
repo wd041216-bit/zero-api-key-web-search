@@ -1,0 +1,15 @@
+{
+  "domain": "web-search-infra",
+  "council_id": "cross-validated-search-main-council",
+  "iteration": 6,
+  "last_score": {
+    "total": 92,
+    "breadth": 22,
+    "depth": 22,
+    "thickness": 24,
+    "effectiveness": 24
+  },
+  "target_repo": "/tmp/zero-api-key-web-search",
+  "build_command": "auto-detect",
+  "generated_at": "2026-04-30T23:19:32Z"
+}

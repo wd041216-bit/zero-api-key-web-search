@@ -1,0 +1,16 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://analysis.example.com/vendorx-merger-watch",
+      "title": "Analysts keep watching VendorX merger talks",
+      "snippet": "Analysts say VendorX is still discussing merger strategy and document review, but no definitive agreement was confirmed.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    }
+  ],
+  "pages": {}
+}

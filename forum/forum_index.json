@@ -1,0 +1,139 @@
+{
+  "version": "expert_forum_index_v1",
+  "generated_at": "2026-05-03T01:16:13Z",
+  "domains": [
+    "agent-search-infrastructure",
+    "cross-validated-search",
+    "web-search-infra"
+  ],
+  "candidate_count": 6,
+  "expert_count": 6,
+  "experts": [
+    {
+      "id": "andreas-hanselowski",
+      "name": "Andreas Hanselowski",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "methodology_reviewer",
+        "systems_builder"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 0.75,
+        "rationale": "Computed from source-tier coverage; human review should still check claim-source alignment."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Profile filled from source dossier. Re-verify industry role accuracy annually."
+      }
+    },
+    {
+      "id": "david-soria-parra",
+      "name": "David Soria Parra",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "protocol_specialist",
+        "systems_builder"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 1.0,
+        "rationale": "Multiple Tier A sources (MAINTAINERS.md, official Anthropic announcement, Linux Foundation summit, Stack Overflow Blog) plus multiple Tier B podcast interviews with extensive direct technical content (a16z, Software Engineering Daily, Latent Space). Core expertise in MCP specification, design philosophy, anti-patterns, and evolution roadmap directly substantiated."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-19",
+        "notes": "Active as Lead Maintainer at Anthropic; MCP Dev Summit keynote April 2026 confirms ongoing role. a16z and SED podcasts from 2025-2026 contain extensive design philosophy content."
+      }
+    },
+    {
+      "id": "isabelle-augenstein",
+      "name": "Isabelle Augenstein",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "methodology_reviewer",
+        "systems_builder"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 1.0,
+        "rationale": "Multiple Tier A sources (institutional profile, Google Scholar) plus Tier B keynote covering research vision. Core expertise well-documented."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Augenstein is currently active at UCPH; profile reflects ongoing research direction."
+      }
+    },
+    {
+      "id": "pepa-atanasova",
+      "name": "Pepa Atanasova",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "methodology_reviewer",
+        "systems_builder"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 0.75,
+        "rationale": "Computed from source-tier coverage; human review should still check claim-source alignment."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Profile filled from source dossier; career-stage and publication data current as of source retrieval date."
+      }
+    },
+    {
+      "id": "preslav-nakov",
+      "name": "Preslav Nakov",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "venue_strategist",
+        "methodology_reviewer"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 1.0,
+        "rationale": "Multiple Tier A sources (MBZUAI faculty page, Google Scholar, ACL Anthology, ORCID) plus Tier B sources with extensive verbatim content (MIT Technology Review interview, Checkstep/Medium interview, CoNLL 2023 keynote, Nature Machine Intelligence paper). 8 canonical works spanning 2018-2024 with 250+ citations each. Core expertise in fact-checking, propaganda detection, and LLM-era factuality directly substantiated."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-19",
+        "notes": "Active researcher at MBZUAI; Nature Machine Intelligence 2024 paper and CoNLL 2023 keynote confirm ongoing leadership in the field."
+      }
+    },
+    {
+      "id": "reihaneh-rabbany",
+      "name": "Reihaneh Rabbany",
+      "domains": [
+        "cross-validated-search"
+      ],
+      "roles": [
+        "systems_builder",
+        "methodology_reviewer"
+      ],
+      "source_confidence": {
+        "level": "high",
+        "weighted_score": 0.75,
+        "rationale": "Strong Tier A institutional profile (Mila) and detailed Tier B paper (Veracity arXiv preprint). Research trajectory well-documented through publications, lab page, and Google Scholar. Core expertise in web retrieval for fact-checking and source credibility directly substantiated by source materials."
+      },
+      "freshness": {
+        "status": "fresh",
+        "last_checked": "2026-04-17",
+        "notes": "Active researcher at Mila/McGill; Veracity system published 2025, CrediBench and misinformation guide published 2025. Research direction continues to advance web-scale credibility and open-source fact-checking."
+      }
+    }
+  ]
+}

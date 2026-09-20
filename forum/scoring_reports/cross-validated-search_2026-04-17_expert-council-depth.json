@@ -1,0 +1,81 @@
+{
+  "domain": "cross-validated-search",
+  "artifact_path": "/Users/dawei/playground/cross-validated-search",
+  "iteration": 2,
+  "council_id": "cross-validated-search-main-council",
+  "axes": [
+    {
+      "axis": "breadth",
+      "expert_votes": {
+        "reihaneh-rabbany": 16,
+        "isabelle-augenstein": 15,
+        "preslav-nakov": 15,
+        "pepa-atanasova": 16,
+        "andreas-hanselowski": 17
+      },
+      "score": 16,
+      "evidence": [
+        "All 5 experts cover evidence verification and fact-checking (axis 2) and claim classification/stance detection (axis 5) -- the two most central sub-domains",
+        "Rabbany's Veracity/CrediBench work and Hanselowski's multi-provider aggregation expertise provide good coverage of web search and retrieval (axis 1) and multi-provider aggregation (axis 4)",
+        "Atanasova and Hanselowski both provide deep coverage of confidence calibration and uncertainty quantification (axis 8)",
+        "Nakov's propaganda detection and media bias work complements source credibility and trust scoring (axis 3) alongside Rabbany's network-based credibility scoring",
+        "Rabbany's 6 canonical works span web retrieval, source credibility, evaluation methodology, and temporal graph methods -- the broadest single-expert coverage"
+      ],
+      "gaps": [
+        "MCP and agent runtime integration (axis 6) is thinly covered: only Hanselowski addresses agentic workflows, and no expert covers the MCP protocol specifically",
+        "Information extraction from web pages (axis 7) lacks a dedicated specialist; Augenstein's IE research and Hanselowski's argument mining provide partial coverage at best",
+        "Multilingual and cross-lingual concerns are mentioned by Nakov and Atanasova but not deeply operationalized in any expert's reasoning kernel",
+        "Production deployment, latency, and cost constraints are acknowledged in blind spots but no expert provides deep deployment-side knowledge",
+        "Adversarial robustness of credibility scoring and search result manipulation is a noted blind spot across multiple experts"
+      ]
+    },
+    {
+      "axis": "depth",
+      "expert_votes": {
+        "reihaneh-rabbany": 19,
+        "isabelle-augenstein": 16,
+        "preslav-nakov": 16,
+        "pepa-atanasova": 18,
+        "andreas-hanselowski": 19
+      },
+      "score": 18,
+      "evidence": [
+        "Rabbany's profile contains 6 canonical works (richest among all experts), 8 signature ideas, a 6-item reasoning kernel per category, and detailed advantage_knowledge_base with 8 canonical concepts and 4 favorite benchmarks",
+        "Hanselowski's profile has the most granular reasoning kernel (5 items per category), 5 question playbook entries (most), and 6 preferred_evidence types with specific metric names (Recall@k, MRR, nDCG)",
+        "Atanasova's profile features 4 question playbook entries, 3 quote bank entries, and a detailed advantage_knowledge_base (6 canonical concepts, 5 favorite benchmarks, 4 known debates, 5 anti-patterns)",
+        "All 5 profiles include complete reasoning_kernel structures (core_questions, decision_rules, failure_taxonomy, preferred_abstractions), question_playbooks, quote_banks, critique_styles, blind_spots, and domain_relevance sections",
+        "Source confidence scores range from 0.75 to 1.0, with Augenstein having the highest (1.0) based on multiple Tier A sources"
+      ],
+      "gaps": [
+        "Augenstein's and Nakov's profiles are thinner: only 3 canonical works each, 2 question playbook entries each, and 1 quote bank entry each -- solid but not deep",
+        "Nakov's source_confidence is 0.75 with only 2 source refs (institutional profile + interview), limiting verifiable source alignment",
+        "Augenstein's quote bank has only 1 entry, and it is a paraphrase rather than a direct quote, reducing its evidentiary weight",
+        "No expert profile reaches the 'authoritative standalone reference work' level (23-25); all are in the 'rich profiles' to 'deep profiles' range",
+        "Blind spots are self-identified but not externally validated; some profiles may have undocumented gaps in coverage of emerging areas like RAG architecture patterns and MCP tool integration"
+      ]
+    }
+  ],
+  "total": 34,
+  "verdict": "needs_work",
+  "weighted_median_calculation": {
+    "note": "Weights normalized from {reihaneh-rabbany: 0.3, isabelle-augenstein: 0.2, preslav-nakov: 0.24, pepa-atanasova: 0.24, andreas-hanselowski: 0.2} summing to 1.18",
+    "normalized_weights": {
+      "reihaneh-rabbany": 0.2542,
+      "isabelle-augenstein": 0.1695,
+      "preslav-nakov": 0.2034,
+      "pepa-atanasova": 0.2034,
+      "andreas-hanselowski": 0.1695
+    },
+    "breadth_median_trace": "Sorted: 15(0.17), 15(0.37), 16(0.63), 16(0.83), 17(1.00) -- crosses 0.5 at 16",
+    "depth_median_trace": "Sorted: 16(0.17), 16(0.37), 18(0.58), 19(0.83), 19(1.00) -- crosses 0.5 at 18"
+  },
+  "generated_at": "2026-04-17T03:15:00Z",
+  "recommendations": [
+    "BREADTH gap: Add an expert with deep MCP protocol and agent runtime integration expertise to cover axis 6",
+    "BREADTH gap: Add an expert specializing in information extraction from web pages (HTML parsing, structured data extraction, web table understanding) to cover axis 7",
+    "BREADTH gap: Strengthen multilingual coverage by expanding existing experts' profiles or adding a multilingual verification specialist",
+    "DEPTH gap: Enrich Augenstein's and Nakov's profiles with additional canonical works, more question playbook entries, and more quote bank entries",
+    "DEPTH gap: Add verified direct quotes from primary sources to profiles that currently rely on paraphrased material",
+    "DEPTH gap: Validate blind spots externally and add coverage of emerging areas (RAG patterns, MCP tool use) to relevant experts' reasoning kernels"
+  ]
+}

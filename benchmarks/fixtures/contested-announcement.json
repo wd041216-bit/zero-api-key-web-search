@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "providers_used": ["ddgs", "searxng"],
+    "errors": []
+  },
+  "sources": [
+    {
+      "url": "https://example.com/support",
+      "title": "Launch reported",
+      "snippet": "Multiple reports say the product launch happened this week.",
+      "engine": "DDGS-Text",
+      "date": "2026-03-20"
+    },
+    {
+      "url": "https://example.org/conflict",
+      "title": "Fact check disputes launch timing",
+      "snippet": "A fact check says the launch did not happen this week and calls the claim false.",
+      "engine": "SEARXNG-Text",
+      "date": "2026-03-20"
+    }
+  ],
+  "pages": {}
+}

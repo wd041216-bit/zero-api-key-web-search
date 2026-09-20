@@ -1,0 +1,118 @@
+{
+  "domain": "cross-validated-search",
+  "artifact_path": "/Users/dawei/playground/cross-validated-search",
+  "iteration": 1,
+  "council_id": "cross-validated-search-main-council",
+  "axes": [
+    {
+      "axis": "breadth",
+      "score": 16,
+      "evidence": [
+        "5 experts covering 7 of 8 sub-domains",
+        "Strong coverage of evidence verification, fact-checking, claim classification, and source credibility",
+        "Rabbany and Hanselowski cover web retrieval and multi-provider aggregation",
+        "Augenstein covers multi-domain verification and explainability",
+        "Nakov covers propaganda detection and media bias"
+      ],
+      "gaps": [
+        "MCP and agent runtime integration expertise only partially covered by Hanselowski",
+        "No dedicated specialist for information extraction from web pages",
+        "Multilingual concerns acknowledged but not deeply operationalized"
+      ],
+      "expert_votes": {
+        "reihaneh-rabbany": 17,
+        "isabelle-augenstein": 16,
+        "preslav-nakov": 15,
+        "pepa-atanasova": 16,
+        "andreas-hanselowski": 16
+      }
+    },
+    {
+      "axis": "depth",
+      "score": 18,
+      "evidence": [
+        "All profiles have complete reasoning kernels, question playbooks, and advantage knowledge bases",
+        "Rabbany and Hanselowski have the deepest profiles with 5-6 canonical works and 5 playbook entries",
+        "Atanasova has detailed playbook entries and rich advantage KB",
+        "Augenstein and Nakov are thinner with only 3 canonical works and 2 playbook entries each"
+      ],
+      "gaps": [
+        "Augenstein and Nakov profiles need more canonical works and quote bank entries",
+        "No profile reaches authoritative standalone reference work level",
+        "Some blind spots sections are generic rather than specific to the domain"
+      ],
+      "expert_votes": {
+        "reihaneh-rabbany": 19,
+        "isabelle-augenstein": 16,
+        "preslav-nakov": 16,
+        "pepa-atanasova": 18,
+        "andreas-hanselowski": 19
+      }
+    },
+    {
+      "axis": "thickness",
+      "score": 18,
+      "evidence": [
+        "Complete CLI tools (search-web, browse-page, verify-claim, evidence-report) plus MCP server",
+        "Working provider abstraction with DdgsProvider and SearxngProvider",
+        "46 unit + integration tests passing with benchmark fixtures",
+        "Dockerfile, docker-compose, deployment scripts, and platform integration files",
+        "Evidence-aware heuristic v3 verification model with documented score weights",
+        "Error handling for provider failures, network errors, and unknown providers"
+      ],
+      "gaps": [
+        "No rate limiting, retry with backoff, or circuit breaker for provider calls",
+        "No async implementation for concurrent provider queries",
+        "No structured logging or monitoring hooks for production",
+        "English-only conflict markers without multilingual support",
+        "No type checking or linting enforced in CI"
+      ],
+      "expert_votes": {
+        "reihaneh-rabbany": 18,
+        "isabelle-augenstein": 19,
+        "preslav-nakov": 17,
+        "pepa-atanasova": 18,
+        "andreas-hanselowski": 19
+      }
+    },
+    {
+      "axis": "effectiveness",
+      "score": 17,
+      "evidence": [
+        "Core workflow is functional end-to-end: search-verify-report pipeline works with live providers",
+        "Evidence report surface produces structured output with verdict rationale, stance summaries, and next steps",
+        "Dual-provider aggregation with cross-validated deduplication works",
+        "Page-aware verification genuinely improves classification over snippet heuristics",
+        "Source quality heuristics provide reasonable first-order signal"
+      ],
+      "gaps": [
+        "Verification is purely heuristic - no NLP-based stance detection or entailment reasoning",
+        "Conflict detection relies on English-language markers only",
+        "Uncalibrated confidence thresholds (hand-tuned, not benchmarked against gold standard)",
+        "No claim decomposition for compound claims",
+        "Binary provider diversity without reliability weighting",
+        "Naive browse-page extractor without main content detection or boilerplate removal"
+      ],
+      "expert_votes": {
+        "reihaneh-rabbany": 17,
+        "isabelle-augenstein": 18,
+        "preslav-nakov": 16,
+        "pepa-atanasova": 17,
+        "andreas-hanselowski": 18
+      }
+    }
+  ],
+  "total": 69,
+  "verdict": "needs_work",
+  "generated_at": "2026-04-17T02:50:00Z",
+  "recommendations": [
+    "Add NLP-based stance detection or sentence similarity for verification beyond keyword overlap",
+    "Add claim decomposition for compound claims",
+    "Add confidence calibration against a gold standard dataset",
+    "Implement async provider calls for concurrent queries",
+    "Add rate limiting and retry logic for provider resilience",
+    "Deepen Augenstein and Nakov expert profiles with more canonical works and playbook entries",
+    "Add multilingual conflict detection markers",
+    "Improve browse-page with main content extraction and boilerplate removal"
+  ]
+}

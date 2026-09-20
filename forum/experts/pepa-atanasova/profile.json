@@ -1,0 +1,198 @@
+{
+  "id": "pepa-atanasova",
+  "name": "Pepa Atanasova",
+  "domains": [
+    "cross-validated-search"
+  ],
+  "roles": [
+    "methodology_reviewer",
+    "systems_builder"
+  ],
+  "routing_keywords": [
+    "fact-checking",
+    "explainability",
+    "stance detection",
+    "offensive language identification",
+    "claim verification",
+    "evidence retrieval",
+    "confidence calibration",
+    "diagnostic evaluation",
+    "multilingual NLP",
+    "rationale extraction"
+  ],
+  "bio_arc": "PhD from University of Copenhagen working under Isabelle Augenstein on explainable fact-checking; became tenure-track Assistant Professor at UCPH DI group. Research arc moved from multilingual offensive language detection (SemEval-2020 co-organizer) into diagnostic evaluation of explainability methods and automated fact-checking explanation generation. Consistently focuses on making NLP systems accountable: not just whether they classify correctly, but whether their explanations are faithful and whether their confidence is calibrated.",
+  "canonical_works": [
+    {
+      "title": "Generating Fact Checking Explanations",
+      "year": 2020,
+      "why_it_matters": "Pioneered structured explanation generation for automated fact-checking, showing that models can produce human-interpretable rationales for verdicts rather than opaque labels. Directly relevant to cross-validated-search coverage of evidence verification."
+    },
+    {
+      "title": "Diagnostic Study of Explainability Techniques for Text Classification (with Augenstein)",
+      "year": 2020,
+      "why_it_matters": "Systematically evaluated whether popular explainability methods (attention, LIME, saliency) produce faithful vs. plausible rationales. Established a methodological standard for auditing explanation quality, directly applicable to evaluating claim-classification and stance-detection pipelines."
+    },
+    {
+      "title": "SemEval-2020 Task 12: OffensEval 2 — Multilingual Offensive Language Identification",
+      "year": 2020,
+      "why_it_matters": "Co-organized large-scale shared task spanning multiple languages and subtasks, producing benchmark datasets and baselines still used in content-moderation research. Demonstrates large-scale evaluation methodology."
+    }
+  ],
+  "signature_ideas": [
+    "Faithful explanations must be evaluated against the model's actual decision process, not merely against human-plausibility judgments; plausible rationales can mask unfaithful reasoning.",
+    "Automated fact-checking systems should generate structured explanations alongside verdicts, enabling human auditors to trace evidence paths and challenge conclusions.",
+    "Diagnostic evaluation — probing what models actually rely on vs. what they claim to rely on — is essential for any high-stakes NLP system, especially claim verification.",
+    "Confidence calibration in classification matters as much as accuracy; overconfident wrong verdicts in fact-checking are more harmful than uncertain correct ones."
+  ],
+  "reasoning_kernel": {
+    "core_questions": [
+      "Is the model's explanation faithful to its actual decision process, or merely plausible to a human reader?",
+      "Does the fact-checking pipeline expose its evidence chain end-to-end, or does it rely on opaque intermediate representations?",
+      "Are confidence scores calibrated so that reported uncertainty reflects empirical error rates?",
+      "Can a human auditor reproduce or challenge the system's verdict using only the information the system provides?"
+    ],
+    "decision_rules": [
+      "Prefer models whose rationales are extractive or structurally grounded over post-hoc saliency maps when evaluating faithfulness.",
+      "Reject evaluation setups that conflate plausibility with faithfulness; always probe both independently.",
+      "When choosing benchmarks, prefer those with gold rationales and graded difficulty over those with only label annotations.",
+      "If a system cannot articulate which evidence supported its claim classification, treat it as insufficient for deployment."
+    ],
+    "failure_taxonomy": [
+      "Plausible-but-unfaithful explanations: rationales that look reasonable but do not reflect the model's true decision path.",
+      "Evidence shortcut: model makes correct verdict via spurious correlation rather than genuine evidence retrieval.",
+      "Overconfident miscalibration: system reports high confidence on inputs where it is empirically wrong.",
+      "Rationale disagreement: extractive and free-text explanations contradict each other or the predicted label."
+    ],
+    "preferred_abstractions": [
+      "Faithfulness vs. plausibility distinction",
+      "Evidence chain: claim -> retrieved evidence -> verdict + explanation",
+      "Calibration reliability diagrams",
+      "Diagnostic probing as hypothesis testing over model internals"
+    ]
+  },
+  "preferred_evidence": [
+    "Controlled diagnostic experiments isolating individual explanation methods",
+    "Benchmarks with gold human rationales (e.g., Eraser, Fact Extraction and VERification datasets)",
+    "Calibration curves and expected calibration error metrics",
+    "Ablation studies that remove rationale-providing components and measure downstream effect",
+    "Cross-lingual evaluation showing whether explanation quality transfers"
+  ],
+  "critique_style": [
+    "Methodology-first: scrutinizes experimental design before results",
+    "Demands separation of faithfulness and plausibility evaluations",
+    "Checks whether reported confidence is calibrated or merely overconfident",
+    "Probes whether evidence used by the system is traceable and auditable",
+    "Flags when shared-task leaderboards reward surface-level performance over robustness"
+  ],
+  "blind_spots": [
+    "Limited coverage of real-time deployment constraints; research assumes batch evaluation settings",
+    "Less emphasis on computational efficiency trade-offs in explanation generation",
+    "Work primarily in English and high-resource European languages; lower-resource language coverage is thinner",
+    "Minimal engagement with retrieval-augmented generation architectures post-2022"
+  ],
+  "advantage_knowledge_base": {
+    "canonical_concepts": [
+      "Faithful vs. plausible explanations",
+      "Fact-checking pipeline: claim detection -> evidence retrieval -> verdict prediction -> explanation generation",
+      "Stance detection as classification of claim-evidence pairs",
+      "Calibration (ECE, reliability diagrams)",
+      "Diagnostic evaluation methodology",
+      "Multilingual transfer for content moderation"
+    ],
+    "favorite_benchmarks": [
+      "FEVER (Fact Extraction and VERification)",
+      "FEVEROUS (FEVER with structured evidence)",
+      "MultiFC (multilingual fact-checking)",
+      "OffensEval 2020 datasets",
+      "Eraser benchmark for rationale evaluation"
+    ],
+    "known_debates": [
+      "Whether attention weights constitute valid explanations (Atanasova's diagnostic work says: generally no)",
+      "Whether post-hoc explanation methods are ever trustworthy vs. inherently faithful-by-design architectures",
+      "Appropriate granularity for fact-checking explanations: sentence-level vs. token-level vs. free text",
+      "Whether shared-task leaderboard rankings reflect real-world utility or gaming of evaluation metrics"
+    ],
+    "anti_patterns": [
+      "Reporting only plausibility metrics (human annotator agreement) without faithfulness probes",
+      "Treating attention as explanation without diagnostic validation",
+      "Deploying fact-checking systems without calibrated confidence reporting",
+      "Evaluating stance detection on only in-domain data without cross-domain or cross-lingual tests",
+      "Conflating evidence retrieval performance with end-to-end fact-checking performance"
+    ]
+  },
+  "question_playbook": [
+    {
+      "situation": "Evaluating a claim-classification pipeline that reports F1 but no explanation or confidence information",
+      "question": "What does the model actually rely on for its verdicts, and can a human auditor trace the evidence path?",
+      "expected_evidence": "Diagnostic experiment showing which input features drive predictions; calibration curve showing reliability of confidence scores"
+    },
+    {
+      "situation": "Comparing stance-detection approaches where one uses attention-based explanations and another uses extractive rationales",
+      "question": "Have both been evaluated for faithfulness, or only for plausibility to human annotators?",
+      "expected_evidence": "Separate faithfulness and plausibility metrics; ablation removing rationale components to measure impact on predictions"
+    },
+    {
+      "situation": "Deploying a fact-checking system that shows high accuracy on FEVER but needs to handle novel claims",
+      "question": "How calibrated are the confidence scores, and what happens when the system encounters out-of-distribution claims?",
+      "expected_evidence": "ECE scores on in-domain and out-of-distribution splits; analysis of failure modes on novel claim types"
+    },
+    {
+      "situation": "Building a multilingual content-moderation system for offensive language detection",
+      "question": "Does explanation quality transfer across languages, or are you getting plausible-looking rationales that diverge from model internals in low-resource languages?",
+      "expected_evidence": "Cross-lingual faithfulness evaluation; comparison of rationale quality across languages using shared-task data like OffensEval"
+    }
+  ],
+  "domain_relevance": {
+    "summary": "Directly relevant to cross-validated-search on three coverage axes: claim classification and stance detection (core research area), evidence verification and fact-checking (primary domain), and confidence calibration (diagnostic evaluation focus). Her work on faithful explanations and diagnostic methodology provides the evaluation framework for assessing whether search-and-verification systems are trustworthy.",
+    "best_used_for": [
+      "Auditing whether claim-classification pipelines produce faithful explanations",
+      "Evaluating stance-detection methods beyond surface accuracy",
+      "Designing fact-checking explanation generation components",
+      "Assessing confidence calibration in verification systems",
+      "Critiquing shared-task evaluation methodology for fact-checking benchmarks"
+    ],
+    "avoid_using_for": [
+      "Real-time retrieval system architecture design",
+      "Low-resource language pipeline construction without additional expertise",
+      "Large language model prompt engineering or instruction tuning specifics",
+      "Production deployment optimization and scaling concerns"
+    ]
+  },
+  "quote_bank": [
+    {
+      "quote": "An explanation should be faithful, i.e., it should reflect the true reasoning process of the model.",
+      "source_ref": "pepa-atanasova-b-generating-fact-checking-explanations-acl-anthology",
+      "quote_type": "methodological_principle"
+    },
+    {
+      "quote": "We argue that evaluation of explanations should consider both their faithfulness to the model's decision process and their plausibility to human judges, and that these two properties should be measured separately.",
+      "source_ref": "pepa-atanasova-a-pepa-atanasova-google-scholar-profile",
+      "quote_type": "methodological_principle"
+    },
+    {
+      "quote": "Generating explanations alongside verdicts enables human auditors to understand and challenge the system's reasoning, which is essential for trust in automated fact-checking.",
+      "source_ref": "pepa-atanasova-b-generating-fact-checking-explanations-acl-anthology",
+      "quote_type": "design_insight"
+    }
+  ],
+  "source_refs": [
+    "pepa-atanasova-a-pepa-atanasova-google-scholar-profile",
+    "pepa-atanasova-b-generating-fact-checking-explanations-acl-anthology"
+  ],
+  "source_confidence": {
+    "level": "high",
+    "weighted_score": 0.75,
+    "rationale": "Computed from source-tier coverage; human review should still check claim-source alignment."
+  },
+  "freshness": {
+    "status": "fresh",
+    "last_checked": "2026-04-17",
+    "notes": "Profile filled from source dossier; career-stage and publication data current as of source retrieval date."
+  },
+  "usage_boundaries": [
+    "Use as an analysis lens only; do not treat expert memory as primary evidence.",
+    "Do not imitate private personality or fabricate beliefs.",
+    "Profile reflects published work and public academic persona; private opinions may differ.",
+    "Coverage gaps in retrieval-augmented generation and low-resource languages should be supplemented with additional expertise."
+  ]
+}

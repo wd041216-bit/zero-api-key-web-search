@@ -1,0 +1,23 @@
+{
+  "expert_id": "reihaneh-rabbany",
+  "created_at": "2026-04-17T02:37:17Z",
+  "updated_at": "2026-04-17T02:37:17Z",
+  "sources": [
+    {
+      "id": "reihaneh-rabbany-a-reihaneh-rabbany-mila-faculty-profile",
+      "title": "Reihaneh Rabbany - Mila Faculty Profile",
+      "url": "https://mila.quebec/en/people/reihaneh-rabbany/",
+      "tier": "A",
+      "note": "Official Mila profile describing research in network science, data mining, and misinformation detection",
+      "added_at": "2026-04-17T02:37:17Z"
+    },
+    {
+      "id": "reihaneh-rabbany-b-veracity-an-open-source-ai-fact-checking-system-arxiv",
+      "title": "Veracity: An Open-Source AI Fact-Checking System - ArXiv",
+      "url": "https://arxiv.org/html/2506.15794v1",
+      "tier": "B",
+      "note": "Paper on Veracity, an open-source fact-checking system led by Rabbany at Mila",
+      "added_at": "2026-04-17T02:37:17Z"
+    }
+  ]
+}

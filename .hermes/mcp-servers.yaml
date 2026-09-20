@@ -1,0 +1,9 @@
+# Hermes MCP Server Configuration for zerosieve
+# Add this to your ~/.hermes/config.yaml under mcp_servers:
+
+mcp_servers:
+  zerosieve:
+    command: "zs-mcp"
+    args: []
+    enabled: true
+    timeout: 120

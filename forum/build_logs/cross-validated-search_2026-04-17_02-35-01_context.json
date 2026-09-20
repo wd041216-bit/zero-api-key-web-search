@@ -1,0 +1,15 @@
+{
+  "domain": "cross-validated-search",
+  "council_id": "",
+  "iteration": 0,
+  "last_score": {
+    "total": 0,
+    "breadth": 0,
+    "depth": 0,
+    "thickness": 0,
+    "effectiveness": 0
+  },
+  "target_repo": "/Users/dawei/playground/cross-validated-search",
+  "build_command": "auto-detect",
+  "generated_at": "2026-04-17T02:35:01Z"
+}

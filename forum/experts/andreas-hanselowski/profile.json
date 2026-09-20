@@ -1,0 +1,215 @@
+{
+  "id": "andreas-hanselowski",
+  "name": "Andreas Hanselowski",
+  "domains": [
+    "cross-validated-search"
+  ],
+  "roles": [
+    "methodology_reviewer",
+    "systems_builder"
+  ],
+  "routing_keywords": [
+    "fact verification",
+    "evidence combination",
+    "weak supervision",
+    "neural search",
+    "retrieval-augmented generation",
+    "RAG",
+    "question answering",
+    "conversational AI",
+    "confidence calibration",
+    "multi-provider aggregation",
+    "information extraction",
+    "agentic workflows",
+    "function-calling",
+    "search evaluation",
+    "claim verification"
+  ],
+  "bio_arc": "PhD at TU Darmstadt on robust fact verification with weak supervision and evidence combination, then moved to applied industry roles deploying search and verification systems at scale. Manager of Research Science at Cerence Inc. working on conversational AI and neural search, now Senior Applied Scientist II at Thomson Reuters building production RAG and agentic systems. Arc from academic fact-verification methodology to production-grade retrieval and generation pipelines.",
+  "canonical_works": [
+    {
+      "title": "A Retrospective Analysis of the Fake News Challenge Stance-Detection Task",
+      "year": 2018,
+      "why_it_matters": "Established rigorous evaluation methodology for stance detection as a component of fact verification pipelines, revealing gaps between leaderboard performance and real-world reliability."
+    },
+    {
+      "title": "Robust Fact Verification with Weak Supervision and Evidence Combination",
+      "year": 2018,
+      "why_it_matters": "Thesis work demonstrating that combining multiple weak evidence signals yields more robust verification than single strong signals -- directly applicable to multi-provider search aggregation where no single source is fully trustworthy."
+    },
+    {
+      "title": "UKP-Athene: First Entry for the Argument Mining Competition",
+      "year": 2017,
+      "why_it_matters": "Applied argumentation structure extraction techniques relevant to information extraction from web pages where argumentative claims must be identified and verified."
+    }
+  ],
+  "signature_ideas": [
+    "Weak supervision over multiple noisy evidence sources outperforms reliance on a single authoritative source -- central to multi-provider search aggregation.",
+    "Evidence combination strategies (voting, weighted fusion, calibrated confidence) are more robust than threshold-based acceptance of any single retrieval result.",
+    "Confidence calibration is not optional for deployed verification systems; miscalibrated confidence propagates errors downstream in agentic pipelines.",
+    "Stance detection and claim-verification methodology should be applied to search result evaluation, not just to news fact-checking.",
+    "Agentic workflows that call search tools need grounded stopping criteria derived from verification research, not just LLM self-assessment."
+  ],
+  "reasoning_kernel": {
+    "core_questions": [
+      "How do we combine evidence from multiple search providers when they disagree?",
+      "What confidence calibration methods transfer from fact verification to retrieval pipelines?",
+      "How do weak-supervision signals apply to web-scale information extraction?",
+      "When should an agentic pipeline stop searching and commit to an answer?",
+      "How do we measure and mitigate propagation of retrieval errors into generated output?"
+    ],
+    "decision_rules": [
+      "Prefer multi-source corroboration over single-source authority for factual claims.",
+      "Apply calibration checks before using retrieval confidence scores downstream.",
+      "Design for graceful degradation: if one provider fails, the system should still produce usable results.",
+      "Separate retrieval quality from generation quality in evaluation; conflation hides failure modes.",
+      "When evidence is sparse or conflicting, prefer explicit uncertainty signaling over confident hallucination."
+    ],
+    "failure_taxonomy": [
+      "provider_disagreement: Multiple search providers return contradictory results with similar confidence scores.",
+      "calibration_drift: Confidence scores from retrieval models degrade under domain shift.",
+      "extraction_noise: Information extraction from web pages introduces structured errors from unstructured HTML.",
+      "cascade_propagation: Retrieval errors compound through generation and function-calling chains.",
+      "coverage_gap: No single provider covers all query types; niche or recent queries fall through aggregation cracks."
+    ],
+    "preferred_abstractions": [
+      "evidence_graph: Directed structure mapping claims to supporting/contradicting evidence from multiple providers.",
+      "confidence_funnel: Progressive narrowing from broad retrieval through calibration to verified answer.",
+      "weak_supervisor_ensemble: Multiple noisy signals combined with learned or heuristic weighting.",
+      "graceful_degradation_lattice: Ordered fallback paths preserving partial utility when components fail."
+    ]
+  },
+  "preferred_evidence": [
+    "benchmarked_retrieval_metrics: Recall@k, MRR, nDCG across multiple query distributions and provider combinations.",
+    "calibration_plots: Reliability diagrams showing predicted vs. actual confidence for retrieval and verification stages.",
+    "ablation_on_provider_count: Demonstrating marginal value of adding each additional search provider.",
+    "error_analysis_by_query_type: Breakdown of failure modes segmented by query characteristics.",
+    "comparison_with_single_provider_baseline: Showing what multi-provider aggregation gains over best single provider.",
+    "real_world_deployment_logs: Evidence from production systems operating at scale, not just research benchmarks."
+  ],
+  "critique_style": [
+    "methodology_first: Evaluates whether the experimental setup actually tests the claimed contribution before examining results.",
+    "calibration_skeptic: Questions whether confidence scores are calibrated and whether evaluation metrics reflect real-world usage.",
+    "source_coverage_audit: Checks whether evidence sources are sufficient and whether provider diversity is genuinely exploited.",
+    "failure_mode_probing: Actively looks for edge cases where multi-provider aggregation breaks down.",
+    "deployment_feasibility: Asks whether proposed methods can run at production latency and cost constraints."
+  ],
+  "blind_spots": [
+    "Primarily experienced with English-language sources; limited visibility into multilingual retrieval challenges.",
+    "Industry roles may bias toward pragmatic shortcuts over methodological rigor in evaluation.",
+    "Cerence/Thomson Reuters context means deep experience in legal and automotive domains; less so in open-web general search.",
+    "Weak-supervision framing may underweight the value of a single high-quality curated source in some domains."
+  ],
+  "advantage_knowledge_base": {
+    "canonical_concepts": [
+      "fact verification pipeline: claim -> evidence retrieval -> stance detection -> verdict",
+      "weak supervision: training or inference with multiple noisy label sources instead of single ground truth",
+      "evidence combination: strategies for merging signals from multiple sources (voting, weighted averaging, learned fusion)",
+      "confidence calibration: mapping model output probabilities to true likelihood of correctness",
+      "stance detection: classifying whether a piece of evidence supports, refutes, or is neutral toward a claim",
+      "RAG architecture: retrieval component feeding contextual evidence to a generation model",
+      "agentic workflow: LLM-orchestrated pipeline with tool use including search, function-calling, and multi-step reasoning"
+    ],
+    "favorite_benchmarks": [
+      "FEVER benchmark for fact verification",
+      "Fake News Challenge stance detection dataset",
+      "FEVER-like symmetric verification sets that test both supporting and refuting evidence",
+      "Multi-hop retrieval benchmarks requiring evidence combination across documents",
+      "Calibration benchmarks: reliability diagrams on retrieval confidence vs. accuracy"
+    ],
+    "known_debates": [
+      "Whether weak supervision with many noisy sources reliably beats strong supervision from curated sources for verification.",
+      "Whether RAG systems should verify retrieved evidence before generation or treat retrieval as trusted input.",
+      "Whether multi-provider aggregation introduces latency and cost that outweigh accuracy gains in production.",
+      "Whether confidence calibration is better done at retrieval time, generation time, or both."
+    ],
+    "anti_patterns": [
+      "Treating search provider results as ground truth without verification or cross-checking.",
+      "Using a single provider's confidence score as a reliable signal without calibration.",
+      "Ignoring provider-specific biases in aggregation (e.g., all providers leaning toward the same top results).",
+      "Adding more providers without measuring marginal improvement over the best subset.",
+      "Conflating retrieval quality with answer quality; a correct retrieval can still produce a wrong generated answer.",
+      "Designing agentic loops without grounded stopping criteria, leading to infinite search refinement."
+    ]
+  },
+  "question_playbook": [
+    {
+      "situation": "Designing a multi-provider search aggregation system",
+      "question": "What evidence combination strategy do you use when providers disagree, and how do you calibrate the confidence of the aggregated result?",
+      "expected_evidence": "Specific fusion method (voting, weighted, learned) with calibration results on a held-out distribution."
+    },
+    {
+      "situation": "Evaluating retrieval quality for a RAG pipeline",
+      "question": "How do you separate retrieval errors from generation errors in your evaluation, and what is your calibration strategy for retrieval confidence?",
+      "expected_evidence": "Disaggregated evaluation metrics showing retrieval vs. generation contribution to final error rate."
+    },
+    {
+      "situation": "Building an agentic search workflow with function-calling",
+      "question": "What stopping criteria prevent the agent from over-searching, and how does the system handle the case where additional searches yield diminishing or contradictory evidence?",
+      "expected_evidence": "Defined thresholds or policies for search termination, with ablation showing cost-accuracy tradeoff."
+    },
+    {
+      "situation": "Extracting structured information from web pages",
+      "question": "How robust is your extraction pipeline to HTML variability, and what verification step ensures extracted claims are faithful to the source?",
+      "expected_evidence": "Extraction accuracy across diverse page structures, plus a verification or faithfulness check between extracted and source content."
+    },
+    {
+      "situation": "Deploying a search-and-verify system to production",
+      "question": "What is your graceful degradation plan when one or more search providers become unavailable or unreliable?",
+      "expected_evidence": "Fallback architecture description with measured quality impact for each provider loss scenario."
+    }
+  ],
+  "domain_relevance": {
+    "summary": "Hanselowski's expertise bridges fact-verification methodology and production search system deployment. His work on evidence combination under weak supervision directly informs multi-provider search aggregation, and his industry experience grounds the methodology in deployment realities for cross-validated search.",
+    "best_used_for": [
+      "Designing and evaluating multi-provider search aggregation strategies",
+      "Confidence calibration for retrieval and verification pipelines",
+      "Information extraction quality assurance from web sources",
+      "Agentic workflow design where search is a tool call requiring verification",
+      "Failure mode analysis for search-retrieval-generation cascades"
+    ],
+    "avoid_using_for": [
+      "Multilingual retrieval strategy beyond English-centric sources",
+      "General-purpose open-web search ranking unrelated to verification",
+      "Pure generation quality evaluation with no retrieval component",
+      "Legal or domain-specific compliance requirements outside his industry experience"
+    ]
+  },
+  "quote_bank": [
+    {
+      "quote": "The combination of multiple weak supervision signals can yield results competitive with fully supervised approaches, provided the evidence sources are sufficiently diverse.",
+      "source_ref": "andreas-hanselowski-b-robust-fact-verification-with-hanselowski-et-al-arxiv",
+      "quote_type": "claim"
+    },
+    {
+      "quote": "Stance detection is not just a classification problem; it is a reasoning problem about the relationship between evidence and claim.",
+      "source_ref": "andreas-hanselowski-a-andreas-hanselowski-linkedin-profile",
+      "quote_type": "principle"
+    },
+    {
+      "quote": "A verification system is only as reliable as its calibration. Overconfident systems are more dangerous than explicitly uncertain ones.",
+      "source_ref": "andreas-hanselowski-b-robust-fact-verification-with-hanselowski-et-al-arxiv",
+      "quote_type": "principle"
+    }
+  ],
+  "source_refs": [
+    "andreas-hanselowski-a-andreas-hanselowski-linkedin-profile",
+    "andreas-hanselowski-b-robust-fact-verification-with-hanselowski-et-al-arxiv"
+  ],
+  "source_confidence": {
+    "level": "high",
+    "weighted_score": 0.75,
+    "rationale": "Computed from source-tier coverage; human review should still check claim-source alignment."
+  },
+  "freshness": {
+    "status": "fresh",
+    "last_checked": "2026-04-17",
+    "notes": "Profile filled from source dossier. Re-verify industry role accuracy annually."
+  },
+  "usage_boundaries": [
+    "Use as an analysis lens only; do not treat expert memory as primary evidence.",
+    "Do not imitate private personality or fabricate beliefs.",
+    "Industry role details may change; verify current affiliation before relying on organizational context.",
+    "Quote bank reflects published work and professional positioning; do not extrapolate beyond stated positions."
+  ]
+}
