@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.0.0 — ZeroSieve
+
+Rebrand of `zero-api-key-web-search` with an optional neural sieve.
+
+- **Added**: Laya integration (`zerosieve.laya_filter`) — relevance sieving of
+  search results and probabilistic stance verification, backed by the local
+  Apache-2.0 Laya decision model (`convaiinnovations/laya`). Falls back to the
+  lexical `evidence-aware-heuristic-v3` verifier whenever Laya is unavailable.
+- **Added**: `--laya`, `--laya-model`, `--laya-subfolder`, `--laya-device`,
+  `--laya-threshold` CLI flags; `laya` / `laya_threshold` parameters on the
+  `search_web`, `llm_context`, `verify_claim`, `evidence_report` MCP tools.
+- **Added**: `laya` optional dependency extra; `zerosieve_compat` shim package
+  for legacy import paths and `python -m` entry points.
+- **Changed**: package renamed to `zerosieve`; CLI commands renamed to `zs-*`
+  with `zero-*` aliases retained; `mcp` pinned to `>=1.1.2,<2` (SDK 2.x
+  changes the Server decorator API).
+- 111 tests passing; verified end-to-end against the real checkpoint on
+  Apple Silicon (MPS).
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
