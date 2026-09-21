@@ -130,7 +130,7 @@ class LayaBackend:
                     kwargs["token"] = self.token
                 if self.subfolder:
                     kwargs["subfolder"] = self.subfolder
-                self._agent = laya.load(self.model_id, **kwargs)
+                agent: StanceBackend = laya.load(self.model_id, **kwargs)
             except Exception as exc:
                 self._load_error = (
                     f"could not load Laya checkpoint {self.model_label!r} ({exc}). "
@@ -138,7 +138,8 @@ class LayaBackend:
                     "HF_ENDPOINT=https://hf-mirror.com and retry."
                 )
                 raise LayaUnavailableError(self._load_error) from exc
-            return self._agent
+            self._agent = agent
+            return agent
 
     def predict(self, state: Any, questions: dict) -> dict:
         """One forward pass: answer every question about one state."""

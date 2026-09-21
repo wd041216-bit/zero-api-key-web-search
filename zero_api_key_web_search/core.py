@@ -12,7 +12,11 @@ from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
+
+if TYPE_CHECKING:
+    from zero_api_key_web_search.laya_filter import LayaBackend
 
 from zero_api_key_web_search.browse_page import browse
 from zero_api_key_web_search.cache import get_cache
@@ -321,7 +325,7 @@ class UltimateSearcher:
         min_sources: int = 3,
         providers: list[SearchProvider] | None = None,
         browse_func: Callable[..., dict] | None = None,
-        laya_backend: "LayaBackend | None" = None,
+        laya_backend: LayaBackend | None = None,
     ):
         self.timeout = timeout
         self.min_sources = min_sources
@@ -330,7 +334,7 @@ class UltimateSearcher:
         self._circuit_breaker: dict[str, dict] = {}
         self._laya_backend = laya_backend
 
-    def _resolve_laya_backend(self) -> "LayaBackend":
+    def _resolve_laya_backend(self) -> LayaBackend:
         """Lazily construct the default Laya backend on first use."""
         if self._laya_backend is None:
             from .laya_filter import LayaBackend
@@ -1183,7 +1187,8 @@ class UltimateSearcher:
             return classification, evidence
 
         stance_prob = stance["p_support"] if laya_classification == "supporting" else (
-            stance["p_conflict"] if laya_classification == "conflicting" else max(stance["p_support"], stance["p_conflict"])
+            stance["p_conflict"] if laya_classification == "conflicting"
+            else max(stance["p_support"], stance["p_conflict"])
         )
         evidence["evidence_strength"] = blend_strength(
             stance_prob,

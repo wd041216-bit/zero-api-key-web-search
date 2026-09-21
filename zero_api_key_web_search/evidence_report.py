@@ -8,7 +8,12 @@ import json
 from dataclasses import asdict
 
 from zero_api_key_web_search.core import EvidenceReportResult, UltimateSearcher
-from zero_api_key_web_search.laya_filter import add_laya_args, laya_backend_from_args, laya_search_kwargs, laya_verify_kwargs
+from zero_api_key_web_search.laya_filter import (
+    add_laya_args,
+    laya_backend_from_args,
+    laya_search_kwargs,
+    laya_verify_kwargs,
+)
 
 
 def main() -> None:
