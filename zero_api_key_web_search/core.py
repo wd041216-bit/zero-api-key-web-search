@@ -22,7 +22,6 @@ from zero_api_key_web_search.providers import (
     ProviderConfigurationError,
     SearchProvider,
     SearxngProvider,
-    TavilyProvider,
     WebUnlockerProvider,
 )
 
@@ -281,7 +280,7 @@ PROVIDER_PROFILES = {
     "free-verified": ["ddgs", "searxng"],
     "production": ["brightdata"],
     "production-unlock": ["brightdata"],
-    "max-evidence": ["ddgs", "searxng", "brightdata", "tavily"],
+    "max-evidence": ["ddgs", "searxng", "brightdata"],
 }
 
 GOGGLES_PRESETS = {
@@ -347,30 +346,22 @@ class UltimateSearcher:
         brightdata = BrightDataProvider(timeout=self.timeout)
         if brightdata.is_configured():
             providers.append(brightdata)
-        tavily = TavilyProvider(timeout=self.timeout)
-        if tavily.is_configured():
-            providers.append(tavily)
         return providers
 
     def _provider_guidance(self) -> dict:
         searxng = SearxngProvider(timeout=self.timeout)
         brightdata = BrightDataProvider(timeout=self.timeout)
-        tavily = TavilyProvider(timeout=self.timeout)
         searxng_configured = searxng.is_configured()
         brightdata_configured = brightdata.is_configured()
-        tavily_configured = tavily.is_configured()
         return {
             "free_recommended_pair": ["ddgs", "searxng"],
             "production_provider": "brightdata",
-            "optional_provider": "tavily",
             "searxng_configured": searxng_configured,
             "searxng_env_vars": list(SearxngProvider.ENV_VARS),
             "brightdata_configured": brightdata_configured,
             "brightdata_api_key_env_vars": list(BrightDataProvider.API_KEY_ENV_VARS),
             "brightdata_zone_env_vars": list(BrightDataProvider.ZONE_ENV_VARS),
             "brightdata_signup_url": BrightDataProvider.SIGNUP_URL,
-            "tavily_configured": tavily_configured,
-            "tavily_api_key_env_vars": list(TavilyProvider.ENV_VARS),
             "free_setup_hint": (
                 "Self-host a SearXNG instance and point "
                 f"{SearxngProvider.ENV_VARS[0]} to it for a free dual-provider path."
@@ -381,13 +372,9 @@ class UltimateSearcher:
                 f"{BrightDataProvider.API_KEY_ENV_VARS[0]}. New users can sign up at "
                 f"{BrightDataProvider.SIGNUP_URL}."
             ),
-            "tavily_setup_hint": (
-                "For an optional Tavily evidence path, install the tavily extra and set "
-                f"{TavilyProvider.ENV_VARS[0]}."
-            ),
             "recommended_next_step": (
                 "Multi-provider evidence path is active."
-                if searxng_configured or brightdata_configured or tavily_configured
+                if searxng_configured or brightdata_configured
                 else (
                     "Configure a self-hosted SearXNG instance for a free second provider "
                     "or Bright Data for production-grade search."
@@ -421,7 +408,7 @@ class UltimateSearcher:
                 ),
             },
             "max-evidence": {
-                "providers": ["ddgs", "searxng", "brightdata", "tavily"],
+                "providers": ["ddgs", "searxng", "brightdata"],
                 "description": "Maximum provider diversity across free and production backends.",
             },
         }
@@ -443,7 +430,6 @@ class UltimateSearcher:
         searxng = SearxngProvider(timeout=self.timeout)
         brightdata = BrightDataProvider(timeout=self.timeout)
         web_unlocker = WebUnlockerProvider(timeout=self.timeout)
-        tavily = TavilyProvider(timeout=self.timeout)
         return [
             {
                 "name": "ddgs",
@@ -486,14 +472,6 @@ class UltimateSearcher:
                 "setup": WebUnlockerProvider.configuration_hint(),
                 "signup_url": WebUnlockerProvider.SIGNUP_URL,
             },
-            {
-                "name": "tavily",
-                "status": "ready" if tavily.is_configured() else "not_configured",
-                "default": "tavily" in configured_names,
-                "kind": "optional api",
-                "description": "Optional Tavily search provider for text and news evidence.",
-                "setup": TavilyProvider.configuration_hint(),
-            },
         ]
 
     def _resolve_provider_profile(self, profile: str | None) -> list[str] | None:
@@ -512,13 +490,11 @@ class UltimateSearcher:
             return SearxngProvider(timeout=self.timeout)
         if provider_name == "brightdata":
             return BrightDataProvider(timeout=self.timeout)
-        if provider_name == "tavily":
-            return TavilyProvider(timeout=self.timeout)
         return None
 
     def _provider_registry(self) -> dict[str, SearchProvider]:
         registry = {provider.name: provider for provider in self.providers}
-        for provider_name in ("searxng", "brightdata", "tavily"):
+        for provider_name in ("searxng", "brightdata"):
             if provider_name not in registry:
                 provider = self._known_optional_provider(provider_name)
                 if provider is not None:
